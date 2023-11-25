@@ -16,8 +16,10 @@ namespace API.Data
             modelBuilder.Entity<Brand>()
                 .HasMany(x => x.Vehicles)
                 .WithOne(x => x.Brand)
-                .HasForeignKey(x => x.VehicleID);
-
+                .HasForeignKey(x => x.BrandId);
         }
+        public DbSet<Account> Accounts { get; set; }
+        public DbSet<Brand> Brands { get; set; }
+        public DbSet<Vehicle> Vehicles { get; set; }
     }
 }

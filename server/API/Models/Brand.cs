@@ -8,7 +8,7 @@ namespace API.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int BrandId { get; set; }
         [Required]
-        [Column(TypeName = "nvarchar(50)")]
+        [Column(TypeName = "nvarchar(50)"), StringLength(50)]
         public string Name { get; set; }
         public string Description { get; set; }
         public string? ImagePath { get; set; }

@@ -5,12 +5,34 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class Initial_1 : Migration
+    public partial class DatabaseInitial_1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Brand",
+                name: "Accounts",
+                columns: table => new
+                {
+                    AccountId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Email = table.Column<string>(type: "nvarchar(320)", maxLength: 320, nullable: false),
+                    Password = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Phone = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
+                    Role = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    AvatarUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Gender = table.Column<string>(type: "nvarchar(20)", nullable: false),
+                    DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accounts", x => x.AccountId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Brands",
                 columns: table => new
                 {
                     BrandId = table.Column<int>(type: "int", nullable: false)
@@ -21,14 +43,15 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Brand", x => x.BrandId);
+                    table.PrimaryKey("PK_Brands", x => x.BrandId);
                 });
 
             migrationBuilder.CreateTable(
-                name: "Vehicle",
+                name: "Vehicles",
                 columns: table => new
                 {
-                    VehicleID = table.Column<int>(type: "int", nullable: false),
+                    VehicleID = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
                     Model = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     BrandId = table.Column<int>(type: "int", nullable: false),
                     ManufacturingYear = table.Column<int>(type: "int", nullable: false),
@@ -45,11 +68,11 @@ namespace API.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Vehicle", x => x.VehicleID);
+                    table.PrimaryKey("PK_Vehicles", x => x.VehicleID);
                     table.ForeignKey(
-                        name: "FK_Vehicle_Brand_VehicleID",
-                        column: x => x.VehicleID,
-                        principalTable: "Brand",
+                        name: "FK_Vehicles_Brands_BrandId",
+                        column: x => x.BrandId,
+                        principalTable: "Brands",
                         principalColumn: "BrandId",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -67,9 +90,9 @@ namespace API.Migrations
                 {
                     table.PrimaryKey("PK_Images", x => x.ImageId);
                     table.ForeignKey(
-                        name: "FK_Images_Vehicle_VehicleId",
+                        name: "FK_Images_Vehicles_VehicleId",
                         column: x => x.VehicleId,
-                        principalTable: "Vehicle",
+                        principalTable: "Vehicles",
                         principalColumn: "VehicleID",
                         onDelete: ReferentialAction.Cascade);
                 });
@@ -78,18 +101,26 @@ namespace API.Migrations
                 name: "IX_Images_VehicleId",
                 table: "Images",
                 column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Vehicles_BrandId",
+                table: "Vehicles",
+                column: "BrandId");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Accounts");
+
+            migrationBuilder.DropTable(
                 name: "Images");
 
             migrationBuilder.DropTable(
-                name: "Vehicle");
+                name: "Vehicles");
 
             migrationBuilder.DropTable(
-                name: "Brand");
+                name: "Brands");
         }
     }
 }

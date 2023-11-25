@@ -22,6 +22,59 @@ namespace API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder, 1L, 1);
 
+            modelBuilder.Entity("API.Models.Account", b =>
+                {
+                    b.Property<int>("AccountId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountId"), 1L, 1);
+
+                    b.Property<string>("AvatarUrl")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTime>("DateOfBirth")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(320)
+                        .HasColumnType("nvarchar(320)");
+
+                    b.Property<string>("Gender")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Phone")
+                        .IsRequired()
+                        .HasMaxLength(11)
+                        .HasColumnType("nvarchar(11)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("AccountId");
+
+                    b.ToTable("Accounts");
+                });
+
             modelBuilder.Entity("API.Models.Brand", b =>
                 {
                     b.Property<int>("BrandId")
@@ -44,7 +97,7 @@ namespace API.Migrations
 
                     b.HasKey("BrandId");
 
-                    b.ToTable("Brand");
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("API.Models.Images", b =>
@@ -73,6 +126,8 @@ namespace API.Migrations
                     b.Property<int>("VehicleID")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("VehicleID"), 1L, 1);
 
                     b.Property<int>("BrandId")
                         .HasColumnType("int");
@@ -127,7 +182,9 @@ namespace API.Migrations
 
                     b.HasKey("VehicleID");
 
-                    b.ToTable("Vehicle");
+                    b.HasIndex("BrandId");
+
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("API.Models.Images", b =>
@@ -145,7 +202,7 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Models.Brand", "Brand")
                         .WithMany("Vehicles")
-                        .HasForeignKey("VehicleID")
+                        .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
