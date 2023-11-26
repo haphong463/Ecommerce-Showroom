@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Grid,
@@ -47,13 +47,23 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
       }));
     }
   };
-  console.log(vehicles);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+
+    console.log(vehicles);
+  };
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="100%">
-      <DialogTitle variant="h3" color="text.secondary" align="center">
+      <DialogTitle
+        variant="h3"
+        color="text.secondary"
+        align="center"
+        letterSpacing={10}
+      >
         NEW VEHICLE
       </DialogTitle>
       <DialogContent>
+        <FormHelperText error>*All field is required!</FormHelperText>
         <form style={{ marginTop: "10px" }}>
           <Grid container spacing={2}>
             <Grid item xs={3}>
@@ -61,19 +71,19 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 fullWidth
                 id="name"
                 name="name"
-                label="Name"
+                label="Name*"
                 onChange={handleChangeInput}
               />
             </Grid>
             <Grid item xs={3}>
               <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Brand</InputLabel>
+                <InputLabel id="demo-simple-select-label">Brand*</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
                   name="brand"
                   onChange={handleChangeInput}
-                  label="Brand"
+                  label="Brand*"
                   defaultValue=""
                 >
                   <MenuItem value="">None</MenuItem>
@@ -89,7 +99,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 id="manufacturingYear"
                 name="manufacturingYear"
                 onChange={handleChangeInput}
-                label="Manufacturing Year"
+                label="Manufacturing Year*"
                 type="number"
               />
             </Grid>
@@ -99,7 +109,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 id="registrationNumber"
                 name="registrationNumber"
                 onChange={handleChangeInput}
-                label="Registration Number"
+                label="Registration Number*"
               />
             </Grid>
             <Grid item xs={3}>
@@ -107,7 +117,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 fullWidth
                 id="color"
                 name="color"
-                label="Color"
+                label="Color*"
                 onChange={handleChangeInput}
               />
             </Grid>
@@ -117,7 +127,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 id="mileage"
                 name="mileage"
                 onChange={handleChangeInput}
-                label="Mileage"
+                label="Mileage*"
                 type="number"
               />
             </Grid>
@@ -127,7 +137,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 id="engineType"
                 onChange={handleChangeInput}
                 name="engineType"
-                label="Engine Type"
+                label="Engine Type*"
               />
             </Grid>
             <Grid item xs={3}>
@@ -136,7 +146,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 id="transmissionType"
                 name="transmissionType"
                 onChange={handleChangeInput}
-                label="Transmission Type"
+                label="Transmission Type*"
               />
             </Grid>
             <Grid item xs={3}>
@@ -145,7 +155,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 id="fuelType"
                 onChange={handleChangeInput}
                 name="fuelType"
-                label="Fuel Type"
+                label="Fuel Type*"
               />
             </Grid>
             <Grid item xs={3}>
@@ -154,13 +164,13 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 onChange={handleChangeInput}
                 id="numberOfSeats"
                 name="numberOfSeats"
-                label="Number of Seats"
+                label="Number of Seats*"
                 type="number"
               />
             </Grid>
             <Grid item xs={3}>
               <DatePicker
-                label="Purchased Date"
+                label="Purchased Date*"
                 sx={{
                   width: "100%",
                 }}
@@ -173,7 +183,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 fullWidth
                 id="purchasePrice"
                 name="purchasePrice"
-                label="Purchase Price"
+                label="Purchase Price*"
                 onChange={handleChangeInput}
                 type="number"
               />
@@ -204,7 +214,12 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
             </Grid>
           </Grid>
           <DialogActions>
-            <Button type="submit" variant="contained" color="info">
+            <Button
+              type="submit"
+              variant="contained"
+              color="info"
+              onClick={handleSubmit}
+            >
               Submit
             </Button>
             <Button variant="contained" color="error" onClick={handleClose}>
