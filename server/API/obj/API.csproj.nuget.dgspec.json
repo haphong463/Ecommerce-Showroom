@@ -11,7 +11,7 @@
         "projectName": "API",
         "projectPath": "C:\\Users\\vnjoh\\source\\repos\\Ecommerce-Showroom\\server\\API\\API.csproj",
         "packagesPath": "C:\\Users\\vnjoh\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\vnjoh\\Source\\Repos\\Ecommerce-Showroom\\server\\API\\obj\\",
+        "outputPath": "C:\\Users\\vnjoh\\source\\repos\\Ecommerce-Showroom\\server\\API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
           "C:\\Users\\vnjoh\\AppData\\Roaming\\NuGet\\NuGet.Config",

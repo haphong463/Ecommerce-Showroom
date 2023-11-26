@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "12scQFxwztQo0I9tLW0GwG2rD/Wfo7bwt4ciY8oH1nUc7ShMzbxNKGV9ktNJWGpG7dY0PvgsAeFkoSytKsouxg==",
+  "dgSpecHash": "g9tHu/HLhMpeJbL6E2cQuO5KBnzrP8L29rL18cbp5VYXKUTf17BolvTDuO3nc3ICWHIW7H2E2U64U1NMZCpwwg==",
   "success": true,
   "projectFilePath": "C:\\Users\\vnjoh\\source\\repos\\Ecommerce-Showroom\\server\\API\\API.csproj",
   "expectedPackageFiles": [
@@ -56,5 +56,12 @@
     "C:\\Users\\vnjoh\\.nuget\\packages\\system.text.encoding.codepages\\4.7.0\\system.text.encoding.codepages.4.7.0.nupkg.sha512",
     "C:\\Users\\vnjoh\\.nuget\\packages\\system.windows.extensions\\4.7.0\\system.windows.extensions.4.7.0.nupkg.sha512"
   ],
-  "logs": []
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\vnjoh\\source\\repos\\Ecommerce-Showroom\\server\\API\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }

@@ -2504,11 +2504,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\vnjoh\\Source\\Repos\\Ecommerce-Showroom\\server\\API\\API.csproj",
+      "projectUniqueName": "C:\\Users\\vnjoh\\source\\repos\\Ecommerce-Showroom\\server\\API\\API.csproj",
       "projectName": "API",
-      "projectPath": "C:\\Users\\vnjoh\\Source\\Repos\\Ecommerce-Showroom\\server\\API\\API.csproj",
+      "projectPath": "C:\\Users\\vnjoh\\source\\repos\\Ecommerce-Showroom\\server\\API\\API.csproj",
       "packagesPath": "C:\\Users\\vnjoh\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\vnjoh\\Source\\Repos\\Ecommerce-Showroom\\server\\API\\obj\\",
+      "outputPath": "C:\\Users\\vnjoh\\source\\repos\\Ecommerce-Showroom\\server\\API\\obj\\",
       "projectStyle": "PackageReference",
       "configFilePaths": [
         "C:\\Users\\vnjoh\\AppData\\Roaming\\NuGet\\NuGet.Config",
@@ -2583,5 +2583,13 @@
         "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.306\\RuntimeIdentifierGraph.json"
       }
     }
-  }
+  },
+  "logs": [
+    {
+      "code": "Undefined",
+      "level": "Warning",
+      "warningLevel": 1,
+      "message": "Problem reading the cache file C:\\Users\\vnjoh\\source\\repos\\Ecommerce-Showroom\\server\\API\\obj\\project.nuget.cache : Invalid property identifier character: <. Path 'version', line 3, position 0."
+    }
+  ]
 }
