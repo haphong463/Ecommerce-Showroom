@@ -10,9 +10,11 @@ public class Vehicle
 
     [Required]
     [StringLength(50), Column(TypeName = "nvarchar(50)")]
-    public string Model { get; set; }
+    public string Name { get; set; }
     [Required]
     public int BrandId { get; set; }
+    [Column(TypeName = "nvarchar(50)")]
+    public string ModelId { get; set; }
     public int ManufacturingYear { get; set; }
 
     [StringLength(20)]
@@ -46,6 +48,7 @@ public class Vehicle
 
     [EnumDataType(typeof(VehicleStatus))]
     public VehicleStatus Status { get; set; }
+    public bool IsUsed { get; set; }
     [NotMapped]
     public List<Images>? Images { get; set; }
     [NotMapped]

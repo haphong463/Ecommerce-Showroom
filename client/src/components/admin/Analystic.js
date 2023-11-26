@@ -1,4 +1,5 @@
 import {
+  BarElement,
   CategoryScale,
   Chart,
   Legend,
@@ -8,7 +9,7 @@ import {
   Title,
   Tooltip,
 } from "chart.js";
-import { Line } from "react-chartjs-2";
+import { Bar, Line } from "react-chartjs-2";
 Chart.register(
   CategoryScale,
   LinearScale,
@@ -16,12 +17,12 @@ Chart.register(
   LineElement,
   Title,
   Tooltip,
-  Legend
+  Legend,
+  BarElement
 );
 
 export const options = {
   maintainAspectRatio: false,
-  responsive: true,
   animations: {
     tension: {
       duration: 1000,
@@ -44,6 +45,12 @@ const data = {
       fill: false,
       borderColor: "rgb(75, 192, 192)",
     },
+    {
+      label: "Looping tension",
+      data: [12, 51, 23, 54, 215, 55, 34],
+      fill: false,
+      borderColor: "pink",
+    },
   ],
 };
 
@@ -51,6 +58,14 @@ export const Analystic = () => {
   return (
     <div style={{ height: "50vh" }}>
       <Line options={options} data={data} />
+    </div>
+  );
+};
+
+export const ProductChart = () => {
+  return (
+    <div style={{ height: "50vh" }}>
+      <Bar data={data} options={options} />
     </div>
   );
 };

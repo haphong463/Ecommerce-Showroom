@@ -1,9 +1,9 @@
-import { Box, Typography } from "@mui/material";
 import React from "react";
-import { Sidebar } from "../../components/admin/Sidebar";
 import Navbar from "../../components/admin/Navbar";
+import { Box, Typography } from "@mui/material";
+import { Sidebar } from "../../components/admin/Sidebar";
 
-export const Settings = () => {
+export const Brand = () => {
   return (
     <>
       <Navbar />
@@ -12,7 +12,7 @@ export const Settings = () => {
         <Sidebar />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
           <Typography variant="h3" component="div">
-            Settings
+            Brand
           </Typography>
         </Box>
       </Box>
