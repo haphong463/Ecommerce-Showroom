@@ -20,7 +20,11 @@ export const Brand = () => {
       <Box sx={{ display: "flex" }}>
         <Sidebar />
         <Box component="main" sx={{ flexGrow: 1 }}>
-          <BrandForm open={openBrandForm} handleClose={onClose} />
+          <BrandForm
+            open={openBrandForm}
+            onSetOpen={handleClickOpen}
+            handleClose={onClose}
+          />
         </Box>
         <BrandList handleClickOpen={handleClickOpen} />
       </Box>

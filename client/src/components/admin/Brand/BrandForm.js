@@ -1,47 +1,50 @@
-import React, { useState } from "react";
+import React, { useContext } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Grid,
   TextField,
   Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  FormHelperText,
 } from "@mui/material";
-import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import dayjs from "dayjs";
-
+import { useFormik } from "formik";
+import { initialValues, postBrand, validationSchema } from "./BrandLibrary";
+import { BrandContext } from "../../../context/BrandContext";
 const BrandForm = ({ open, onSetOpen, handleClose }) => {
-  const [brand, setBrand] = useState({
-    name: "",
-    image: null,
-    description: "",
+  const { setData } = useContext(BrandContext);
+  const formik = useFormik({
+    initialValues: initialValues,
+    validationSchema: validationSchema,
+    onSubmit: (values) => {
+      const formData = new FormData();
+      formData.append("name", values.name);
+      formData.append("description", values.description);
+      formData.append("file", values.image);
+      postBrand(formData).then((res) => {
+        setData((prev) => [...prev, res.data]);
+      });
+      handleClose();
+    },
   });
-  const handleChangeInput = (e) => {
-    const { name, value } = e.target;
-    if (name === "image") {
-      setBrand((prev) => ({
-        ...prev,
-        image: e.target.files[0],
-      }));
-    } else {
-      setBrand((prev) => ({
-        ...prev,
-        [name]: value,
-      }));
-    }
-  };
-  const handleSubmit = (e) => {
-    e.preventDefault();
-
-    console.log(brand);
-  };
+  // const handleChangeInput = (e) => {
+  //   const { name, value } = e.target;
+  //   if (name === "image") {
+  //     setBrand((prev) => ({
+  //       ...prev,
+  //       image: e.target.files[0],
+  //     }));
+  //   } else {
+  //     setBrand((prev) => ({
+  //       ...prev,
+  //       [name]: value,
+  //     }));
+  //   }
+  // };
+  // const handleSubmit = (e) => {
+  //   e.preventDefault();
+  // };
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="100%">
       <DialogTitle
@@ -53,8 +56,7 @@ const BrandForm = ({ open, onSetOpen, handleClose }) => {
         NEW BRAND
       </DialogTitle>
       <DialogContent>
-        <FormHelperText error>*All field is required!</FormHelperText>
-        <form style={{ marginTop: "10px" }}>
+        <form onSubmit={formik.handleSubmit} style={{ marginTop: "10px" }}>
           <Grid container spacing={2}>
             <Grid item xs={12}>
               <TextField
@@ -62,7 +64,10 @@ const BrandForm = ({ open, onSetOpen, handleClose }) => {
                 id="name"
                 name="name"
                 label="Name*"
-                onChange={handleChangeInput}
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                helperText={formik.touched.name && formik.errors.name}
+                error={formik.touched.name && !!formik.errors.name}
               />
             </Grid>
             <Grid item xs={12}>
@@ -71,7 +76,15 @@ const BrandForm = ({ open, onSetOpen, handleClose }) => {
                 id="description"
                 name="description"
                 label="Desctipion*"
-                onChange={handleChangeInput}
+                multiline
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                helperText={
+                  formik.touched.description && formik.errors.description
+                }
+                error={
+                  formik.touched.description && !!formik.errors.description
+                }
               />
             </Grid>
 
@@ -84,10 +97,11 @@ const BrandForm = ({ open, onSetOpen, handleClose }) => {
                   type="file"
                   id="image"
                   name="image"
-                  accept="image/*" // Limit to image files if needed
-                  onChange={handleChangeInput}
+                  accept="image/*"
+                  onChange={(event) => {
+                    formik.setFieldValue("image", event.currentTarget.files[0]);
+                  }}
                   style={{ display: "none" }}
-                  multiple
                 />
                 <Button
                   variant="contained"
@@ -105,7 +119,7 @@ const BrandForm = ({ open, onSetOpen, handleClose }) => {
               type="submit"
               variant="contained"
               color="info"
-              onClick={handleSubmit}
+              // onClick={handleSubmit}
             >
               Submit
             </Button>

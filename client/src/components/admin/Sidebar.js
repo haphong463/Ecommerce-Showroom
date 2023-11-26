@@ -11,7 +11,9 @@ import CarIcon from "@mui/icons-material/DriveEta";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/ExitToApp";
 import MenuIcon from "@mui/icons-material/Menu";
+import CategoryIcon from "@mui/icons-material/Category";
 import BackgroundImage from "../../assets/images/HD-wallpaper-black-background-car-cars-vehicles.jpg";
+import { Divider } from "@mui/material";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -111,21 +113,24 @@ export function Sidebar() {
             />
             <RouteItem
               navigate={navigate}
-              route={"/settings"}
-              primary={"Settings"}
-              open={open}
-              icon={<SettingsIcon />}
-            />
-            <RouteItem
-              navigate={navigate}
               route={"/brand"}
               primary={"Brand"}
               open={open}
-              icon={<SettingsIcon />}
+              icon={<CategoryIcon />}
             />
           </Box>
+
           <Box>
             <List>
+              <Divider sx={{ borderTop: "1px solid #2f2f2f" }} />
+
+              <RouteItem
+                navigate={navigate}
+                route={"/settings"}
+                primary={"Settings"}
+                open={open}
+                icon={<SettingsIcon />}
+              />
               <RouteItem
                 navigate={navigate}
                 route={"/logout"}

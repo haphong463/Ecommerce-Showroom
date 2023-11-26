@@ -1,4 +1,4 @@
-import * as React from "react";
+import { useState, useEffect, useContext } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -11,29 +11,17 @@ import AddIcon from "@mui/icons-material/Add";
 import { Fab, IconButton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { getBrandList } from "./BrandLibrary";
+import { BrandContext } from "../../../context/BrandContext";
 const columns = [
-  { id: "name", label: "Name", minWidth: 170 },
-  { id: "code", label: "ISO\u00a0Code", minWidth: 100 },
+  { id: "image", label: "", minWidth: 170 },
+  { id: "name", label: "Name", minWidth: 100 },
   {
-    id: "population",
-    label: "Population",
+    id: "description",
+    label: "Description",
     minWidth: 170,
     align: "right",
     format: (value) => value.toLocaleString("en-US"),
-  },
-  {
-    id: "size",
-    label: "Size\u00a0(km\u00b2)",
-    minWidth: 170,
-    align: "right",
-    format: (value) => value.toLocaleString("en-US"),
-  },
-  {
-    id: "density",
-    label: "Density",
-    minWidth: 170,
-    align: "right",
-    format: (value) => value.toFixed(2),
   },
   {
     id: "actions",
@@ -43,23 +31,10 @@ const columns = [
   },
 ];
 
-function createData(name, code, population, size) {
-  const density = population / size;
-  return { name, code, population, size, density };
-}
-
-const rows = [
-  createData("India", "IN", 1324171354, 3287263, "India"),
-  createData("China", "CN", 1403500365, 9596961, "China"),
-  createData("Italy", "IT", 60483973, 301340, "Italy"),
-  createData("United States", "US", 327167434, 9833520, "United"),
-  createData("Canada", "CA", 37602103, 9984670, "Canada"),
-  createData("Australia", "AU", 25475400, 7692024, "Australia"),
-];
-
 export function BrandList({ handleClickOpen }) {
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const { data, setData } = useContext(BrandContext);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -70,6 +45,11 @@ export function BrandList({ handleClickOpen }) {
     setPage(0);
   };
 
+  useEffect(() => {
+    getBrandList().then((res) => {
+      setData(res.data);
+    });
+  }, []);
   return (
     <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
       <Fab
@@ -87,26 +67,32 @@ export function BrandList({ handleClickOpen }) {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
+              {columns.map((column) => {
+                return (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                );
+              })}
             </TableRow>
           </TableHead>
           <TableBody>
-            {rows
+            {data
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
-                  <TableRow hover role="checkbox" tabIndex={-1} key={row.code}>
+                  <TableRow
+                    hover
+                    role="checkbox"
+                    tabIndex={-1}
+                    key={row.brandId}
+                  >
                     {columns.map((column) => {
                       const value = row[column.id];
-                      console.log(value);
                       return (
                         <TableCell key={column.id} align={column.align}>
                           {column.id === "actions" ? (
@@ -130,6 +116,11 @@ export function BrandList({ handleClickOpen }) {
                                 <DeleteIcon />
                               </IconButton>
                             </Stack>
+                          ) : column.id === "image" ? (
+                            <img
+                              alt={`${row.name}-image`}
+                              src={row.imagePath}
+                            />
                           ) : column.format && typeof value === "number" ? (
                             column.format(value)
                           ) : (
@@ -145,9 +136,9 @@ export function BrandList({ handleClickOpen }) {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[5, 10, 15]}
         component="div"
-        count={rows.length}
+        count={data.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
