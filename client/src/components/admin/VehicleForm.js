@@ -12,20 +12,47 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  FormHelperText,
 } from "@mui/material";
+import * as yup from "yup";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-
+import { useFormik } from "formik";
+import dayjs from "dayjs";
+const validationSchema = yup.object().shape({
+  name: yup.string().required("Name field is required"),
+  brand: yup.string().required("Brand field is required"),
+  image: yup.array().nullable(),
+  manufacturingYear: yup.number().required(),
+  registrationNumber: yup.string().required(),
+  color: yup.string().required(),
+  mileage: yup.number().required(),
+  engineType: yup.string().required(),
+  transmissionType: yup.string().required(),
+  fuelType: yup.string().required(),
+  numberOfSeats: yup.number().required(),
+  purchasePrice: yup.number().required(),
+});
 const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
-  const [selectedFile, setSelectedFile] = useState([]);
-  const handleFileChange = (event) => {
-    // Handle the file change event and update the state
-    const file = Array(event.target.files);
-    setSelectedFile(file);
-  };
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    onSetOpen(false);
-  };
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      image: [],
+      brand: "",
+      manufacturingYear: "",
+      registrationNumber: "",
+      color: "",
+      mileage: "",
+      engineType: "",
+      transmissionType: "",
+      fuelType: "",
+      numberOfSeats: "",
+      purchasePrice: "",
+    },
+    validationSchema,
+    onSubmit: (values) => {
+      console.log(values);
+    },
+  });
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="100%">
@@ -33,7 +60,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
         NEW VEHICLE
       </DialogTitle>
       <DialogContent>
-        <form onSubmit={handleSubmit} style={{ marginTop: "10px" }}>
+        <form onSubmit={formik.handleSubmit} style={{ marginTop: "10px" }}>
           <Grid container spacing={2}>
             <Grid item xs={3}>
               <TextField
@@ -41,7 +68,11 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 id="name"
                 name="name"
                 label="Name"
-                required
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.name}
+                error={formik.touched.name && Boolean(formik.errors.name)}
+                helperText={formik.touched.name && formik.errors.name}
               />
             </Grid>
             <Grid item xs={3}>
@@ -50,13 +81,21 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 <Select
                   labelId="demo-simple-select-label"
                   id="demo-simple-select"
+                  name="brand"
                   label="Brand"
-                  defaultValue={"10"}
+                  defaultValue=""
+                  onChange={formik.handleChange}
                 >
+                  <MenuItem value="">None</MenuItem>
                   <MenuItem value={"10"}>Brand 1</MenuItem>
                   <MenuItem value={"20"}>Brand 2</MenuItem>
                   <MenuItem value={"30"}>Brand 3</MenuItem>
                 </Select>
+                {formik.touched.brand && (
+                  <FormHelperText error={Boolean(formik.errors.brand)}>
+                    {formik.errors.brand}
+                  </FormHelperText>
+                )}
               </FormControl>
             </Grid>
             <Grid item xs={3}>
@@ -66,7 +105,17 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 name="manufacturingYear"
                 label="Manufacturing Year"
                 type="number"
-                required
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.manufacturingYear}
+                error={
+                  formik.touched.manufacturingYear &&
+                  Boolean(formik.errors.manufacturingYear)
+                }
+                helperText={
+                  formik.touched.manufacturingYear &&
+                  formik.errors.manufacturingYear
+                }
               />
             </Grid>
             <Grid item xs={3}>
@@ -75,10 +124,31 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 id="registrationNumber"
                 name="registrationNumber"
                 label="Registration Number"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.registrationNumber}
+                error={
+                  formik.touched.registrationNumber &&
+                  Boolean(formik.errors.registrationNumber)
+                }
+                helperText={
+                  formik.touched.registrationNumber &&
+                  formik.errors.registrationNumber
+                }
               />
             </Grid>
             <Grid item xs={3}>
-              <TextField fullWidth id="color" name="color" label="Color" />
+              <TextField
+                fullWidth
+                id="color"
+                name="color"
+                label="Color"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.color}
+                error={formik.touched.color && Boolean(formik.errors.color)}
+                helperText={formik.touched.color && formik.errors.color}
+              />
             </Grid>
             <Grid item xs={3}>
               <TextField
@@ -87,6 +157,11 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 name="mileage"
                 label="Mileage"
                 type="number"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.mileage}
+                error={formik.touched.mileage && Boolean(formik.errors.mileage)}
+                helperText={formik.touched.mileage && formik.errors.mileage}
               />
             </Grid>
             <Grid item xs={3}>
@@ -95,6 +170,15 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 id="engineType"
                 name="engineType"
                 label="Engine Type"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.engineType}
+                error={
+                  formik.touched.engineType && Boolean(formik.errors.engineType)
+                }
+                helperText={
+                  formik.touched.engineType && formik.errors.engineType
+                }
               />
             </Grid>
             <Grid item xs={3}>
@@ -103,6 +187,17 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 id="transmissionType"
                 name="transmissionType"
                 label="Transmission Type"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.transmissionType}
+                error={
+                  formik.touched.transmissionType &&
+                  Boolean(formik.errors.transmissionType)
+                }
+                helperText={
+                  formik.touched.transmissionType &&
+                  formik.errors.transmissionType
+                }
               />
             </Grid>
             <Grid item xs={3}>
@@ -111,6 +206,13 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 id="fuelType"
                 name="fuelType"
                 label="Fuel Type"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.fuelType}
+                error={
+                  formik.touched.fuelType && Boolean(formik.errors.fuelType)
+                }
+                helperText={formik.touched.fuelType && formik.errors.fuelType}
               />
             </Grid>
             <Grid item xs={3}>
@@ -120,6 +222,16 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 name="numberOfSeats"
                 label="Number of Seats"
                 type="number"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.numberOfSeats}
+                error={
+                  formik.touched.numberOfSeats &&
+                  Boolean(formik.errors.numberOfSeats)
+                }
+                helperText={
+                  formik.touched.numberOfSeats && formik.errors.numberOfSeats
+                }
               />
             </Grid>
             <Grid item xs={3}>
@@ -128,6 +240,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 sx={{
                   width: "100%",
                 }}
+                defaultValue={dayjs(new Date())}
               />
             </Grid>
             <Grid item xs={3}>
@@ -137,6 +250,16 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 name="purchasePrice"
                 label="Purchase Price"
                 type="number"
+                onChange={formik.handleChange}
+                onBlur={formik.handleBlur}
+                value={formik.values.purchasePrice}
+                error={
+                  formik.touched.purchasePrice &&
+                  Boolean(formik.errors.purchasePrice)
+                }
+                helperText={
+                  formik.touched.purchasePrice && formik.errors.purchasePrice
+                }
               />
             </Grid>
             <Grid item xs={3}>
@@ -150,7 +273,6 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                   name="image"
                   accept="image/*" // Limit to image files if needed
                   style={{ display: "none" }}
-                  onChange={handleFileChange}
                   multiple
                 />
                 <Button
@@ -161,27 +283,19 @@ const VehicleForm = ({ open, onSetOpen, handleClose, ...props }) => {
                 >
                   Upload Image
                 </Button>
-                {selectedFile && (
-                  <span style={{ marginLeft: "8px" }}>{selectedFile.name}</span>
-                )}
               </label>
             </Grid>
           </Grid>
+          <DialogActions>
+            <Button type="submit" variant="contained" color="info">
+              Submit
+            </Button>
+            <Button variant="contained" color="error" onClick={handleClose}>
+              Cancel
+            </Button>
+          </DialogActions>
         </form>
       </DialogContent>
-      <DialogActions>
-        <Button
-          type="submit"
-          variant="contained"
-          color="info"
-          onClick={handleSubmit}
-        >
-          Submit
-        </Button>
-        <Button variant="contained" color="error" onClick={handleClose}>
-          Cancel
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 };

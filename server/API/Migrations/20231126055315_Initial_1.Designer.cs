@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20231125032729_DatabaseInitial_1")]
-    partial class DatabaseInitial_1
+    [Migration("20231126055315_Initial_1")]
+    partial class Initial_1
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -149,13 +149,20 @@ namespace API.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
                     b.Property<int>("ManufacturingYear")
                         .HasColumnType("int");
 
                     b.Property<float>("Mileage")
                         .HasColumnType("real");
 
-                    b.Property<string>("Model")
+                    b.Property<string>("ModelId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
