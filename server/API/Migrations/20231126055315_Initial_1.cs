@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class DatabaseInitial_1 : Migration
+    public partial class Initial_1 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -52,8 +52,9 @@ namespace API.Migrations
                 {
                     VehicleID = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Model = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(50)", maxLength: 50, nullable: false),
                     BrandId = table.Column<int>(type: "int", nullable: false),
+                    ModelId = table.Column<string>(type: "nvarchar(50)", nullable: false),
                     ManufacturingYear = table.Column<int>(type: "int", nullable: false),
                     RegistrationNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Color = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
@@ -64,7 +65,8 @@ namespace API.Migrations
                     NumberOfSeats = table.Column<int>(type: "int", nullable: false),
                     PurchaseDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     PurchasePrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
-                    Status = table.Column<int>(type: "int", nullable: false)
+                    Status = table.Column<int>(type: "int", nullable: false),
+                    IsUsed = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {

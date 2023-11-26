@@ -1,5 +1,5 @@
 import React from "react";
-import { Sidebar } from "../../components/Sidebar";
+import { Sidebar } from "../../components/admin/Sidebar";
 import {
   Accordion,
   AccordionDetails,
@@ -11,15 +11,15 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
-import Navbar from "../../components/Navbar";
+import Navbar from "../../components/admin/Navbar";
 import "../../assets/styles/Dashboard.css";
 import StorefrontIcon from "@mui/icons-material/Storefront";
 import CreditCardIcon from "@mui/icons-material/CreditCard";
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { Analystic } from "../../components/Analystic";
+import { Analystic } from "../../components/admin/Analystic";
 import CountUp from "react-countup";
-
+import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
 export const Home = () => {
   const [expanded, setExpanded] = React.useState(false);
 
@@ -31,6 +31,7 @@ export const Home = () => {
     <div className="bg-gray">
       <Navbar />
       <Box height={70} />
+
       <Box sx={{ display: "flex" }}>
         <Sidebar />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
@@ -93,11 +94,16 @@ export const Home = () => {
             </Grid>
             <Grid item xs={4}>
               <Stack spacing={2}>
-                <Card sx={{ minWidth: 345 }} className="gradientlight">
+                <Card>
                   <Stack spacing={2} direction="row">
-                    <div className="iconstyle">
-                      <StorefrontIcon />
-                    </div>
+                    <Box>
+                      <StorefrontRoundedIcon
+                        sx={{
+                          ml: "20px",
+                          mt: "20px",
+                        }}
+                      />
+                    </Box>
                     <div className="paddingall">
                       <span className="priceTitle">$203K</span>
                       <br />
@@ -105,7 +111,7 @@ export const Home = () => {
                     </div>
                   </Stack>
                 </Card>
-                <Card sx={{ minWidth: 345 }}>
+                <Card>
                   <Stack spacing={2} direction="row">
                     <div className="iconstyleblack">
                       <StorefrontIcon />
@@ -122,17 +128,17 @@ export const Home = () => {
           </Grid>
           <Box height={20} />
           <Grid container spacing={2}>
-            <Grid item xs={8}>
+            <Grid item xs={4} sm={6} xl={8}>
               <Card sx={{ height: 60 + "vh" }}>
                 <CardContent>
                   <Analystic />
                 </CardContent>
               </Card>
             </Grid>
-            <Grid item xs={4}>
+            <Grid item xs={8} sm={6} xl={4}>
               <Card sx={{ height: 60 + "vh" }}>
                 <CardContent>
-                  <span className="priceTitle">Popular Product</span>
+                  <span className="priceTitle">Notification</span>
                   <Accordion
                     expanded={expanded === "panel1"}
                     onChange={handleChange("panel1")}
@@ -142,9 +148,6 @@ export const Home = () => {
                       aria-controls="panel1bh-content"
                       id="panel1bh-header"
                     >
-                      <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                        General settings
-                      </Typography>
                       <Typography sx={{ color: "text.secondary" }}>
                         I am an accordion
                       </Typography>
@@ -166,9 +169,6 @@ export const Home = () => {
                       aria-controls="panel2bh-content"
                       id="panel2bh-header"
                     >
-                      <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                        Users
-                      </Typography>
                       <Typography sx={{ color: "text.secondary" }}>
                         You are currently not an owner
                       </Typography>
@@ -190,9 +190,6 @@ export const Home = () => {
                       aria-controls="panel3bh-content"
                       id="panel3bh-header"
                     >
-                      <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                        Advanced settings
-                      </Typography>
                       <Typography sx={{ color: "text.secondary" }}>
                         Filtering has been entirely disabled for whole web
                         server
