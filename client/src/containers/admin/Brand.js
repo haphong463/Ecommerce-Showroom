@@ -1,9 +1,14 @@
-import React from "react";
+import React, { useState } from "react";
 import Navbar from "../../components/admin/Navbar";
-import { Box, Typography } from "@mui/material";
+import { Box, Fab, Typography } from "@mui/material";
 import { Sidebar } from "../../components/admin/Sidebar";
+import AddIcon from "@mui/icons-material/Add";
 
 export const Brand = () => {
+  const [openBrandForm, setOpenBrandForm] = useState(false);
+  const handleClickOpen = () => {
+    setOpenBrandForm(true);
+  };
   return (
     <>
       <Navbar />
@@ -14,6 +19,18 @@ export const Brand = () => {
           <Typography variant="h3" component="div">
             Brand
           </Typography>
+          
+          <Fab
+            color="primary"
+            size="medium"
+            aria-label="add"
+            onClick={handleClickOpen}
+            sx={{
+              marginBottom: "10px",
+            }}
+          >
+            <AddIcon />
+          </Fab>
         </Box>
       </Box>
     </>
