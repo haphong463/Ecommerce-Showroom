@@ -1,5 +1,5 @@
 import { Box, Fab, Grid, Stack } from "@mui/material";
-import React from "react";
+import React, { useCallback } from "react";
 import { Sidebar } from "../../components/admin/Sidebar";
 import Navbar from "../../components/admin/Navbar";
 import AddIcon from "@mui/icons-material/Add";
@@ -9,9 +9,9 @@ import { VehicleItem } from "../../components/admin/Vehicle/VehicleItem";
 export const Vehicles = () => {
   const [open, setOpen] = React.useState(false);
 
-  const handleClickOpen = () => {
+  const handleClickOpen = useCallback(() => {
     setOpen(true);
-  };
+  });
 
   const handleClose = () => {
     setOpen(false);
