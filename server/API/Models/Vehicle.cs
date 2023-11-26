@@ -10,7 +10,7 @@ public class Vehicle
 
     [Required]
     [StringLength(50), Column(TypeName = "nvarchar(50)")]
-    public string Model { get; set; }
+    public string Name { get; set; }
     [Required]
     public int BrandId { get; set; }
     public int ManufacturingYear { get; set; }
