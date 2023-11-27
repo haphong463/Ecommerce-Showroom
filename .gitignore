@@ -35,6 +35,8 @@ bld/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
+.vs/*
+*.vsidx
 # Uncomment if you have tasks that create the project's static files in wwwroot
 #wwwroot/
 
@@ -362,3 +364,12 @@ MigrationBackup/
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
 /.idea/.idea.SupportCV/.idea
+/server/.vs/server/FileContentIndex/18f972d1-f3a8-4543-ab38-3747f55eacd3.vsidx
+/server/.vs/server/FileContentIndex/24b00187-8df6-4218-b71b-8df18e9d7024.vsidx
+/server/.vs/server/FileContentIndex/33854272-c19f-44e9-a5dd-1b8744eb5fd2.vsidx
+/server/.vs/server/FileContentIndex/3c391f67-cfa6-4fa8-9d06-9bd4739f8f91.vsidx
+/server/.vs/server/FileContentIndex/7b47eaba-c1f9-4117-8319-02b83528c4aa.vsidx
+/server/.vs/server/FileContentIndex/dcf2098b-5f73-4d94-8cd4-89f72ca24677.vsidx
+/server/.vs/server/FileContentIndex/dd035100-2aa5-4ac1-a2d3-edda8062a082.vsidx
+/server/.vs/server/FileContentIndex/e21d5543-375e-412d-9cb7-736c6fac391f.vsidx
+/server/.vs/server/FileContentIndex/e838caf4-0429-4b29-93df-6808ed0eac90.vsidx

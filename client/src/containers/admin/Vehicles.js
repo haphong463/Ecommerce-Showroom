@@ -3,8 +3,8 @@ import React from "react";
 import { Sidebar } from "../../components/admin/Sidebar";
 import Navbar from "../../components/admin/Navbar";
 import AddIcon from "@mui/icons-material/Add";
-import VehicleForm from "../../components/admin/VehicleForm";
-import { VehicleItem } from "../../components/admin/VehicleItem";
+import VehicleForm from "../../components/admin/Vehicle/VehicleForm";
+import { VehicleItem } from "../../components/admin/Vehicle/VehicleItem";
 
 export const Vehicles = () => {
   const [open, setOpen] = React.useState(false);
@@ -35,6 +35,7 @@ export const Vehicles = () => {
             onSetOpen={setOpen}
             handleClose={handleClose}
           />
+
           <Fab
             color="primary"
             size="medium"
@@ -48,31 +49,7 @@ export const Vehicles = () => {
           </Fab>
           <Grid container spacing={2}>
             <Grid item xs={12} sm={6} lg={4} xl={3}>
-              <Stack direction="row">
-                <VehicleItem image={"https://source.unsplash.com/random"} />
-              </Stack>
-            </Grid>
-
-            <Grid item xs={12} sm={6} lg={4} xl={3}>
-              <Stack direction="row">
-                <VehicleItem image={"https://source.unsplash.com/random"} />
-              </Stack>
-            </Grid>
-
-            <Grid item xs={12} sm={6} lg={4} xl={3}>
-              <Stack direction="row">
-                <VehicleItem image={"https://source.unsplash.com/random"} />
-              </Stack>
-            </Grid>
-            <Grid item xs={12} sm={6} lg={4} xl={3}>
-              <Stack direction="row">
-                <VehicleItem image={"https://source.unsplash.com/random"} />
-              </Stack>
-            </Grid>
-            <Grid item xs={12} sm={6} lg={4} xl={3}>
-              <Stack direction="row">
-                <VehicleItem image={"https://source.unsplash.com/random"} />
-              </Stack>
+              <VehicleItem image={"https://source.unsplash.com/random"} />
             </Grid>
           </Grid>
         </Box>
