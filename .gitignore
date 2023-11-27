@@ -363,17 +363,8 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-/.idea/.idea.SupportCV/.idea
-/server/.vs/server/FileContentIndex/18f972d1-f3a8-4543-ab38-3747f55eacd3.vsidx
-/server/.vs/server/FileContentIndex/24b00187-8df6-4218-b71b-8df18e9d7024.vsidx
-/server/.vs/server/FileContentIndex/33854272-c19f-44e9-a5dd-1b8744eb5fd2.vsidx
-/server/.vs/server/FileContentIndex/3c391f67-cfa6-4fa8-9d06-9bd4739f8f91.vsidx
-/server/.vs/server/FileContentIndex/7b47eaba-c1f9-4117-8319-02b83528c4aa.vsidx
-/server/.vs/server/FileContentIndex/dcf2098b-5f73-4d94-8cd4-89f72ca24677.vsidx
-/server/.vs/server/FileContentIndex/dd035100-2aa5-4ac1-a2d3-edda8062a082.vsidx
-/server/.vs/server/FileContentIndex/e21d5543-375e-412d-9cb7-736c6fac391f.vsidx
-/server/.vs/server/FileContentIndex/e838caf4-0429-4b29-93df-6808ed0eac90.vsidx
-/server/.vs/server/FileContentIndex
+/.idea
+/server/.vs/server/
 /server/API/obj/Debug/net6.0/API.assets.cache
 /server/API/obj/Debug/net6.0/API.csproj.AssemblyReference.cache
 /server/API/obj/Debug/net6.0/API.GeneratedMSBuildEditorConfig.editorconfig
@@ -381,8 +372,8 @@ FodyWeavers.xsd
 /.vs/Ecommerce-Showroom/FileContentIndex/7d572ac6-1c82-4779-88bc-50ea82c69a21.vsidx
 /.vs/Ecommerce-Showroom/FileContentIndex/read.lock
 /.vs/Ecommerce-Showroom/v17/.wsuo
-/.vs/slnx.sqlite
-/.vs/VSWorkspaceState.json
-/server/API/bin/Debug/net6.0/runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.dll
-/server/API/bin/Debug/net6.0/runtimes/unix/lib/netcoreapp3.0/System.Drawing.Common.dll
-/server/API/bin/Debug/net6.0/runtimes/unix/lib/netcoreapp3.1/Microsoft.Data.SqlClient.dll
+/.vs/
+/server/API/bin/
+/v17/
+/server/.vs/server/v17/.suo
+/server/.vs/server/DesignTimeBuild/.dtbcache.v2
