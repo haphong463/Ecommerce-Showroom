@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Ecommerce-Showroom\\server\\API\\API.csproj": {}
+    "D:\\DEV\\Ecommerce Showroom\\server\\API\\API.csproj": {}
   },
   "projects": {
-    "C:\\Ecommerce-Showroom\\server\\API\\API.csproj": {
+    "D:\\DEV\\Ecommerce Showroom\\server\\API\\API.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Ecommerce-Showroom\\server\\API\\API.csproj",
+        "projectUniqueName": "D:\\DEV\\Ecommerce Showroom\\server\\API\\API.csproj",
         "projectName": "API",
-        "projectPath": "C:\\Ecommerce-Showroom\\server\\API\\API.csproj",
-        "packagesPath": "C:\\Users\\Admin\\.nuget\\packages\\",
-        "outputPath": "C:\\Ecommerce-Showroom\\server\\API\\obj\\",
+        "projectPath": "D:\\DEV\\Ecommerce Showroom\\server\\API\\API.csproj",
+        "packagesPath": "C:\\Users\\DEV\\.nuget\\packages\\",
+        "outputPath": "D:\\DEV\\Ecommerce Showroom\\server\\API\\obj\\",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "C:\\Users\\Admin\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Users\\DEV\\AppData\\Roaming\\NuGet\\NuGet.Config",
           "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
         ],
         "originalTargetFrameworks": [
@@ -22,7 +22,6 @@
         ],
         "sources": {
           "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
-          "C:\\Program Files\\dotnet\\sdk\\7.0.304\\Sdks\\Microsoft.NET.Sdk.Web\\library-packs": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -83,7 +82,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.304\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\7.0.401\\RuntimeIdentifierGraph.json"
         }
       }
     }
