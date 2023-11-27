@@ -1,5 +1,8 @@
 using API.Data;
+using API.Helper;
+using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.FileProviders;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -20,6 +23,7 @@ builder.Services.AddCors(options =>
         policy.AllowAnyHeader().AllowAnyHeader().AllowAnyOrigin();
     });
 });
+builder.Services.AddAutoMapper(typeof(ApplicationProfile));
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -28,9 +32,14 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
-app.UseAuthorization();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "Uploads")),
+    RequestPath = "/Uploads"
+});
 app.UseCors();
+app.UseAuthorization();
 app.MapControllers();
 
 app.Run();

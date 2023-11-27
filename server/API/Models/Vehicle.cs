@@ -6,11 +6,12 @@ using System.ComponentModel.DataAnnotations.Schema;
 public class Vehicle
 {
     [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-    public int VehicleID { get; set; }
+    public int VehicleId { get; set; }
 
     [Required]
     [StringLength(50), Column(TypeName = "nvarchar(50)")]
     public string Name { get; set; }
+    public string Description { get; set; }
     [Required]
     public int BrandId { get; set; }
     [Column(TypeName = "nvarchar(50)")]
