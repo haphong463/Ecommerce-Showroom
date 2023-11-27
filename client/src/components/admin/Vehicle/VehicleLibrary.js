@@ -19,6 +19,8 @@ export const formFields = [
   { name: "numberOfSeats", label: "Number of Seats*", type: "number" },
   { name: "purchasedDate", label: "Purchased Date*", type: "date" },
   { name: "purchasePrice", label: "Purchase Price*", type: "number" },
+  { name: "description", label: "Description*", type: "text" },
+
   {
     name: "image",
     label: "Image",
@@ -41,4 +43,6 @@ export const validationSchema = yup.object({
   numberOfSeats: yup.number().required("Number of Seats is required"),
   purchasedDate: yup.date().required("Purchased Date is required"),
   purchasePrice: yup.number().required("Purchase Price is required"),
+  description: yup.string().required("Description is required"),
+  image: yup.array(),
 });

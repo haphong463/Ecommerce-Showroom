@@ -8,7 +8,6 @@ export const getBrandList = async () => {
     return res.data;
   } catch (error) {
     console.log(error);
-
     return [];
   }
 };
@@ -37,4 +36,14 @@ export const initialValues = {
   name: "",
   description: "",
   image: null,
+};
+
+export const notification = (msg) => {
+  let notification = document.getElementById("notification");
+  if (msg) {
+    notification.innerHTML = msg;
+  } else {
+    notification.innerHTML = "";
+  }
+  return notification;
 };
