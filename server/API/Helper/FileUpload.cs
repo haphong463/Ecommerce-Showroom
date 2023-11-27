@@ -3,7 +3,7 @@
     public static class FileUpload
     {
         static readonly string baseFolder = "Uploads";
-        static readonly string rootUrl = "http://localhost:5003/";
+        static readonly string rootUrl = "http://localhost:5251/";
         public static string SaveImage(string folder, IFormFile image)
         {
             string imageName = Guid.NewGuid().ToString() + "_" + image.FileName;
