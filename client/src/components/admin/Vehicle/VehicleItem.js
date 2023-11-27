@@ -5,7 +5,6 @@ import {
   CardContent,
   CardHeader,
   CardMedia,
-  Rating,
   Stack,
   Typography,
 } from "@mui/material";
@@ -47,13 +46,6 @@ export const VehicleItem = ({ image }) => {
           Lizards are a widespread group of squamate reptiles, with over 6,000
           species, ranging across all continents except Antarctica
         </Typography>
-        <Rating
-          name="read-only"
-          value={3.6}
-          precision={0.5}
-          sx={{ marginTop: "10px" }}
-          readOnly
-        />
       </CardContent>
       <CardActions
         sx={{

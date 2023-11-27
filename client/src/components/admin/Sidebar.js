@@ -10,6 +10,7 @@ import { RouteItem } from "./RouteItem";
 import CarIcon from "@mui/icons-material/DriveEta";
 import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/ExitToApp";
+import LoginIcon from "@mui/icons-material/Login";
 import MenuIcon from "@mui/icons-material/Menu";
 import CategoryIcon from "@mui/icons-material/Category";
 import BackgroundImage from "../../assets/images/HD-wallpaper-black-background-car-cars-vehicles.jpg";
@@ -36,14 +37,6 @@ const closedMixin = (theme) => ({
     width: `calc(${theme.spacing(8)} + 1px)`,
   },
 });
-
-const DrawerHeader = styled("div")(({ theme }) => ({
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "flex-end",
-  padding: theme.spacing(0, 1),
-  ...theme.mixins.toolbar,
-}));
 
 const Drawer = styled(MuiDrawer, {
   shouldForwardProp: (prop) => prop !== "open",
@@ -75,6 +68,44 @@ const Overlay = styled("div")({
   filter: "brightness(65%)",
 });
 
+const routes = [
+  {
+    route: "/admin/",
+    primary: "Dashboard",
+    icon: <MenuIcon />,
+    position: "top",
+  },
+  {
+    route: "/admin/vehicles",
+    primary: "Vehicles",
+    icon: <CarIcon />,
+    position: "top",
+  },
+  {
+    route: "/admin/brand",
+    primary: "Brand",
+    icon: <CategoryIcon />,
+    position: "top",
+  },
+  {
+    route: "/admin/settings",
+    primary: "Settings",
+    icon: <SettingsIcon />,
+    position: "bot",
+  },
+  {
+    route: "/admin/login",
+    primary: "Login",
+    icon: <LoginIcon />,
+    position: "bot",
+  },
+  {
+    route: "/admin/logout",
+    primary: "Logout",
+    icon: <LogoutIcon />,
+    position: "bot",
+  },
+];
 export function Sidebar() {
   const navigate = useNavigate();
   const open = useAppStore((state) => state.dopen);
@@ -97,47 +128,37 @@ export function Sidebar() {
         >
           <Overlay />
           <Box>
-            <RouteItem
-              navigate={navigate}
-              route={"/"}
-              primary={"Dashboard"}
-              open={open}
-              icon={<MenuIcon />}
-            />
-            <RouteItem
-              navigate={navigate}
-              route={"/vehicles"}
-              primary={"Vehicles"}
-              open={open}
-              icon={<CarIcon />}
-            />
-            <RouteItem
-              navigate={navigate}
-              route={"/brand"}
-              primary={"Brand"}
-              open={open}
-              icon={<CategoryIcon />}
-            />
+            {routes.map(
+              (route, index) =>
+                route.position === "top" && (
+                  <RouteItem
+                    key={index}
+                    navigate={navigate}
+                    route={route.route}
+                    primary={route.primary}
+                    open={open}
+                    icon={route.icon}
+                  />
+                )
+            )}
           </Box>
-
           <Box>
             <List>
               <Divider sx={{ borderTop: "1px solid #2f2f2f" }} />
 
-              <RouteItem
-                navigate={navigate}
-                route={"/settings"}
-                primary={"Settings"}
-                open={open}
-                icon={<SettingsIcon />}
-              />
-              <RouteItem
-                navigate={navigate}
-                route={"/logout"}
-                primary={"Logout"}
-                open={open}
-                icon={<LogoutIcon />}
-              />
+              {routes.map(
+                (route, index) =>
+                  route.position === "bot" && (
+                    <RouteItem
+                      key={index}
+                      navigate={navigate}
+                      route={route.route}
+                      primary={route.primary}
+                      open={open}
+                      icon={route.icon}
+                    />
+                  )
+              )}
             </List>
           </Box>
         </List>

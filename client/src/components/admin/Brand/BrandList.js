@@ -49,7 +49,7 @@ export function BrandList({ handleClickOpen }) {
     getBrandList().then((res) => {
       setData(res.data);
     });
-  }, []);
+  }, [setData]);
   return (
     <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
       <Fab

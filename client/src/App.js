@@ -1,15 +1,10 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./assets/styles/Body.css";
-import {
-  CircularProgress,
-  ThemeProvider,
-  Typography,
-  createTheme,
-} from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { publicRoutes } from "./route/Route";
-import { useEffect, useState } from "react";
+import { ToastContainer } from "react-toastify";
 
 const theme = createTheme({
   typography: {
@@ -66,6 +61,7 @@ function App() {
               ))}
             </Routes>
           </BrowserRouter>
+          <ToastContainer />
         </ThemeProvider>
       </div>
     </LocalizationProvider>

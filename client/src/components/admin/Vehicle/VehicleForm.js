@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Grid,
@@ -13,12 +13,12 @@ import {
   DialogContent,
   DialogTitle,
   FormHelperText,
+  Box,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import { formFields, validationSchema } from "./VehicleLibrary";
-import { ErrorMessage, FastField, Form, Formik, useFormik } from "formik";
-import moment from "moment/moment";
+import { FastField, Form, Formik } from "formik";
 const VehicleForm = ({ open, onSetOpen, handleClose }) => {
   const initialValues = {
     name: "",
@@ -46,7 +46,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
         NEW VEHICLE
       </DialogTitle>
       <DialogContent>
-        <FormHelperText error>*All field is required!</FormHelperText>
+        <Box height={10} />
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
@@ -66,7 +66,11 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
               <Grid container spacing={2}>
                 {formFields.map((field) => {
                   return (
-                    <Grid item xs={3} key={field.name}>
+                    <Grid
+                      item
+                      xs={field.name === "description" ? 12 : 3}
+                      key={field.name}
+                    >
                       {field.type === "select" ? (
                         <FormControl fullWidth>
                           <InputLabel>{field.label}</InputLabel>
@@ -77,13 +81,20 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                             onChange={props.handleChange}
                             value={props.values[field.name]}
                           >
-                            <MenuItem value="">None</MenuItem>
                             {field.options.map((option) => (
                               <MenuItem key={option.value} value={option.value}>
                                 {option.label}
                               </MenuItem>
                             ))}
                           </Select>
+
+                          {touched[field.name] && errors[field.name] ? (
+                            <FormHelperText error>
+                              {errors[field.name]}
+                            </FormHelperText>
+                          ) : (
+                            ""
+                          )}
                         </FormControl>
                       ) : field.type === "date" ? (
                         <DatePicker
@@ -134,6 +145,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                                 name={name}
                                 label={field.label}
                                 multiline={field.name === "description"}
+                                rows={field.name === "description" ? 4 : 1}
                                 helperText={
                                   touched[field.name] && errors[field.name]
                                     ? errors[field.name]

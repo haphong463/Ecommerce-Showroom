@@ -7,7 +7,7 @@ export const Settings = () => {
   return (
     <>
       <Navbar />
-      <Box height={30} />
+      <Box height={70} />
       <Box sx={{ display: "flex" }}>
         <Sidebar />
         <Box component="main" sx={{ flexGrow: 1, p: 3 }}>

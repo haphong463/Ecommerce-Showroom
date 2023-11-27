@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Grid,
@@ -8,6 +8,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
+  Avatar,
 } from "@mui/material";
 import { useFormik } from "formik";
 import { initialValues, postBrand, validationSchema } from "./BrandLibrary";
@@ -23,28 +24,22 @@ const BrandForm = ({ open, onSetOpen, handleClose }) => {
       formData.append("description", values.description);
       formData.append("file", values.image);
       postBrand(formData).then((res) => {
-        setData((prev) => [...prev, res.data]);
+        if (res.data !== null) {
+          setData((prev) => [...prev, res.data]);
+        }
+        handleClose();
       });
-      handleClose();
     },
   });
-  // const handleChangeInput = (e) => {
-  //   const { name, value } = e.target;
-  //   if (name === "image") {
-  //     setBrand((prev) => ({
-  //       ...prev,
-  //       image: e.target.files[0],
-  //     }));
-  //   } else {
-  //     setBrand((prev) => ({
-  //       ...prev,
-  //       [name]: value,
-  //     }));
-  //   }
-  // };
-  // const handleSubmit = (e) => {
-  //   e.preventDefault();
-  // };
+  const [preview, setPreview] = useState();
+  useEffect(() => {
+    const file = formik.values.image;
+    if (file) {
+      const objectUrl = URL.createObjectURL(file);
+      setPreview(objectUrl);
+      return () => URL.revokeObjectURL(objectUrl);
+    }
+  }, [formik.values.image]);
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="100%">
       <DialogTitle
@@ -112,6 +107,15 @@ const BrandForm = ({ open, onSetOpen, handleClose }) => {
                   Upload Image
                 </Button>
               </label>
+            </Grid>
+            <Grid item xs={12}>
+              {preview && (
+                <Avatar
+                  alt="Image Preview"
+                  src={preview}
+                  sx={{ width: 100, height: 100 }}
+                />
+              )}
             </Grid>
           </Grid>
           <DialogActions>
