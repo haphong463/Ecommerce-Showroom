@@ -8,7 +8,7 @@ import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import AddIcon from "@mui/icons-material/Add";
-import { Fab, IconButton, Stack } from "@mui/material";
+import { CircularProgress, Fab, IconButton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getBrandList } from "./BrandLibrary";
@@ -32,6 +32,7 @@ const columns = [
 ];
 
 export function BrandList({ handleClickOpen }) {
+  const [loading, setLoading] = useState(false);
   const { data, setData } = useContext(BrandContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -46,12 +47,24 @@ export function BrandList({ handleClickOpen }) {
   };
 
   useEffect(() => {
+    setLoading(true);
+
     getBrandList().then((res) => {
       setData(res.data);
+      setLoading(false);
     });
   }, [setData]);
   return (
     <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
+      {loading && (
+        <CircularProgress
+          sx={{
+            position: "absolute",
+            left: "50%",
+          }}
+        />
+      )}
+
       <Fab
         color="primary"
         size="medium"

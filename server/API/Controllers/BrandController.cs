@@ -15,7 +15,7 @@ namespace API.Controllers
     {
         public readonly DatabaseContext _dbContext;
         private readonly IMapper _mapper;
-        public BrandController (DatabaseContext dbContext, IMapper mapper)
+        public BrandController(DatabaseContext dbContext, IMapper mapper)
         {
             _dbContext = dbContext;
             _mapper = mapper;

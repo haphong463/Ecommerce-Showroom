@@ -180,12 +180,12 @@ export default function Navbar() {
             {dopen ? <ArrowBackIosNewIcon /> : <ArrowForwardIosIcon />}
           </IconButton>
           <Typography
-            variant="h6"
+            variant="h5"
             noWrap
             component="div"
             sx={{ display: { xs: "none", sm: "block" } }}
           >
-            MUI
+            AutoCar
           </Typography>
           <Search>
             <SearchIconWrapper>

@@ -36,7 +36,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
     image: [],
   };
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="100%">
+    <Dialog fullWidth open={open} onClose={handleClose} maxWidth="100%">
       <DialogTitle
         variant="h3"
         color="text.secondary"
