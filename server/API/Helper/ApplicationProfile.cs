@@ -14,12 +14,11 @@ namespace API.Helper
                     ImageId = x.ImageId,
                     ImagePath = x.ImagePath!
                 }).ToList()))
-                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => new BrandDTO
+                .ForMember(dest => dest.Brand, opt => opt.MapFrom(src => new Vehicle_BrandDTO
                 {
                     BrandId = src.Brand!.BrandId,
                     Name = src.Brand.Name,
-                    Description = src.Brand.Description,
-                    ImagePath = src.Brand.ImagePath!,
+
                 }))
                 .ReverseMap();
             CreateMap<Brand, BrandDTO>().ReverseMap();

@@ -23,6 +23,6 @@ namespace API.DTO
         [EnumDataType(typeof(VehicleStatus))]
         public VehicleStatus Status { get; set; }
         public List<ImageDTO> Images { get; set; }
-        public BrandDTO Brand { get; set; }
+        public Vehicle_BrandDTO Brand { get; set; }
     }
 }

@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.DTO;
 using API.Helper;
+using API.Models;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -30,7 +31,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<VehicleDTO>>> GetVehicleById(int id)
         {
-            var vehicle = await _dbContext.Vehicles.FindAsync(id);
+            var vehicle = await _dbContext.Vehicles.Include(x => x.Brand).Include(x => x.Images).SingleOrDefaultAsync(x => x.VehicleId == id);
 
             if (vehicle == null)
             {
@@ -42,27 +43,39 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<VehicleDTO>>> PostVehicle([FromBody] VehicleDTO vehicleDto)
+        public async Task<ActionResult<ApiResponse<VehicleDTO>>> PostVehicle([FromForm] Vehicle vehicle, List<IFormFile> files)
         {
             if (!ModelState.IsValid)
             {
                 return ApiResponse<VehicleDTO>.BadRequest(ModelState);
             }
-
             try
             {
-                var vehicle = _mapper.Map<Vehicle>(vehicleDto);
+                // Lưu ảnh và lấy đường dẫn
+                if (files != null && files.Any())
+                {
+                    vehicle.Images = new List<Images>();
+
+                    foreach (var file in files)
+                    {
+                        var imagePath = FileUpload.SaveImage("VehicleImages", file);
+                        vehicle.Images.Add(new Images { ImagePath = imagePath });
+                    }
+                }
+
                 await _dbContext.Vehicles.AddAsync(vehicle);
                 await _dbContext.SaveChangesAsync();
 
-                var createdDto = _mapper.Map<VehicleDTO>(vehicle);
-                return CreatedAtAction(nameof(GetVehicleById), new { id = createdDto.VehicleID }, new ApiResponse<VehicleDTO>(createdDto, "Vehicle created successfully", 201));
+                var vehicleDtoResult = _mapper.Map<VehicleDTO>(vehicle);
+                return CreatedAtAction(nameof(GetVehicleById), new { id = vehicle.VehicleId },
+                                        new ApiResponse<VehicleDTO>(vehicleDtoResult, "Vehicle created successfully", 201));
             }
             catch (Exception ex)
             {
                 return ApiResponse<VehicleDTO>.Exception(ex);
             }
         }
+
 
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<VehicleDTO>>> UpdateVehicle(int id, [FromBody] VehicleDTO vehicleDto)
