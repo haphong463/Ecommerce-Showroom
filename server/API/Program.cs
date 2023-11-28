@@ -4,12 +4,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
-<<<<<<< HEAD
 using System.Text.Json.Serialization;
-=======
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
->>>>>>> 27c1d760fa99a5a03f076a5c515208d0a5030aca
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -44,7 +41,7 @@ builder.Services.AddCors(options =>
 {
     options.AddDefaultPolicy(policy =>
     {
-        policy.AllowAnyHeader().AllowAnyHeader().AllowAnyOrigin();
+        policy.AllowAnyHeader().AllowAnyMethod().AllowAnyOrigin();
     });
 });
 builder.Services.AddAutoMapper(typeof(ApplicationProfile));

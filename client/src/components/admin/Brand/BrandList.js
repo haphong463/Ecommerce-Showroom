@@ -1,5 +1,4 @@
 import { useState, useEffect, useContext } from "react";
-import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,35 +6,38 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import AddIcon from "@mui/icons-material/Add";
-import { CircularProgress, Fab, IconButton, Stack } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getBrandList } from "./BrandLibrary";
+import { columns, deleteBrand, getBrandList } from "./BrandLibrary";
 import { BrandContext } from "../../../context/BrandContext";
-const columns = [
-  { id: "image", label: "", minWidth: 170 },
-  { id: "name", label: "Name", minWidth: 100 },
-  {
-    id: "description",
-    label: "Description",
-    minWidth: 170,
-    align: "right",
-    format: (value) => value.toLocaleString("en-US"),
-  },
-  {
-    id: "actions",
-    label: "Actions",
-    minWidth: 170,
-    align: "right",
-  },
-];
 
-export function BrandList({ handleClickOpen }) {
-  const [loading, setLoading] = useState(false);
-  const { data, setData } = useContext(BrandContext);
+export const BrandList = ({ onSetLoading }) => {
+  const { data, setData, setIsEditing, formik, handleClickOpen } =
+    useContext(BrandContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+
+  const handleDelete = (id) => {
+    deleteBrand(id).then((res) => {
+      if (res.data !== null) {
+        setData((prev) =>
+          prev.filter((item) => item.brandId !== res.data.brandId)
+        );
+      }
+    });
+  };
+
+  const handleEdit = (id) => {
+    const brand = data.find((item) => item.brandId === id);
+    if (brand !== null) {
+      formik.setFieldValue("id", brand.brandId);
+      formik.setFieldValue("name", brand.name);
+      formik.setFieldValue("description", brand.description);
+      setIsEditing(true);
+      handleClickOpen();
+    }
+  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -47,35 +49,17 @@ export function BrandList({ handleClickOpen }) {
   };
 
   useEffect(() => {
-    setLoading(true);
+    onSetLoading(true);
 
     getBrandList().then((res) => {
-      setData(res.data);
-      setLoading(false);
+      if (res.data !== null) {
+        setData(res.data);
+      }
+      onSetLoading(false);
     });
-  }, [setData]);
+  }, [setData, onSetLoading]);
   return (
-    <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
-      {loading && (
-        <CircularProgress
-          sx={{
-            position: "absolute",
-            left: "50%",
-          }}
-        />
-      )}
-
-      <Fab
-        color="primary"
-        size="medium"
-        aria-label="add"
-        onClick={handleClickOpen}
-        sx={{
-          m: "10px",
-        }}
-      >
-        <AddIcon />
-      </Fab>
+    <>
       <TableContainer sx={{ maxHeight: 440 }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
@@ -118,21 +102,22 @@ export function BrandList({ handleClickOpen }) {
                             >
                               <IconButton
                                 aria-label="edit"
-                                onClick={() => console.log(row.name)}
+                                onClick={() => handleEdit(row.brandId)}
                               >
                                 <EditIcon />
                               </IconButton>
                               <IconButton
                                 aria-label="delete"
-                                onClick={() => handleDelete(row.code)}
+                                onClick={() => handleDelete(row.brandId)}
                               >
                                 <DeleteIcon />
                               </IconButton>
                             </Stack>
                           ) : column.id === "image" ? (
                             <img
-                              alt={`${row.name}-image`}
+                              alt={`${row.name}`}
                               src={row.imagePath}
+                              width={100}
                             />
                           ) : column.format && typeof value === "number" ? (
                             column.format(value)
@@ -157,6 +142,6 @@ export function BrandList({ handleClickOpen }) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </Paper>
+    </>
   );
-}
+};

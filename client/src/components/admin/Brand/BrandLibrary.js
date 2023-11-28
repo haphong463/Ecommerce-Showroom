@@ -1,32 +1,21 @@
 import axios from "axios";
-import { toast } from "react-toastify";
 import * as yup from "yup";
+import { errorToast } from "../../ErrorMessage";
 const url = "http://localhost:5251/api/Brand";
-const errorToast = (error) => {
-  const errorMessage = error.response
-    ? error.response.data.message
-    : "Something went wrong. Please try again later.";
-
-  toast.warn(errorMessage, {
-    position: "top-right",
-    autoClose: 5000,
-    hideProgressBar: false,
-    closeOnClick: true,
-    pauseOnHover: true,
-    draggable: true,
-    progress: undefined,
-    theme: "light",
-  });
-};
 
 export const getBrandList = async () => {
   try {
     const res = await axios.get(url);
-    return res.data;
+    if (res.status === 200) {
+      return res.data;
+    }
+    return {
+      data: null,
+    };
   } catch (error) {
     errorToast(error);
     return {
-      data: [],
+      data: null,
     };
   }
 };
@@ -47,10 +36,63 @@ export const postBrand = async (brand) => {
   }
 };
 
+export const deleteBrand = async (id) => {
+  try {
+    const res = await axios.delete(url + "/" + id);
+    if (res.status === 200) {
+      return res.data;
+    } else {
+      return {
+        data: null,
+      };
+    }
+  } catch (error) {
+    errorToast(error);
+    return {
+      data: null,
+    };
+  }
+};
+
+export const putBrand = async (brand, brandId) => {
+  try {
+    const res = await axios.put(`${url}/${brandId}`, brand, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    if (res.status === 200) {
+      return res.data;
+    }
+    return brand;
+  } catch (error) {
+    errorToast(error);
+    return {
+      data: null,
+    };
+  }
+};
+export const columns = [
+  { id: "image", label: "", minWidth: 170 },
+  { id: "name", label: "Name", minWidth: 100 },
+  {
+    id: "description",
+    label: "Description",
+    minWidth: 170,
+    align: "right",
+    format: (value) => value.toLocaleString("en-US"),
+  },
+  {
+    id: "actions",
+    label: "Actions",
+    minWidth: 170,
+    align: "right",
+  },
+];
 export const validationSchema = yup.object().shape({
   name: yup.string().required("Name is required!"),
   description: yup.string().required("Description is required"),
-  image: yup.mixed(),
+  image: yup.mixed().nullable(),
 });
 
 export const initialValues = {

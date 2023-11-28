@@ -14,12 +14,22 @@ import {
   DialogTitle,
   FormHelperText,
   Box,
+  Switch,
+  FormControlLabel,
+  Typography,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { formFields, validationSchema } from "./VehicleLibrary";
+import { formFields, generateValidationSchema } from "./VehicleLibrary";
 import { FastField, Form, Formik } from "formik";
+import { useState } from "react";
 const VehicleForm = ({ open, onSetOpen, handleClose }) => {
+  const [isUsed, setIsUsed] = useState(false);
+  const [isEditing, setIsEditing] = useState(false);
+  const validationSchema = generateValidationSchema(isEditing);
+  const handleChange = () => {
+    setIsEditing(!isEditing);
+  };
   const initialValues = {
     name: "",
     brand: "",
@@ -34,9 +44,11 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
     purchasedDate: new Date(),
     purchasePrice: "",
     image: [],
+    isUsed: isUsed,
   };
+
   return (
-    <Dialog fullWidth open={open} onClose={handleClose} maxWidth="100%">
+    <Dialog fullWidth open={open} onClose={handleClose} maxWidth="md">
       <DialogTitle
         variant="h3"
         color="text.secondary"
@@ -50,14 +62,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={(values) => {
-            const date =
-              values.purchasedDate.getFullYear() +
-              "-" +
-              values.purchasedDate.getMonth() +
-              "-" +
-              values.purchasedDate.getDate();
-            console.log(date);
+          onSubmit={(values, actions) => {
             console.log(values);
           }}
         >
@@ -71,10 +76,32 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                       xs={field.name === "description" ? 12 : 3}
                       key={field.name}
                     >
-                      {field.type === "select" ? (
+                      {field.name === "isUsed" ? (
+                        <FormControlLabel
+                          control={
+                            <Switch
+                              checked={isUsed}
+                              onChange={() => {
+                                props.setFieldValue("isUsed", !isUsed);
+                                setIsUsed(!isUsed);
+                              }}
+                            />
+                          }
+                          label={isUsed ? "New" : "Used"}
+                        />
+                      ) : field.type === "select" ? (
                         <FormControl fullWidth>
-                          <InputLabel>{field.label}</InputLabel>
+                          <InputLabel
+                            error={
+                              touched[field.name] && Boolean(errors[field.name])
+                            }
+                          >
+                            {field.label}
+                          </InputLabel>
                           <Select
+                            error={
+                              touched[field.name] && Boolean(errors[field.name])
+                            }
                             label={field.label}
                             name={field.name}
                             onBlur={props.handleBlur}
@@ -102,39 +129,46 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                           sx={{ width: "100%" }}
                           onBlur={props.handleBlur}
                           onChange={(newValue) => {
-                            props.setFieldValue(field.name, newValue);
+                            props.setFieldValue(field.name, dayjs(newValue));
                           }}
                           value={dayjs(props.values[field.name])}
                         />
                       ) : field.type === "file" ? (
-                        <label
-                          htmlFor={field.name}
-                          style={{ display: "flex", alignItems: "center" }}
-                        >
-                          <input
-                            type="file"
-                            id={field.name}
-                            name={field.name}
-                            accept={field.accept}
-                            onBlur={props.handleBlur}
-                            onChange={(event) => {
-                              props.setFieldValue(
-                                "image",
-                                Array.from(event.currentTarget.files)
-                              );
-                            }}
-                            style={{ display: "none" }}
-                            multiple={field.multiple}
-                          />
-                          <Button
-                            variant="contained"
-                            component="span"
-                            startIcon={<CloudUploadIcon />}
-                            sx={{ width: "100%" }}
+                        <div>
+                          <label
+                            htmlFor={field.name}
+                            style={{ display: "flex", alignItems: "center" }}
                           >
-                            {field.label}
-                          </Button>
-                        </label>
+                            <input
+                              type="file"
+                              id={field.name}
+                              name={field.name}
+                              accept={field.accept}
+                              onBlur={props.handleBlur}
+                              onChange={(event) => {
+                                props.setFieldValue(
+                                  "image",
+                                  Array.from(event.currentTarget.files)
+                                );
+                              }}
+                              style={{ display: "none" }}
+                              multiple={field.multiple}
+                            />
+                            <Button
+                              variant="contained"
+                              component="span"
+                              startIcon={<CloudUploadIcon />}
+                              sx={{ width: "100%" }}
+                            >
+                              {field.label}
+                            </Button>
+                          </label>
+                          {touched.image && errors.image && (
+                            <Typography variant="body2" color="error">
+                              {errors.image}
+                            </Typography>
+                          )}
+                        </div>
                       ) : (
                         <FastField name={field.name}>
                           {({ field: { name, value, onChange, onBlur } }) => (
@@ -168,7 +202,12 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 })}
               </Grid>
               <DialogActions>
-                <Button type="submit" variant="contained" color="info">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  onClick={handleChange}
+                  color="info"
+                >
                   Submit
                 </Button>
                 <Button variant="contained" color="error" onClick={handleClose}>
