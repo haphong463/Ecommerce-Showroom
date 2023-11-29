@@ -1,4 +1,6 @@
-﻿namespace API.Helper
+﻿using System;
+
+namespace API.Helper
 {
     public static class FileUpload
     {
@@ -21,12 +23,14 @@
             }
             return rootUrl + baseFolder + "/" + folder + "/" + imageName;
         }
-        public static void DeleteImage(string imageName)
+        public static void DeleteImage(string imageName, IWebHostEnvironment env)
         {
-            var filePath = Path.Combine(imageName);
-            if (File.Exists(filePath))
+            int index = imageName.IndexOf("http://localhost:5251/");
+            string result = imageName.Substring(index + "http://localhost:5251/".Length);
+            var filePath = Path.Combine(env.ContentRootPath, result);
+            if (System.IO.File.Exists(filePath))
             {
-                File.Delete(filePath);
+                System.IO.File.Delete(filePath);
             }
         }
     }

@@ -6,6 +6,7 @@ using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace API.Controllers
 {
@@ -15,15 +16,17 @@ namespace API.Controllers
     {
         public readonly DatabaseContext _dbContext;
         public readonly IMapper _mapper;
-        public VehicleController(DatabaseContext dbContext, IMapper mapper)
+        private readonly IWebHostEnvironment _env;
+        public VehicleController(DatabaseContext dbContext, IMapper mapper, IWebHostEnvironment env)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _env = env; 
         }
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<VehicleDTO>>>> GetVehicles()
         {
-            var vehicles = await _dbContext.Vehicles.ToListAsync();
+            var vehicles = await _dbContext.Vehicles.Include(x => x.Brand).Include(x => x.Images).ToListAsync();
             var vehicleDtos = _mapper.Map<List<VehicleDTO>>(vehicles);
             return Ok(new ApiResponse<IEnumerable<VehicleDTO>>(vehicleDtos, "Get all vehicles successfully"));
         }
@@ -78,7 +81,7 @@ namespace API.Controllers
 
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApiResponse<VehicleDTO>>> UpdateVehicle(int id, [FromBody] VehicleDTO vehicleDto)
+        public async Task<ActionResult<ApiResponse<VehicleDTO>>> UpdateVehicle(int id, [FromForm] Vehicle vehicleUpdate, List<IFormFile>? files)
         {
             try
             {
@@ -87,15 +90,30 @@ namespace API.Controllers
                     return ApiResponse<VehicleDTO>.BadRequest(ModelState);
                 }
 
-                var vehicle = await _dbContext.Vehicles.FindAsync(id);
-                if (vehicle != null)
+                var vehicleExisting = await _dbContext.Vehicles.Include(x => x.Brand).Include(x => x.Images).SingleOrDefaultAsync(x => x.VehicleId == id);
+                if (vehicleExisting != null)
                 {
-                    _mapper.Map(vehicleDto, vehicle);
+                    if (files != null)
+                    {
+                        if (vehicleExisting.Images != null)
+                        {
+                            foreach (var image in vehicleExisting.Images)
+                            {
+                                FileUpload.DeleteImage(image.ImagePath, _env);
+                            }
+                        }
+                            vehicleExisting.Images = new List<Images>();
 
-                    _dbContext.Update(vehicle);
+                            foreach (var file in files)
+                            {
+                                var imagePath = FileUpload.SaveImage("VehicleImage", file);
+                                vehicleExisting.Images.Add(new Images { ImagePath = imagePath });
+                            }
+                    }
+                    _dbContext.Entry(vehicleExisting).CurrentValues.SetValues(vehicleUpdate);
                     await _dbContext.SaveChangesAsync();
 
-                    var updatedDto = _mapper.Map<VehicleDTO>(vehicle);
+                    var updatedDto = _mapper.Map<VehicleDTO>(vehicleUpdate);
                     return Ok(new ApiResponse<VehicleDTO>(updatedDto, "Vehicle updated successfully"));
                 }
 
@@ -110,7 +128,14 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVehicle(int id)
         {
-            var vehicle = await _dbContext.Vehicles.FindAsync(id);
+            var vehicle = await _dbContext.Vehicles.Include(x => x.Brand).Include(x => x.Images).SingleOrDefaultAsync(x => x.VehicleId == id);
+            if (vehicle.Images != null)
+            {
+                foreach (var image in vehicle.Images)
+                {
+                    FileUpload.DeleteImage(image.ImagePath, _env);
+                }
+            }
             if (vehicle == null)
             {
                 return NotFound(new ApiResponse<VehicleDTO>(null, "Vehicle not found", 404));

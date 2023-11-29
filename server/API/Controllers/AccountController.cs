@@ -13,11 +13,13 @@ namespace API.Controllers
     [ApiController]
     public class AccountController : ControllerBase
     {
+        private readonly IWebHostEnvironment _env;
         private readonly DatabaseContext _dbContext;
 
-        public AccountController(DatabaseContext dbContext)
+        public AccountController(DatabaseContext dbContext, IWebHostEnvironment env)
         {
             _dbContext = dbContext;
+            _env = env;
         }
 
         [HttpGet]
@@ -98,7 +100,7 @@ namespace API.Controllers
                     if (account.AvatarUrl != null)
                     {
                         // Xoá hình ảnh
-                        FileUpload.DeleteImage(account.AvatarUrl);
+                        FileUpload.DeleteImage(account.AvatarUrl, _env);
                     }
                     _dbContext.Accounts.Remove(account);
                     await _dbContext.SaveChangesAsync();
@@ -130,7 +132,7 @@ namespace API.Controllers
                         if (account.AvatarUrl != null)
                         {
                             // Xoá hình ảnh
-                            FileUpload.DeleteImage(account.AvatarUrl);
+                            FileUpload.DeleteImage(account.AvatarUrl, _env);
                         }
                         account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
                     }
