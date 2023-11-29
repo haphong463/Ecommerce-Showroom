@@ -10,16 +10,55 @@ import {
 } from "@mui/material";
 
 import { BrandContext } from "../../../context/BrandContext";
-import { postBrand, putBrand, validationSchema } from "./BrandLibrary";
+import {
+  generateValidationSchemaBrand,
+  postBrand,
+  putBrand,
+} from "./BrandLibrary";
 import { BrandFormFields } from "./BrandFormField";
+import { successToast } from "../../Message";
 
 const BrandForm = () => {
-  const { onClose, formik, isEditing, setIsEditing, setData, openBrandForm } =
+  const { onClose, setData, openBrandForm, brand, setBrand } =
     useContext(BrandContext);
-
+  const initialValues = {
+    name: brand?.name ?? "",
+    description: brand?.description ?? "",
+    image: null,
+  };
+  const validationSchema = generateValidationSchemaBrand(brand);
+  const submitAPI = (brand, values) => {
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("description", values.description);
+    formData.append("file", values.image);
+    if (!brand) {
+      postBrand(formData).then((res) => {
+        if (res.data) {
+          setData((prev) => [...prev, res.data]);
+          setPreview();
+          onClose();
+          successToast("Create a new brand successfully!");
+        }
+      });
+    } else {
+      putBrand(formData, brand.brandId).then((res) => {
+        if (res.data) {
+          setData((prev) =>
+            prev.map((item) =>
+              item.brandId === res.data.brandId ? res.data : item
+            )
+          );
+          setPreview();
+          onClose();
+          successToast("Update a brand successfully!");
+        }
+      });
+    }
+  };
+  // preview
   const [preview, setPreview] = useState();
   const [selectedFile, setSelectedFile] = useState();
-
   useEffect(() => {
     const file = selectedFile;
     if (file) {
@@ -28,7 +67,7 @@ const BrandForm = () => {
       return () => URL.revokeObjectURL(objectUrl);
     }
   }, [selectedFile]);
-
+  // end preview
   return (
     <Dialog open={openBrandForm} onClose={onClose} maxWidth="100%">
       <DialogTitle
@@ -37,41 +76,14 @@ const BrandForm = () => {
         align="center"
         letterSpacing={10}
       >
-        {!isEditing ? "NEW BRAND" : "EDIT BRAND"}
+        {!brand ? "NEW BRAND" : "EDIT BRAND"}
       </DialogTitle>
       <DialogContent>
         <Formik
-          initialValues={formik.values}
+          initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={(values, formikBag) => {
-            const formData = new FormData();
-            formData.append("name", values.name);
-            formData.append("description", values.description);
-            formData.append("file", values.image);
-            if (!isEditing) {
-              postBrand(formData).then((res) => {
-                if (res.data) {
-                  setData((prev) => [...prev, res.data]);
-                  formikBag.resetForm();
-                  setPreview();
-                  onClose();
-                }
-              });
-            } else {
-              putBrand(formData, formik.values.id).then((res) => {
-                if (res.data) {
-                  setData((prev) =>
-                    prev.map((item) =>
-                      item.brandId === res.data.brandId ? res.data : item
-                    )
-                  );
-                  setPreview();
-                  setIsEditing(false);
-                  formikBag.resetForm();
-                  onClose();
-                }
-              });
-            }
+            submitAPI(brand, values);
           }}
         >
           {(formikProps) => (
@@ -85,8 +97,15 @@ const BrandForm = () => {
                 setSelectedFile={setSelectedFile}
               />
               <DialogActions>
-                <Button type="submit" variant="contained" color="info">
-                  Submit
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="info"
+                  disabled={
+                    brand && (formikProps.isSubmitting || !formikProps.dirty)
+                  }
+                >
+                  {brand ? "Save" : "Create"}
                 </Button>
                 <Button variant="contained" color="error" onClick={onClose}>
                   Cancel

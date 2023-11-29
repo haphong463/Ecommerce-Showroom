@@ -11,10 +11,10 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { columns, deleteBrand, getBrandList } from "./BrandLibrary";
 import { BrandContext } from "../../../context/BrandContext";
+import { dangerMessage } from "../../Message";
 
 export const BrandList = ({ onSetLoading }) => {
-  const { data, setData, setIsEditing, formik, handleClickOpen } =
-    useContext(BrandContext);
+  const { data, setData, setBrand, handleClickOpen } = useContext(BrandContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -24,43 +24,36 @@ export const BrandList = ({ onSetLoading }) => {
         setData((prev) =>
           prev.filter((item) => item.brandId !== res.data.brandId)
         );
+        dangerMessage("Delete a brand successfully!");
       }
     });
   };
-
   const handleEdit = (id) => {
     const brand = data.find((item) => item.brandId === id);
     if (brand !== null) {
-      formik.setFieldValue("id", brand.brandId);
-      formik.setFieldValue("name", brand.name);
-      formik.setFieldValue("description", brand.description);
-      setIsEditing(true);
+      setBrand(brand);
       handleClickOpen();
     }
   };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
   useEffect(() => {
     onSetLoading(true);
-
     getBrandList().then((res) => {
       if (res.data !== null) {
         setData(res.data);
+        onSetLoading(false);
       }
-      onSetLoading(false);
     });
-  }, [setData, onSetLoading]);
+  }, []);
   return (
     <>
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ height: "70vh" }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>

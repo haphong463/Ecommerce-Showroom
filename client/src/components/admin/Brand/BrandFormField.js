@@ -1,7 +1,14 @@
 // BrandFormFields.jsx
 import React from "react";
 import { FastField } from "formik";
-import { Grid, TextField, Button, Avatar } from "@mui/material";
+import {
+  Grid,
+  TextField,
+  Button,
+  Avatar,
+  FormLabel,
+  Typography,
+} from "@mui/material";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 export const BrandFormFields = ({ formikProps, preview, setSelectedFile }) => {
@@ -36,7 +43,7 @@ export const BrandFormFields = ({ formikProps, preview, setSelectedFile }) => {
       </Grid>
 
       <Grid item xs={12}>
-        <label
+        <FormLabel
           htmlFor="image"
           style={{ display: "flex", alignItems: "center" }}
         >
@@ -59,7 +66,13 @@ export const BrandFormFields = ({ formikProps, preview, setSelectedFile }) => {
           >
             Upload Image
           </Button>
-        </label>
+        </FormLabel>
+
+        {formikProps.touched.image && (
+          <Typography variant="body2" color="error">
+            {formikProps.errors.image}
+          </Typography>
+        )}
       </Grid>
       <Grid item xs={12}>
         {preview && (

@@ -18,6 +18,7 @@ namespace API.DTO
         public string TransmissionType { get; set; }
         public string FuelType { get; set; }
         public int NumberOfSeats { get; set; }
+        public bool IsUsed { get; set; }
         public DateTime? PurchaseDate { get; set; }
         public decimal PurchasePrice { get; set; }
         [EnumDataType(typeof(VehicleStatus))]

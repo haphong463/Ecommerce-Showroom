@@ -1,3 +1,4 @@
+// eslint-disable-next-line
 import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./assets/styles/Body.css";

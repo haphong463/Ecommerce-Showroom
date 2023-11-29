@@ -1,6 +1,6 @@
 import axios from "axios";
 import * as yup from "yup";
-import { errorToast } from "../../ErrorMessage";
+import { errorToast } from "../../Message";
 const url = "http://localhost:5251/api/Vehicle";
 export const getVehicles = async () => {
   try {
@@ -21,15 +21,55 @@ export const getVehicles = async () => {
   }
 };
 
-export const brands = [
-  { value: "10", label: "Brand 1" },
-  { value: "20", label: "Brand 2" },
-  { value: "30", label: "Brand 3" },
+export const postVehicle = async (vehicle) => {
+  try {
+    const res = await axios.post(url, vehicle, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
+    if (res.status === 200) {
+      return res.data;
+    }
+    return {
+      data: null,
+    };
+  } catch (error) {
+    errorToast(error);
+    return {
+      data: null,
+    };
+  }
+};
+
+export const columns = [
+  { id: "name", label: "Name", minWidth: 170 },
+  { id: "brand", label: "Brand", minWidth: 100 },
+  {
+    id: "color",
+    label: "Color",
+    minWidth: 170,
+  },
+  {
+    id: "used",
+    label: "Used/New",
+    minWidth: 170,
+  },
+  {
+    id: "actions",
+    label: "Actions",
+    minWidth: 170,
+    align: "right",
+  },
 ];
+
+const brands = async () => {
+  const res = await axios.get('')
+};
 
 export const formFields = [
   { name: "name", label: "Name*", type: "text" },
-  { name: "brand", label: "Brand*", type: "select", options: brands },
+  { name: "brandId", label: "Brand*", type: "select", options: brands },
   { name: "manufacturingYear", label: "Manufacturing Year*", type: "number" },
   { name: "registrationNumber", label: "Registration Number*", type: "text" },
   { name: "color", label: "Color*", type: "text" },
@@ -38,12 +78,12 @@ export const formFields = [
   { name: "transmissionType", label: "Transmission Type*", type: "text" },
   { name: "fuelType", label: "Fuel Type*", type: "text" },
   { name: "numberOfSeats", label: "Number of Seats*", type: "number" },
-  { name: "purchasedDate", label: "Purchased Date*", type: "date" },
+  { name: "purchaseDate", label: "Purchased Date*", type: "date" },
   { name: "purchasePrice", label: "Purchase Price*", type: "number" },
   { name: "description", label: "Description*", type: "text" },
   { name: "isUsed", label: "Used/New*" },
   {
-    name: "image",
+    name: "files",
     label: "Image",
     type: "file",
     accept: "image/*",
@@ -54,7 +94,7 @@ export const formFields = [
 export const generateValidationSchema = (isEditing) => {
   return yup.object({
     name: yup.string().required("Name is required"),
-    brand: yup.string().required("Brand is required"),
+    brandId: yup.string().required("Brand is required"),
     manufacturingYear: yup.number().required("Manufacturing Year is required"),
     registrationNumber: yup
       .string()
@@ -65,10 +105,10 @@ export const generateValidationSchema = (isEditing) => {
     transmissionType: yup.string().required("Transmission Type is required"),
     fuelType: yup.string().required("Fuel Type is required"),
     numberOfSeats: yup.number().required("Number of Seats is required"),
-    purchasedDate: yup.date().required("Purchased Date is required"),
+    purchaseDate: yup.date().required("Purchased Date is required"),
     purchasePrice: yup.number().required("Purchase Price is required"),
     description: yup.string().required("Description is required"),
-    image: isEditing
+    files: isEditing
       ? yup.array()
       : yup.array().min(1, "Please upload at least one image."),
   });

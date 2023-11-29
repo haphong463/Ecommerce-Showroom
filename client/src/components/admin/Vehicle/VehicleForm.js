@@ -20,19 +20,21 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
-import { formFields, generateValidationSchema } from "./VehicleLibrary";
+import {
+  formFields,
+  generateValidationSchema,
+  postVehicle,
+} from "./VehicleLibrary";
 import { FastField, Form, Formik } from "formik";
 import { useState } from "react";
 const VehicleForm = ({ open, onSetOpen, handleClose }) => {
   const [isUsed, setIsUsed] = useState(false);
   const [isEditing, setIsEditing] = useState(false);
   const validationSchema = generateValidationSchema(isEditing);
-  const handleChange = () => {
-    setIsEditing(!isEditing);
-  };
+
   const initialValues = {
     name: "",
-    brand: "",
+    brandId: "",
     manufacturingYear: "",
     registrationNumber: "",
     color: "",
@@ -41,9 +43,9 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
     transmissionType: "",
     fuelType: "",
     numberOfSeats: "",
-    purchasedDate: new Date(),
+    purchaseDate: new Date(),
     purchasePrice: "",
-    image: [],
+    files: [],
     isUsed: isUsed,
   };
 
@@ -63,7 +65,24 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={(values, actions) => {
-            console.log(values);
+            const newDay = dayjs(values.purchasedDate).format("YYYY-MM-DD");
+            console.log(newDay);
+            let formData = new FormData();
+            formFields.map((field) => {
+              if (field.name === "files") {
+                values[field.name].forEach((file) => {
+                  formData.append(field.name, file);
+                });
+              }
+              if (field.name === "purchaseDate") {
+                formData.append(field.name, newDay);
+              }
+              formData.append(field.name, values[field.name]);
+              console.log(`${field.name}:`, formData.get(field.name));
+              return formData;
+            });
+            formData.append("modelId", "asd");
+            postVehicle(formData);
           }}
         >
           {({ errors, touched, ...props }) => (
@@ -147,7 +166,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                               onBlur={props.handleBlur}
                               onChange={(event) => {
                                 props.setFieldValue(
-                                  "image",
+                                  "files",
                                   Array.from(event.currentTarget.files)
                                 );
                               }}
@@ -163,9 +182,9 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                               {field.label}
                             </Button>
                           </label>
-                          {touched.image && errors.image && (
+                          {touched.files && errors.files && (
                             <Typography variant="body2" color="error">
-                              {errors.image}
+                              {errors.files}
                             </Typography>
                           )}
                         </div>
@@ -202,12 +221,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 })}
               </Grid>
               <DialogActions>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  onClick={handleChange}
-                  color="info"
-                >
+                <Button type="submit" variant="contained" color="info">
                   Submit
                 </Button>
                 <Button variant="contained" color="error" onClick={handleClose}>

@@ -29,12 +29,7 @@ export const Vehicles = () => {
             handleClose={handleClose}
           />
         </Box>
-        <Paper
-          sx={{
-            width: "100%",
-            p: 3,
-          }}
-        >
+        <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
           <Fab
             color="primary"
             size="medium"

@@ -1,31 +1,23 @@
 import axios from "axios";
 import * as yup from "yup";
-import { errorToast } from "../../ErrorMessage";
+import { errorToast } from "../../Message";
+import axiosRequest from "../../../configs/axiosConfig";
 const url = "http://localhost:5251/api/Brand";
-
+const headers = 'Content-Type: "mulipart/form-data"';
 export const getBrandList = async () => {
   try {
-    const res = await axios.get(url);
-    if (res.status === 200) {
-      return res.data;
-    }
-    return {
-      data: null,
-    };
+    const res = await axiosRequest.get("/Brand");
+    return res.status === 200 ? res : { data: null };
   } catch (error) {
     errorToast(error);
-    return {
-      data: null,
-    };
+    return { data: null };
   }
 };
 
 export const postBrand = async (brand) => {
   try {
     const res = await axios.post(url, brand, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      headers,
     });
     return res.data;
   } catch (error) {
@@ -57,14 +49,10 @@ export const deleteBrand = async (id) => {
 export const putBrand = async (brand, brandId) => {
   try {
     const res = await axios.put(`${url}/${brandId}`, brand, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
+      headers,
     });
-    if (res.status === 200) {
-      return res.data;
-    }
-    return brand;
+    const resId = await axios.get(`${url}/${brandId}`);
+    return res.status === 200 ? res.data : resId.data.data;
   } catch (error) {
     errorToast(error);
     return {
@@ -78,9 +66,8 @@ export const columns = [
   {
     id: "description",
     label: "Description",
-    minWidth: 170,
-    align: "right",
-    format: (value) => value.toLocaleString("en-US"),
+    minWidth: 200,
+    align: "center",
   },
   {
     id: "actions",
@@ -89,14 +76,12 @@ export const columns = [
     align: "right",
   },
 ];
-export const validationSchema = yup.object().shape({
-  name: yup.string().required("Name is required!"),
-  description: yup.string().required("Description is required"),
-  image: yup.mixed().nullable(),
-});
-
-export const initialValues = {
-  name: "",
-  description: "",
-  image: null,
+export const generateValidationSchemaBrand = (brand) => {
+  return yup.object().shape({
+    name: yup.string().required("Name is required!"),
+    description: yup.string().required("Description is required"),
+    image: brand
+      ? yup.mixed().nullable()
+      : yup.mixed().required("Image is required"),
+  });
 };

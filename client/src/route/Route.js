@@ -6,10 +6,12 @@ import { Brand } from "../containers/admin/Brand";
 import { BrandProvider } from "../context/BrandContext";
 import { Login } from "../containers/admin/Login";
 import { AboutUs } from "../containers/user/AboutUs";
+import { VehicleDetails } from "../containers/admin/VehicleDetails";
 
 export const publicRoutes = [
   { path: "/", component: <HomeUser /> },
   { path: "/about", component: <AboutUs /> },
+  { path: "/vehicle/:id", component: <VehicleDetails /> },
 ];
 
 export const privateRoutes = [
