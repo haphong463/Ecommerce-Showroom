@@ -6,10 +6,11 @@ import BrandForm from "../../components/Brand/BrandForm";
 import { BrandList } from "../../components/Brand/BrandList";
 import { BrandContext } from "../../context/BrandContext";
 import AddIcon from "@mui/icons-material/Add";
+import { DataContext } from "../../context/DataContext";
 
 export const Brand = () => {
   const { onClose, handleClickOpen, openBrandForm } = useContext(BrandContext);
-  const [loading, setLoading] = useState(false);
+  const { loading } = useContext(DataContext);
   return (
     <>
       <Navbar />
@@ -40,7 +41,7 @@ export const Brand = () => {
           >
             <AddIcon />
           </Fab>
-          <BrandList onSetLoading={setLoading} />
+          <BrandList />
         </Paper>
       </Box>
     </>

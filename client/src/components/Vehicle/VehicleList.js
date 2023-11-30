@@ -12,7 +12,7 @@ import { IconButton, Stack } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { useNavigate } from "react-router-dom";
 export function VehicleList() {
-  const { setVehicleData, vehicleData } = useContext(DataContext);
+  const { setVehicleData, vehicleData, setLoading } = useContext(DataContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const navigate = useNavigate();
@@ -25,8 +25,12 @@ export function VehicleList() {
     setPage(0);
   };
   useEffect(() => {
+    setLoading(true);
     getVehicles().then((res) => {
-      setVehicleData(res.data);
+      if (res.data !== null) {
+        setVehicleData(res.data);
+        setLoading(false);
+      }
     });
   }, [setVehicleData]);
   return (

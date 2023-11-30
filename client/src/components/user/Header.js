@@ -3,7 +3,7 @@ import React from "react";
 import { Box, Typography } from "@mui/material";
 import { SideBar } from "../../components/user/Sidebar";
 
-const Header = ({ title, state, setState }) => {
+const Header = ({ title, state, setState, colorHeader }) => {
   return (
     <Box
       sx={{
@@ -23,11 +23,12 @@ const Header = ({ title, state, setState }) => {
           ml: 3,
           letterSpacing: 3,
           fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+          color: colorHeader ? "#333" : "#fff",
         }}
       >
         {title}
       </Typography>
-      <SideBar state={state} onSetState={setState} />
+      <SideBar state={state} onSetState={setState} colorHeader={colorHeader} />
     </Box>
   );
 };

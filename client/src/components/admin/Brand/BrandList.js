@@ -9,9 +9,9 @@ import TableRow from "@mui/material/TableRow";
 import { IconButton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { columns, deleteBrand, getBrandList } from "./BrandLibrary";
+import { columns, deleteBrand, getBrandList } from "../../Brand/BrandLibrary";
 import { BrandContext } from "../../context/BrandContext";
-import { dangerMessage } from "../Message";
+import { dangerMessage } from "../../Message";
 import Swal from "sweetalert2";
 import { DataContext } from "../../context/DataContext";
 

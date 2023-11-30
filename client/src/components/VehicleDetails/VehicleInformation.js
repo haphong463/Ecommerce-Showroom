@@ -2,7 +2,12 @@
 import React from "react";
 import { Box, Button, Grid, Stack, Tooltip, Typography } from "@mui/material";
 
-const VehicleInformation = ({ infoArray, handleClickOpen, handleDelete, vehicleID }) => {
+const VehicleInformation = ({
+  infoArray,
+  handleClickOpen,
+  handleDelete,
+  vehicleID,
+}) => {
   return (
     <Box mt={2}>
       <Typography variant="h6">Vehicle Information</Typography>
@@ -26,7 +31,11 @@ const VehicleInformation = ({ infoArray, handleClickOpen, handleDelete, vehicleI
         <Button variant="contained" color="info" onClick={handleClickOpen}>
           Edit
         </Button>
-        <Button variant="contained" color="error" onClick={() => handleDelete(vehicleID)}>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => handleDelete(vehicleID)}
+        >
           Delete
         </Button>
       </Stack>

@@ -55,7 +55,7 @@ const routes = [
     position: "bot",
   },
 ];
-export function SideBar({ onSetState, state }) {
+export function SideBar({ onSetState, state, colorHeader }) {
   const navigate = useNavigate();
 
   const toggleDrawer = (anchor, open) => (event) => {
@@ -79,6 +79,7 @@ export function SideBar({ onSetState, state }) {
           mr: 3,
           letterSpacing: 5,
           fontSize: { xs: "2rem", sm: "1.5rem", md: "1rem" },
+          color: colorHeader ? "#333" : "#fff",
         }}
         size="large"
         endIcon={<MenuIcon />}

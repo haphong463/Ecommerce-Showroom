@@ -3,6 +3,8 @@ export const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const [vehicleData, setVehicleData] = useState([]);
   const [entry, setEntry] = useState();
+  const [loading, setLoading] = useState(false);
+
   const [vehicle, setVehicle] = useState({
     name: "",
     description: "",
@@ -27,6 +29,8 @@ export const DataProvider = ({ children }) => {
     setEntry,
     vehicle,
     setVehicle,
+    loading,
+    setLoading,
   };
   return <DataContext.Provider value={values}>{children}</DataContext.Provider>;
 };

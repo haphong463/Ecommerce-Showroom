@@ -9,7 +9,7 @@ const images = [
   },
   // Add more images as needed
 ];
-export function Main({ title, description, labelImg, img }) {
+export function Main({ title, description, labelImg, img, colorHeader }) {
   const [state, setState] = useState({
     left: false,
   });
@@ -22,21 +22,23 @@ export function Main({ title, description, labelImg, img }) {
 
   return (
     <Box sx={{ maxWidth: "100%", flexGrow: 1, position: "relative" }}>
-      <Box
-        component="img"
-        sx={{
-          height: "100vh",
-          display: "block",
-          maxWidth: "100%",
-          overflow: "hidden",
-          width: "100%",
-          position: "relative",
-          filter: "brightness(50%)",
-        }}
-        src={img}
-        alt={labelImg}
-        onLoad={handleImageLoad}
-      />
+      {img && (
+        <Box
+          component="img"
+          sx={{
+            height: "100vh",
+            display: "block",
+            maxWidth: "100%",
+            overflow: "hidden",
+            width: "100%",
+            position: "relative",
+            filter: "brightness(50%)",
+          }}
+          src={img}
+          alt={labelImg}
+          onLoad={handleImageLoad}
+        />
+      )}
       {imageLoaded && (
         <Box
           sx={{
@@ -67,7 +69,12 @@ export function Main({ title, description, labelImg, img }) {
           </Typography>
         </Box>
       )}
-      <Header title="AutoCar" state={state} setState={setState} />
+      <Header
+        title="AutoCar"
+        state={state}
+        setState={setState}
+        colorHeader={colorHeader}
+      />
     </Box>
   );
 }

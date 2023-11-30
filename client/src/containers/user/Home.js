@@ -5,6 +5,7 @@ import Header from "../../components/user/Header";
 import FeaturedSection from "../../components/user/Home/FeaturedSection";
 import { Footer } from "../../components/user/Footer";
 import { Carousel } from "../../components/user/Carousel";
+import { LayoutUser } from "../../layout/LayoutUser";
 
 const images = [
   {
@@ -36,7 +37,7 @@ export function Home() {
   });
 
   return (
-    <Box>
+    <LayoutUser>
       <Box
         sx={{
           maxWidth: "100%",
@@ -48,7 +49,6 @@ export function Home() {
         <Header title="AutoCar" state={state} setState={setState} />
       </Box>
       <FeaturedSection />
-      <Footer />
-    </Box>
+    </LayoutUser>
   );
 }

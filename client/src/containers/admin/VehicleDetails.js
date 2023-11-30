@@ -149,8 +149,8 @@ export const VehicleDetails = () => {
         <img
           src={vehicle.images[i].imagePath}
           alt={`Product ${i + 1}`}
-          style={{ width: "50px", height: "50px", marginRight: 5 }} // Set width and height as needed
-          className={`dot ${i === activeIndex ? "active" : ""}`}
+          style={{ width: "100px", height: "100px", marginRight: 5 }} // Set width and height as needed
+          className={`dot img-thumbnail ${i === activeIndex ? "active" : ""}`}
         />
       );
     },
@@ -160,7 +160,7 @@ export const VehicleDetails = () => {
       </div>
     ),
   };
-  useEffect(() => {
+  const refreshVehicleData = () => {
     getVehicleById(id).then((res) => {
       if (res.data !== null) {
         setVehicle(res.data);
@@ -168,7 +168,11 @@ export const VehicleDetails = () => {
         navigate("../admin/vehicles");
       }
     });
+  };
+  useEffect(() => {
+    refreshVehicleData();
   }, [id]);
+  console.log("re-render");
   return (
     <>
       <Navbar />
@@ -181,6 +185,7 @@ export const VehicleDetails = () => {
           open={open}
           onSetOpen={setOpen}
           handleClose={handleClose}
+          refreshVehicleData={refreshVehicleData}
         />
         <Box sx={{ ml: 10 }}>
           <Grid container spacing={2}>

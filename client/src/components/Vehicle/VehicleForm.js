@@ -27,18 +27,18 @@ import {
 } from "./VehicleLibrary";
 import { FastField, Form, Formik } from "formik";
 import { useState } from "react";
-import { getBrandList } from "../Brand/BrandLibrary";
 import { DataContext } from "../../context/DataContext";
 import { successToast } from "../Message";
-const VehicleForm = ({ open, onSetOpen, handleClose }) => {
+import { getBrandList } from "../Brand/BrandLibrary";
+const VehicleForm = ({ open, onSetOpen, handleClose, refreshVehicleData }) => {
   const [isUsed, setIsUsed] = useState(false);
-  const { entry, setEntry, setVehicle, setVehicleData } =
-    useContext(DataContext);
+  const { entry, setVehicle, setVehicleData } = useContext(DataContext);
   const [brand, setBrand] = useState([]);
   const validationSchema = generateValidationSchema(entry);
   const initialValues = {
     name: entry ? entry.name : "",
-    brandId: entry ? entry.brandId : "",
+    price: entry ? entry.price : 0,
+    brandId: entry ? entry.brand?.brandId : "",
     manufacturingYear: entry ? entry.manufacturingYear : "",
     registrationNumber: entry ? entry.registrationNumber : "",
     color: entry ? entry.color : "",
@@ -49,17 +49,17 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
     numberOfSeats: entry ? entry.numberOfSeats : "",
     purchaseDate: entry ? entry.purchaseDate : new Date(),
     purchasePrice: entry ? entry.purchasePrice : "",
-    files: null,
-    isUsed: entry ? entry.isUsed : isUsed,
+    files: entry && entry.images.length > 0 ? null : [],
+    isUsed: entry ? entry.isUsed : false,
     description: entry ? entry.description : "",
   };
   const formFields = [
     { name: "name", label: "Name*", type: "text" },
+    { name: "price", label: "Price*", type: "number" },
     {
       name: "brandId",
       label: "Brand*",
       type: "select",
-      options: brand,
     },
     { name: "manufacturingYear", label: "Manufacturing Year*", type: "number" },
     { name: "registrationNumber", label: "Registration Number*", type: "text" },
@@ -83,13 +83,16 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
   ];
   useEffect(() => {
     getBrandList().then((res) => {
-      res.data.forEach((item) => {
-        const newData = {
-          value: item.brandId,
-          label: item.name,
-        };
-        setBrand((prev) => [...prev, newData]);
-      });
+      console.log(res);
+      if (res.data !== null) {
+        res.data.forEach((item) => {
+          const newData = {
+            value: item.brandId,
+            label: item.name,
+          };
+          setBrand((prev) => [...prev, newData]);
+        });
+      }
     });
   }, []);
   return (
@@ -108,13 +111,16 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={(values, actions) => {
+            console.log(values);
             const newDay = dayjs(values.purchasedDate).format("YYYY-MM-DD");
             let formData = new FormData();
             formFields.map((field) => {
               if (field.name === "files") {
-                values[field.name]?.forEach((file) => {
-                  formData.append(field.name, file);
-                });
+                if (values.files !== null) {
+                  values[field.name].forEach((file) => {
+                    formData.append(field.name, file);
+                  });
+                }
               }
               if (field.name === "purchaseDate") {
                 formData.append(field.name, newDay);
@@ -138,6 +144,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                   setVehicle(res.data);
                   successToast("Updated a vehicle successfully");
                   handleClose();
+                  refreshVehicleData();
                 }
               });
             }
@@ -166,7 +173,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                               }}
                             />
                           }
-                          label={isUsed ? "New" : "Used"}
+                          label={props.values.isUsed ? "New" : "Used"}
                         />
                       ) : field.type === "select" ? (
                         <FormControl fullWidth>
@@ -188,8 +195,8 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                             onChange={props.handleChange}
                             value={props.values[field.name]}
                           >
-                            {field.options.map((option) => (
-                              <MenuItem key={option.value} value={option.value}>
+                            {brand.map((option, index) => (
+                              <MenuItem key={index} value={option.value}>
                                 {option.label}
                               </MenuItem>
                             ))}
