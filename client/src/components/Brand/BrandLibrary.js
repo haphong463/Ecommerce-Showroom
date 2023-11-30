@@ -1,7 +1,7 @@
 import axios from "axios";
 import * as yup from "yup";
-import { errorToast } from "../../Message";
-import axiosRequest from "../../../configs/axiosConfig";
+import { errorToast } from "../Message";
+import axiosRequest from "../../configs/axiosConfig";
 const url = "http://localhost:5251/api/Brand";
 const headers = 'Content-Type: "mulipart/form-data"';
 export const getBrandList = async () => {
@@ -23,7 +23,7 @@ export const postBrand = async (brand) => {
   } catch (error) {
     errorToast(error);
     return {
-      data: null,
+      data: [],
     };
   }
 };
@@ -81,7 +81,30 @@ export const generateValidationSchemaBrand = (brand) => {
     name: yup.string().required("Name is required!"),
     description: yup.string().required("Description is required"),
     image: brand
-      ? yup.mixed().nullable()
-      : yup.mixed().required("Image is required"),
+      ? yup
+          .mixed()
+          .nullable()
+          .test(
+            "fileFormat",
+            "Chỉ chấp nhận các file có định dạng PNG, JPG hoặc JPEG",
+            (value) => {
+              return (
+                value === null ||
+                ["image/png", "image/jpeg", "image/jpg"].includes(value.type)
+              );
+            }
+          )
+      : yup
+          .mixed()
+          .required("Image is required")
+          .test(
+            "fileFormat",
+            "Chỉ chấp nhận các file có định dạng PNG, JPG hoặc JPEG",
+            (value) => {
+              return ["image/png", "image/jpeg", "image/jpg"].includes(
+                value.type
+              );
+            }
+          ),
   });
 };

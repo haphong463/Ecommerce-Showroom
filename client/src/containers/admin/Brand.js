@@ -2,16 +2,14 @@ import React, { useContext, useState } from "react";
 import Navbar from "../../components/admin/Navbar";
 import { Box, CircularProgress, Fab, Paper } from "@mui/material";
 import { Sidebar } from "../../components/admin/Sidebar";
-import BrandForm from "../../components/admin/Brand/BrandForm";
-import { BrandList } from "../../components/admin/Brand/BrandList";
+import BrandForm from "../../components/Brand/BrandForm";
+import { BrandList } from "../../components/Brand/BrandList";
 import { BrandContext } from "../../context/BrandContext";
 import AddIcon from "@mui/icons-material/Add";
 
 export const Brand = () => {
   const { onClose, handleClickOpen, openBrandForm } = useContext(BrandContext);
   const [loading, setLoading] = useState(false);
-
-  console.log("re-render");
   return (
     <>
       <Navbar />

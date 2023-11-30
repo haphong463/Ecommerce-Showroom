@@ -1,10 +1,9 @@
 // DetailPage.js
-import React, { useState } from "react";
-import { Box, Container, Grid, Typography } from "@mui/material";
-import Slider from "react-slick";
+import React, { useContext, useEffect, useState } from "react";
+import { Box, Grid } from "@mui/material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import "./slick.css";
 import { Sidebar } from "../../components/admin/Sidebar";
 import Navbar from "../../components/admin/Navbar";
@@ -23,84 +22,122 @@ import {
   MonetizationOn as MonetizationOnIcon,
   CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
+import DescriptionIcon from "@mui/icons-material/Description";
+import {
+  deleteVehicle,
+  getVehicleById,
+} from "../../components/Vehicle/VehicleLibrary";
+import dayjs from "dayjs";
+import VehicleForm from "../../components/Vehicle/VehicleForm";
+import { DataContext } from "../../context/DataContext";
+import CustomSlider from "../../components/VehicleDetails/CustomSlider";
+import VehicleInformation from "../../components/VehicleDetails/VehicleInformation";
+import { dangerMessage } from "../../components/Message";
 export const VehicleDetails = () => {
-  const { productId } = useParams();
+  const { id } = useParams();
+  const { setEntry, vehicle, setVehicle, setVehicleData } =
+    useContext(DataContext);
+  const navigate = useNavigate();
+  const [open, setOpen] = React.useState(false);
+
+  const handleClickOpen = () => {
+    setEntry(vehicle);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setEntry();
+    setOpen(false);
+  };
+
+  const handleDelete = (id) => {
+    deleteVehicle(id).then((res) => {
+      if (res.data !== null) {
+        setVehicleData((prev) =>
+          prev.filter((item) => item.vehicleID !== res.data.vehicleID)
+        );
+        navigate("../admin/vehicles");
+        dangerMessage(`Deleted vehicle successfully.`);
+      }
+    });
+  };
   const [activeIndex, setActiveIndex] = useState(0);
 
-  const productDetails = {
-    title: "Product Title",
-    description: "Product Description",
-    images: [
-      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?w=1920&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8MXx8fGVufDB8fHx8fA%3D%3D",
-      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?w=1920&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8Mnx8fGVufDB8fHx8fA%3D%3D",
-      "https://images.unsplash.com/photo-1503376780353-7e6692767b70?w=1920&auto=format&fit=crop&q=60&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxleHBsb3JlLWZlZWR8Nnx8fGVufDB8fHx8fA%3D%3D",
-    ],
-  };
   const infoArray = [
-    { icon: <DriveEtaIcon />, title: "Name", value: productDetails.title },
+    { icon: <DriveEtaIcon />, title: "Name", value: vehicle.name },
     {
       icon: <CategoryIcon />,
       title: "Model ID",
-      value: "Model ID Placeholder",
+      value: vehicle.modelId,
     },
     {
       icon: <LocalGasStationIcon />,
       title: "Fuel Type",
-      value: productDetails.fuelType,
+      value: vehicle.fuelType,
     },
     {
       icon: <CalendarTodayIcon />,
       title: "Manufacturing Year",
-      value: productDetails.manufacturingYear,
+      value: vehicle.manufacturingYear,
     },
-    { icon: <ColorLensIcon />, title: "Color", value: productDetails.color },
+    { icon: <ColorLensIcon />, title: "Color", value: vehicle.color },
     {
       icon: <SpeedIcon />,
       title: "Mileage",
-      value: `${productDetails.mileage} km`,
+      value: `${vehicle.mileage} km`,
     },
     {
       icon: <CommuteIcon />,
       title: "Transmission Type",
-      value: productDetails.transmissionType,
+      value: vehicle.transmissionType,
     },
     {
       icon: <EmojiTransportationIcon />,
       title: "Engine Type",
-      value: productDetails.engineType,
+      value: vehicle.engineType,
     },
     {
       icon: <SettingsInputComponentIcon />,
       title: "Number of Seats",
-      value: productDetails.numberOfSeats,
+      value: vehicle.numberOfSeats,
     },
     {
       icon: <PeopleAltIcon />,
-      title: "Is Used",
-      value: productDetails.isUsed ? "Yes" : "No",
+      title: "Used/New",
+      value: vehicle.isUsed ? "New" : "Used",
     },
     {
       icon: <EventAvailableIcon />,
       title: "Purchase Date",
-      value: productDetails.purchaseDate,
+      value: dayjs(vehicle.purchaseDate).format("MMMM, DD YYYY"),
     },
     {
       icon: <MonetizationOnIcon />,
       title: "Purchase Price",
-      value: `$${productDetails.purchasePrice}`,
+      value: `$${vehicle.purchasePrice}`,
     },
     {
       icon: <CheckCircleIcon />,
       title: "Status",
-      value: productDetails.status,
+      value:
+        vehicle.status === 0
+          ? "Available"
+          : vehicle.status === 1
+          ? "Unavailable"
+          : "",
+    },
+    {
+      icon: <DescriptionIcon />,
+      title: "Description",
+      value: vehicle.description,
     },
   ];
-  // Cấu hình cho slider
   const sliderSettings = {
     dots: true,
     dotsClass: "slick-dots slick-thumb",
     infinite: true,
     speed: 500,
+    arrows: false,
     slidesToShow: 1,
     slidesToScroll: 1,
     beforeChange: (current, next) => {
@@ -110,7 +147,7 @@ export const VehicleDetails = () => {
       // Sử dụng hình ảnh thay vì dấu chấm
       return (
         <img
-          src={productDetails.images[i]}
+          src={vehicle.images[i].imagePath}
           alt={`Product ${i + 1}`}
           style={{ width: "50px", height: "50px", marginRight: 5 }} // Set width and height as needed
           className={`dot ${i === activeIndex ? "active" : ""}`}
@@ -123,7 +160,15 @@ export const VehicleDetails = () => {
       </div>
     ),
   };
-
+  useEffect(() => {
+    getVehicleById(id).then((res) => {
+      if (res.data !== null) {
+        setVehicle(res.data);
+      } else {
+        navigate("../admin/vehicles");
+      }
+    });
+  }, [id]);
   return (
     <>
       <Navbar />
@@ -132,37 +177,27 @@ export const VehicleDetails = () => {
         <Sidebar />
       </Box>
       <Box component="main" sx={{ flexGrow: 1 }}>
+        <VehicleForm
+          open={open}
+          onSetOpen={setOpen}
+          handleClose={handleClose}
+        />
         <Box sx={{ ml: 10 }}>
           <Grid container spacing={2}>
             <Grid item xs={12} md={6}>
-              <Slider {...sliderSettings}>
-                {productDetails.images.map((image, index) => (
-                  <div key={index}>
-                    <img
-                      src={image}
-                      alt={`Product ${index + 1}`}
-                      style={{ width: "100%" }}
-                      className="img-thumbnail"
-                    />
-                  </div>
-                ))}
-              </Slider>
+              <CustomSlider
+                vehicleImages={vehicle.images}
+                sliderSettings={sliderSettings}
+              />
             </Grid>
 
             <Grid item xs={12} md={6}>
-              <Box mt={2}>
-                <Typography variant="h6">Vehicle Information</Typography>
-                <Grid container spacing={2}>
-                  {infoArray.map((info, index) => (
-                    <Grid item xs={6} key={index}>
-                      {info.icon}
-                      <Typography variant="body2">
-                        {info.title}: {info.value}
-                      </Typography>
-                    </Grid>
-                  ))}
-                </Grid>
-              </Box>
+              <VehicleInformation
+                infoArray={infoArray}
+                handleClickOpen={handleClickOpen}
+                handleDelete={handleDelete}
+                vehicleID={id}
+              />
             </Grid>
           </Grid>
         </Box>

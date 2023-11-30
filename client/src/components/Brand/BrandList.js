@@ -6,28 +6,76 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { DataContext } from "../../../context/DataContext";
-import { columns, getVehicles } from "./VehicleLibrary";
 import { IconButton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { useNavigate } from "react-router-dom";
-export function VehicleList() {
-  const { setVehicleData, vehicleData } = useContext(DataContext);
+import { columns, deleteBrand, getBrandList } from "./BrandLibrary";
+import { BrandContext } from "../../context/BrandContext";
+import { dangerMessage } from "../Message";
+import Swal from "sweetalert2";
+
+export const BrandList = ({ onSetLoading }) => {
+  const { data, setData, setBrand, handleClickOpen } = useContext(BrandContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const navigate = useNavigate();
+  const handleDelete = (id) => {
+    const brand = data.find((item) => item.brandId === id);
+
+    if (brand && brand.vehicles.length > 0) {
+      // Check if the specific brand has associated vehicles
+      Swal.fire({
+        title: "Cannot delete!",
+        text: "This brand has associated vehicles. Please delete the vehicles first.",
+        icon: "error",
+      });
+    } else {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You will not be able to recover this brand!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked 'Yes, delete it!'
+          deleteBrand(id).then((res) => {
+            if (res.data !== null) {
+              setData((prev) =>
+                prev.filter((item) => item.brandId !== res.data.brandId)
+              );
+              dangerMessage("Delete a brand successfully!");
+            }
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // User clicked 'No, cancel!'
+          Swal.fire("Cancelled", "Your brand is safe :)", "info");
+        }
+      });
+    }
+  };
+
+  const handleEdit = (id) => {
+    const brand = data.find((item) => item.brandId === id);
+    if (brand !== null) {
+      setBrand(brand);
+      handleClickOpen();
+    }
+  };
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
   useEffect(() => {
-    getVehicles().then((res) => {
-      setVehicleData(res.data);
+    onSetLoading(true);
+    getBrandList().then((res) => {
+      if (res.data !== null) {
+        setData(res.data);
+        onSetLoading(false);
+      }
     });
   }, []);
   return (
@@ -36,19 +84,21 @@ export function VehicleList() {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {columns.map((column) => (
-                <TableCell
-                  key={column.id}
-                  align={column.align}
-                  style={{ minWidth: column.minWidth }}
-                >
-                  {column.label}
-                </TableCell>
-              ))}
+              {columns.map((column) => {
+                return (
+                  <TableCell
+                    key={column.id}
+                    align={column.align}
+                    style={{ minWidth: column.minWidth }}
+                  >
+                    {column.label}
+                  </TableCell>
+                );
+              })}
             </TableRow>
           </TableHead>
           <TableBody>
-            {vehicleData
+            {data
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
@@ -56,7 +106,7 @@ export function VehicleList() {
                     hover
                     role="checkbox"
                     tabIndex={-1}
-                    key={row.vehicleID}
+                    key={row.brandId}
                   >
                     {columns.map((column) => {
                       const value = row[column.id];
@@ -72,27 +122,23 @@ export function VehicleList() {
                             >
                               <IconButton
                                 aria-label="edit"
-                                onClick={() =>
-                                  navigate(`../../vehicle/${row.vehicleID}`)
-                                }
+                                onClick={() => handleEdit(row.brandId)}
                               >
                                 <EditIcon />
                               </IconButton>
                               <IconButton
                                 aria-label="delete"
-                                onClick={() => console.log(row.vehicleID)}
+                                onClick={() => handleDelete(row.brandId)}
                               >
                                 <DeleteIcon />
                               </IconButton>
                             </Stack>
-                          ) : column.id === "brand" ? (
-                            row.brand.name
-                          ) : column.id === "used" ? (
-                            row.isUsed ? (
-                              "New"
-                            ) : (
-                              "Used"
-                            )
+                          ) : column.id === "image" ? (
+                            <img
+                              alt={`${row.name}`}
+                              src={row.imagePath}
+                              width={100}
+                            />
                           ) : column.format && typeof value === "number" ? (
                             column.format(value)
                           ) : (
@@ -108,9 +154,9 @@ export function VehicleList() {
         </Table>
       </TableContainer>
       <TablePagination
-        rowsPerPageOptions={[10, 25, 100]}
+        rowsPerPageOptions={[5, 10, 15]}
         component="div"
-        count={vehicleData.length}
+        count={data.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
@@ -118,4 +164,4 @@ export function VehicleList() {
       />
     </>
   );
-}
+};

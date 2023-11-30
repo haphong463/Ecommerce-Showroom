@@ -18,11 +18,10 @@ const Header = ({ title, state, setState }) => {
       }}
     >
       <Typography
-        variant="h3"
+        variant="h6"
         sx={{
-          ml: 5,
+          ml: 3,
           letterSpacing: 3,
-
           fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
         }}
       >

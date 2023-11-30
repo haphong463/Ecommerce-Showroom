@@ -9,14 +9,14 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-import { BrandContext } from "../../../context/BrandContext";
+import { BrandContext } from "../../context/BrandContext";
 import {
   generateValidationSchemaBrand,
   postBrand,
   putBrand,
 } from "./BrandLibrary";
 import { BrandFormFields } from "./BrandFormField";
-import { successToast } from "../../Message";
+import { successToast } from "../Message";
 
 const BrandForm = () => {
   const { onClose, setData, openBrandForm, brand, setBrand } =

@@ -12,6 +12,8 @@ import LoginIcon from "@mui/icons-material/Login";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
+import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
+import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import { ListItemIcon } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 const routes = [
@@ -22,10 +24,23 @@ const routes = [
     icon: <HomeIcon />,
   },
   {
+    route: "/vehicles",
+    primary: "Vehicles",
+    position: "top",
+    icon: <DirectionsCarIcon />,
+  },
+  {
     route: "/about",
     primary: "About Us",
     position: "top",
     icon: <InfoIcon />,
+  },
+
+  {
+    route: "/signup",
+    primary: "Sign Up",
+    position: "bot",
+    icon: <AppRegistrationIcon />,
   },
   {
     route: "/login",
@@ -59,7 +74,12 @@ export function SideBar({ onSetState, state }) {
     <React.Fragment>
       <Button
         onClick={toggleDrawer("right", true)}
-        sx={{ color: "#fff", mr: 3, letterSpacing: 5 }}
+        sx={{
+          color: "#fff",
+          mr: 3,
+          letterSpacing: 5,
+          fontSize: { xs: "2rem", sm: "1.5rem", md: "1rem" },
+        }}
         size="large"
         endIcon={<MenuIcon />}
       >

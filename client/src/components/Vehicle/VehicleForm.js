@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext, useEffect } from "react";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import {
   Grid,
@@ -21,34 +21,77 @@ import {
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
 import {
-  formFields,
   generateValidationSchema,
   postVehicle,
+  putVehicle,
 } from "./VehicleLibrary";
 import { FastField, Form, Formik } from "formik";
 import { useState } from "react";
+import { getBrandList } from "../Brand/BrandLibrary";
+import { DataContext } from "../../context/DataContext";
+import { successToast } from "../Message";
 const VehicleForm = ({ open, onSetOpen, handleClose }) => {
   const [isUsed, setIsUsed] = useState(false);
-  const [isEditing, setIsEditing] = useState(false);
-  const validationSchema = generateValidationSchema(isEditing);
-
+  const { entry, setEntry, setVehicle, setVehicleData } =
+    useContext(DataContext);
+  const [brand, setBrand] = useState([]);
+  const validationSchema = generateValidationSchema(entry);
   const initialValues = {
-    name: "",
-    brandId: "",
-    manufacturingYear: "",
-    registrationNumber: "",
-    color: "",
-    mileage: "",
-    engineType: "",
-    transmissionType: "",
-    fuelType: "",
-    numberOfSeats: "",
-    purchaseDate: new Date(),
-    purchasePrice: "",
-    files: [],
-    isUsed: isUsed,
+    name: entry ? entry.name : "",
+    brandId: entry ? entry.brandId : "",
+    manufacturingYear: entry ? entry.manufacturingYear : "",
+    registrationNumber: entry ? entry.registrationNumber : "",
+    color: entry ? entry.color : "",
+    mileage: entry ? entry.mileage : "",
+    engineType: entry ? entry.engineType : "",
+    transmissionType: entry ? entry.transmissionType : "",
+    fuelType: entry ? entry.fuelType : "",
+    numberOfSeats: entry ? entry.numberOfSeats : "",
+    purchaseDate: entry ? entry.purchaseDate : new Date(),
+    purchasePrice: entry ? entry.purchasePrice : "",
+    files: null,
+    isUsed: entry ? entry.isUsed : isUsed,
+    description: entry ? entry.description : "",
   };
-
+  const formFields = [
+    { name: "name", label: "Name*", type: "text" },
+    {
+      name: "brandId",
+      label: "Brand*",
+      type: "select",
+      options: brand,
+    },
+    { name: "manufacturingYear", label: "Manufacturing Year*", type: "number" },
+    { name: "registrationNumber", label: "Registration Number*", type: "text" },
+    { name: "color", label: "Color*", type: "text" },
+    { name: "mileage", label: "Mileage*", type: "number" },
+    { name: "engineType", label: "Engine Type*", type: "text" },
+    { name: "transmissionType", label: "Transmission Type*", type: "text" },
+    { name: "fuelType", label: "Fuel Type*", type: "text" },
+    { name: "numberOfSeats", label: "Number of Seats*", type: "number" },
+    { name: "purchaseDate", label: "Purchased Date*", type: "date" },
+    { name: "purchasePrice", label: "Purchase Price*", type: "number" },
+    { name: "description", label: "Description*", type: "text" },
+    { name: "isUsed", label: "Used/New*" },
+    {
+      name: "files",
+      label: "Image",
+      type: "file",
+      accept: "image/*",
+      multiple: true,
+    },
+  ];
+  useEffect(() => {
+    getBrandList().then((res) => {
+      res.data.forEach((item) => {
+        const newData = {
+          value: item.brandId,
+          label: item.name,
+        };
+        setBrand((prev) => [...prev, newData]);
+      });
+    });
+  }, []);
   return (
     <Dialog fullWidth open={open} onClose={handleClose} maxWidth="md">
       <DialogTitle
@@ -57,7 +100,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
         align="center"
         letterSpacing={10}
       >
-        NEW VEHICLE
+        {entry ? "EDIT VEHICLE" : "NEW VEHICLE"}
       </DialogTitle>
       <DialogContent>
         <Box height={10} />
@@ -66,11 +109,10 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
           validationSchema={validationSchema}
           onSubmit={(values, actions) => {
             const newDay = dayjs(values.purchasedDate).format("YYYY-MM-DD");
-            console.log(newDay);
             let formData = new FormData();
             formFields.map((field) => {
               if (field.name === "files") {
-                values[field.name].forEach((file) => {
+                values[field.name]?.forEach((file) => {
                   formData.append(field.name, file);
                 });
               }
@@ -78,14 +120,30 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 formData.append(field.name, newDay);
               }
               formData.append(field.name, values[field.name]);
-              console.log(`${field.name}:`, formData.get(field.name));
               return formData;
             });
             formData.append("modelId", "asd");
-            postVehicle(formData);
+            if (!entry) {
+              postVehicle(formData).then((res) => {
+                if (res.data !== null) {
+                  setVehicleData((prev) => [...prev, res.data]);
+                  successToast("Created a new vehicle successfully");
+                  handleClose();
+                }
+              });
+            } else {
+              formData.append("vehicleID", entry.vehicleID);
+              putVehicle(formData, entry.vehicleID).then((res) => {
+                if (res.data !== null) {
+                  setVehicle(res.data);
+                  successToast("Updated a vehicle successfully");
+                  handleClose();
+                }
+              });
+            }
           }}
         >
-          {({ errors, touched, ...props }) => (
+          {({ errors, touched, isSubmitting, dirty, ...props }) => (
             <Form>
               <Grid container spacing={2}>
                 {formFields.map((field) => {
@@ -99,7 +157,9 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                         <FormControlLabel
                           control={
                             <Switch
-                              checked={isUsed}
+                              id="isUsed"
+                              name="isUsed"
+                              checked={props.values.isUsed}
                               onChange={() => {
                                 props.setFieldValue("isUsed", !isUsed);
                                 setIsUsed(!isUsed);
@@ -118,6 +178,7 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                             {field.label}
                           </InputLabel>
                           <Select
+                            id={field.name}
                             error={
                               touched[field.name] && Boolean(errors[field.name])
                             }
@@ -221,7 +282,12 @@ const VehicleForm = ({ open, onSetOpen, handleClose }) => {
                 })}
               </Grid>
               <DialogActions>
-                <Button type="submit" variant="contained" color="info">
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="info"
+                  disabled={entry && (isSubmitting || !dirty)}
+                >
                   Submit
                 </Button>
                 <Button variant="contained" color="error" onClick={handleClose}>

@@ -50,9 +50,7 @@ public class Vehicle
     [EnumDataType(typeof(VehicleStatus))]
     public VehicleStatus Status { get; set; }
     public bool IsUsed { get; set; }
-    [NotMapped]
     public List<Images>? Images { get; set; }
-    [NotMapped]
     public Brand? Brand { get; set; }
 }
 

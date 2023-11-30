@@ -3,8 +3,8 @@ import React from "react";
 import { Sidebar } from "../../components/admin/Sidebar";
 import Navbar from "../../components/admin/Navbar";
 import AddIcon from "@mui/icons-material/Add";
-import VehicleForm from "../../components/admin/Vehicle/VehicleForm";
-import { VehicleList } from "../../components/admin/Vehicle/VehicleList";
+import VehicleForm from "../../components/Vehicle/VehicleForm";
+import { VehicleList } from "../../components/Vehicle/VehicleList";
 
 export const Vehicles = () => {
   const [open, setOpen] = React.useState(false);

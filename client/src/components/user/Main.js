@@ -4,24 +4,20 @@ import Typography from "@mui/material/Typography";
 import Header from "../../components/user/Header";
 const images = [
   {
-    label: "San Francisco – Oakland Bay Bridge, United States",
     imgPath:
       "https://source.unsplash.com/random?wallpapers?auto=format&fit=crop&w=400&h=250&q=60",
   },
   // Add more images as needed
 ];
-export function Main() {
+export function Main({ title, description, labelImg, img }) {
   const [state, setState] = useState({
     left: false,
-    imagesLoaded: Array(images.length).fill(false),
   });
 
-  const handleImageLoad = (index) => {
-    setState((prev) => {
-      const updatedImagesLoaded = [...prev.imagesLoaded];
-      updatedImagesLoaded[index] = true;
-      return { ...prev, imagesLoaded: updatedImagesLoaded };
-    });
+  const [imageLoaded, setImageLoaded] = useState(false);
+
+  const handleImageLoad = () => {
+    setImageLoaded(true);
   };
 
   return (
@@ -35,13 +31,13 @@ export function Main() {
           overflow: "hidden",
           width: "100%",
           position: "relative",
-          filter: "brightness(70%)",
+          filter: "brightness(50%)",
         }}
-        src={images[0].imgPath} // Assuming always using the first image
-        alt={images[0].label}
-        onLoad={() => handleImageLoad(0)} // Assuming always loading the first image
+        src={img}
+        alt={labelImg}
+        onLoad={handleImageLoad}
       />
-      {state.imagesLoaded[0] && (
+      {imageLoaded && (
         <Box
           sx={{
             position: "absolute",
@@ -50,11 +46,24 @@ export function Main() {
             transform: "translate(-50%, -50%)",
             color: "#fff",
             textAlign: "center",
-            width: "100%",
+            width: "50%",
           }}
         >
-          <Typography variant="h1" component="span">
-            {images[0].label}
+          <Typography
+            variant="h1"
+            component="span"
+            sx={{
+              mb: 2,
+              fontSize: { xs: "2rem", sm: "2.5rem", md: "4rem" },
+              fontWeight: "700",
+              letterSpacing: 3,
+              textTransform: "uppercase",
+            }}
+          >
+            {title}
+          </Typography>
+          <Typography variant="body2" component="div">
+            {description}
           </Typography>
         </Box>
       )}
