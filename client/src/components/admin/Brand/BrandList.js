@@ -111,7 +111,7 @@ export function BrandList({ handleClickOpen }) {
                               </IconButton>
                               <IconButton
                                 aria-label="delete"
-                                onClick={() => handleDelete(row.code)}
+                                onClick={() => console.log(row.code)}
                               >
                                 <DeleteIcon />
                               </IconButton>
