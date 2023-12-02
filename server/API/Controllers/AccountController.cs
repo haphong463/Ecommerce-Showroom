@@ -35,12 +35,12 @@ namespace API.Controllers
                 }
                 else
                 {
-                    return NotFound("No accounts found");
+                    return Ok(new ApiResponse<Account>(null,"No accounts found"));
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while retrieving accounts: " + ex.Message);
+                return ApiResponse<Account>.Exception(ex);
             }
         }
 
@@ -61,7 +61,8 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while retrieving account: " + ex.Message);
+                return ApiResponse<Account>.Exception(ex);
+
             }
         }
 
@@ -71,6 +72,10 @@ namespace API.Controllers
         {
             try
             {
+                if (account.Role == null)
+                {
+                    account.Role = "User";
+                }
                 account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
                 var resource = await _dbContext.Accounts.AddAsync(account);
                 await _dbContext.SaveChangesAsync();
@@ -85,7 +90,8 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while adding account: " + ex.Message);
+                return ApiResponse<Account>.Exception(ex);
+
             }
         }
 
@@ -114,7 +120,8 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while deleting account: " + ex.Message);
+                return ApiResponse<Account>.Exception(ex);
+
             }
         }
 
@@ -149,7 +156,8 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode(500, "An error occurred while updating account: " + ex.Message);
+                return ApiResponse<Account>.Exception(ex);
+
             }
         }
     }

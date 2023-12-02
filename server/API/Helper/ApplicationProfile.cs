@@ -22,6 +22,8 @@ namespace API.Helper
                 }))
                 .ReverseMap();
             CreateMap<Brand, BrandDTO>().ReverseMap();
+            CreateMap<Employee, EmployeeDTO>().ReverseMap();
+
         }
     }
 }
