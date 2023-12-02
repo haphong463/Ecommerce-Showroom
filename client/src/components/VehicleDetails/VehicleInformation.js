@@ -7,6 +7,7 @@ const VehicleInformation = ({
   handleClickOpen,
   handleDelete,
   vehicleID,
+  userLayout,
 }) => {
   return (
     <Box mt={2}>
@@ -27,18 +28,20 @@ const VehicleInformation = ({
           </Grid>
         ))}
       </Grid>
-      <Stack direction="row" sx={{ mt: 3 }} spacing={1}>
-        <Button variant="contained" color="info" onClick={handleClickOpen}>
-          Edit
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => handleDelete(vehicleID)}
-        >
-          Delete
-        </Button>
-      </Stack>
+      {!userLayout && (
+        <Stack direction="row" sx={{ mt: 3 }} spacing={1}>
+          <Button variant="contained" color="info" onClick={handleClickOpen}>
+            Edit
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => handleDelete(vehicleID)}
+          >
+            Delete
+          </Button>
+        </Stack>
+      )}
     </Box>
   );
 };

@@ -78,10 +78,9 @@ export function SideBar({ onSetState, state, colorHeader }) {
           color: "#fff",
           mr: 3,
           letterSpacing: 5,
-          fontSize: { xs: "2rem", sm: "1.5rem", md: "1rem" },
-          color: colorHeader ? "#333" : "#fff",
+          fontSize: { xs: "1.2rem", sm: "1.2rem", md: "1.5rem" },
+          color: "#333",
         }}
-        size="large"
         endIcon={<MenuIcon />}
       >
         MENU

@@ -7,3 +7,22 @@
     object-fit: contain;
   }
   
+  .title-specs {
+    position: relative;
+  }
+  
+  .title-specs::after {
+    content: '';
+    position: absolute;
+    width: 5%;
+    height: 3px;
+    background: rgb(255, 184, 0);
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .title-text {
+    color: #003580;
+    font-weight: 700;
+  }

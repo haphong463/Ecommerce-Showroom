@@ -6,12 +6,16 @@ import reportWebVitals from "./reportWebVitals";
 import "./assets/styles/Body.css";
 import "react-toastify/dist/ReactToastify.css";
 import { DataProvider } from "./context/DataContext";
+import { BrowserRouter } from "react-router-dom";
 const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   // <React.StrictMode>
-  <DataProvider>
-    <App />
-  </DataProvider>
+  <BrowserRouter>
+    <DataProvider>
+      <App />
+    </DataProvider>
+  </BrowserRouter>
+
   // </React.StrictMode>
 );
 

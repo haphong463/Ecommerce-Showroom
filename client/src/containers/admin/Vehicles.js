@@ -5,12 +5,13 @@ import Navbar from "../../components/admin/Navbar";
 import AddIcon from "@mui/icons-material/Add";
 import VehicleForm from "../../components/Vehicle/VehicleForm";
 import { VehicleList } from "../../components/Vehicle/VehicleList";
+import { VehicleContext } from "../../context/VehicleContext";
 import { DataContext } from "../../context/DataContext";
 
 export const Vehicles = () => {
   const [open, setOpen] = React.useState(false);
-  const { setEntry } = useContext(DataContext);
-  const {loading} = useContext(DataContext);
+  const { setEntry } = useContext(VehicleContext);
+  const { loading } = useContext(DataContext);
   const handleClickOpen = () => {
     setOpen(true);
   };

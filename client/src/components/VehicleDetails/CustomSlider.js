@@ -1,8 +1,18 @@
 // Slider.js
-import React from "react";
+import React, { useContext, useState } from "react";
 import Slider from "react-slick";
+import { VehicleContext } from "../../context/VehicleContext";
 
-const CustomSlider = ({ vehicleImages, sliderSettings }) => {
+const CustomSlider = ({ vehicleImages }) => {
+  const sliderSettings = {
+    dots: true,
+    dotsClass: "slick-dots slick-thumb",
+    infinite: true,
+    speed: 500,
+    arrows: false,
+    slidesToShow: 1,
+    slidesToScroll: 1,
+  };
   return (
     <Slider {...sliderSettings}>
       {vehicleImages.map((image, index) => (
@@ -10,8 +20,12 @@ const CustomSlider = ({ vehicleImages, sliderSettings }) => {
           <img
             src={image.imagePath}
             alt={`Product ${index + 1}`}
-            style={{ width: "100%", height: "50vh", objectFit: "contain" }}
-            className="img-thumbnail"
+            style={{
+              width: "100%",
+              height: "50vh",
+              objectFit: "cover",
+              border: "1px solid #cbcbcb",
+            }}
           />
         </div>
       ))}

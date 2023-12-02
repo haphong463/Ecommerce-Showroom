@@ -32,8 +32,8 @@ export const Footer = () => {
         <Grid container spacing={2}>
           {/* Company Column */}
           <FooterColumn
-            title="Company"
-            content="AutoCar, a diverse automotive showroom exuding confidence and sophistication. We offer customers a perfect car shopping experience with a wide selection from leading global brands."
+            title="Introduction"
+            content="AutoCar, a diverse automotive showroom exuding confidence and sophistication."
           />
 
           {/* Contact Column */}

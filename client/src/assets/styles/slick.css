@@ -6,7 +6,7 @@
   }
   
  .slick-thumb img {
-  margin-right: 10px;
+  margin: 10px;
   filter: grayscale(100%);
   object-fit: contain;
 

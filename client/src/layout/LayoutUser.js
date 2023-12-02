@@ -9,6 +9,7 @@ export const LayoutUser = ({
   img,
   children,
   colorHeader,
+  imgDetail,
 }) => {
   return (
     <>
@@ -18,6 +19,7 @@ export const LayoutUser = ({
         labelImg={labelImg}
         img={img}
         colorHeader={colorHeader}
+        imgDetail={imgDetail}
       />
       {children}
       <Footer />

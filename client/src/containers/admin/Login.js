@@ -1,16 +1,18 @@
 import * as React from "react";
+import { useForm, Controller } from "react-hook-form"; // Import useForm and Controller
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
+import { Stack } from "@mui/material";
+import axios from "axios";
+import { DataContext } from "../../context/DataContext";
 
 function Copyright(props) {
   return (
@@ -33,13 +35,30 @@ function Copyright(props) {
 // TODO remove, this demo shouldn't need to reset the theme.
 
 export function Login() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
-    });
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm();
+  const { login } = React.useContext(DataContext);
+  const [generalError, setGeneralError] = React.useState("");
+  const onSubmit = async (data) => {
+    console.log(data);
+    try {
+      const res = await axios.post("http://localhost:5251/api/Auth", data);
+      if (res.status === 200) {
+        console.log(res.data);
+        let tokenString = res.data.token;
+        login(tokenString);
+      } else {
+        console.log("Login failed");
+      }
+    } catch (error) {
+      console.log(error);
+      setGeneralError(
+        "An error occurred during login. Please try again later."
+      );
+    }
   };
 
   return (
@@ -82,33 +101,60 @@ export function Login() {
           <Box
             component="form"
             noValidate
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)} // Use handleSubmit from react-hook-form
             sx={{ mt: 1 }}
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            {generalError && (
+              <Typography
+                variant="body2"
+                color="error"
+                align="center"
+                sx={{ m: 1 }}
+              >
+                {generalError}
+              </Typography>
+            )}
+
+            <Stack spacing={2}>
+              <Controller
+                name="email"
+                control={control}
+                defaultValue=""
+                rules={{ required: "Required", pattern: /^\S+@\S+$/i }}
+                render={({ field }) => (
+                  <TextField
+                    // ... other TextField props ...
+                    {...field}
+                    id="email"
+                    label="Email Address"
+                    autoComplete="email"
+                    autoFocus
+                    error={Boolean(errors.email)}
+                    helperText={errors.email?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="password"
+                control={control}
+                defaultValue=""
+                rules={{ required: "Required" }}
+                render={({ field }) => (
+                  <TextField
+                    // ... other TextField props ...
+                    {...field}
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    error={Boolean(errors.password)}
+                    helperText={errors.password?.message}
+                  />
+                )}
+              />
+            </Stack>
+            {/* ... other form fields ... */}
             <Button
               type="submit"
               fullWidth
@@ -117,19 +163,7 @@ export function Login() {
             >
               Sign In
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
-            <Copyright sx={{ mt: 5 }} />
+            {/* ... rest of the code ... */}
           </Box>
         </Box>
       </Grid>

@@ -1,128 +1,141 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
-  Container,
   Grid,
-  TextField,
-  Select,
-  MenuItem,
-  Paper,
   Typography,
   Stack,
+  Card,
+  CardContent,
+  CardMedia,
+  Button,
+  CardActions,
+  Dialog,
+  DialogContent,
 } from "@mui/material";
-import { Footer } from "../../components/user/Footer";
-import { Main } from "../../components/user/Main";
-import { DataContext } from "../../context/DataContext";
+import {
+  Settings as SettingsIcon,
+  LocalGasStation as LocalGasStationIcon,
+  Speed as SpeedIcon,
+} from "@mui/icons-material";
+import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
+
+import { VehicleContext } from "../../context/VehicleContext";
 import { getVehicles } from "../../components/Vehicle/VehicleLibrary";
 import { LayoutUser } from "../../layout/LayoutUser";
+import { Filter } from "../../components/user/Vehicles/Filter";
+import { useNavigate } from "react-router-dom";
 
 export function Vehicles() {
-  const { vehicleData, setVehicleData } = useContext(DataContext);
+  const { vehicleData, setVehicleData } = useContext(VehicleContext);
+  const navigate = useNavigate();
+  const [selectedImage, setSelectedImage] = useState(null);
+
   useEffect(() => {
     getVehicles().then((res) => {
-      if (res.data.length > 0) {
+      if (res.data && res.data.length > 0) {
         setVehicleData(res.data);
       }
     });
   }, []);
+  const openImageDialog = (imagePath) => {
+    setSelectedImage(imagePath);
+  };
+
+  const closeImageDialog = () => {
+    setSelectedImage(null);
+  };
   return (
     <LayoutUser
       title="Vehicles"
-      description="Discover elegance at AutoCar, where a diverse range of top-quality vehicles awaits. From stylish sedans to powerful SUVs, find your perfect companion for every journey. Step into our showroom and experience unmatched service, ensuring your satisfaction at every turn."
       img="https://images.unsplash.com/photo-1608369010965-2a946b0130f4?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
       labelImg="Vehicle Banner"
     >
-      <Box component="section" sx={{ mt: 10, height: "100vh" }}>
-        <Container maxWidth="xl">
-          <Grid container spacing={2}>
-            {/* Filter Section (Left Column) */}
-            <Grid item xs={12} md={2}>
-              <Paper elevation={3} sx={{ p: 2 }}>
-                <Typography
-                  variant="h6"
-                  sx={{
-                    fontWeight: "700",
-                    textAlign: "center",
-                    letterSpacing: 3,
-                    textTransform: "uppercase",
-                  }}
-                >
-                  Filter
-                </Typography>
-                <Stack spacing={2}>
-                  <TextField fullWidth label="Name" variant="outlined" />
-                  <TextField fullWidth label="Model ID" variant="outlined" />
-                  <TextField fullWidth label="Color" variant="outlined" />
-                  <TextField
-                    fullWidth
-                    label="Mileage"
-                    variant="outlined"
-                    type="number"
-                  />
-                  <TextField fullWidth label="Engine Type" variant="outlined" />
-                  <TextField
-                    fullWidth
-                    label="Transmission Type"
-                    variant="outlined"
-                  />
-                  <TextField fullWidth label="Fuel Type" variant="outlined" />
-                  <TextField
-                    fullWidth
-                    label="Number of Seats"
-                    variant="outlined"
-                    type="number"
-                  />
-                  <Select
-                    fullWidth
-                    label="Brand"
-                    defaultValue="1"
-                    variant="outlined"
-                  >
-                    <MenuItem value={"1"}>Brand 1</MenuItem>
-                    <MenuItem value={"2"}>Brand 2</MenuItem>
-                    {/* Add more brands as needed */}
-                  </Select>
-                </Stack>
-                {/* Add components for other filter fields (e.g., checkboxes, radio buttons) */}
-              </Paper>
-            </Grid>
-
-            {/* Vehicle List Section (Right Column) */}
-            <Grid item xs={12} md={8}>
-              <Grid container spacing={2}>
-                {vehicleData.map((vehicle) => {
-                  return (
-                    <Grid item xs={12} sm={6} md={4} key={vehicle.vehicleID}>
-                      <Paper elevation={3} sx={{ p: 2, textAlign: "center" }}>
-                        {vehicle.images && vehicle.images.length > 0 && (
-                          <img
-                            src={vehicle.images[0].imagePath}
-                            alt={vehicle.name}
-                            style={{
-                              width: "100%",
-                              height: "20vh",
-                              objectFit: "contain",
-                            }}
-                          />
-                        )}
-                        <Typography variant="h6" sx={{ mt: 2 }}>
-                          {vehicle.name}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{ color: "text.secondary" }}
+      <Box component="section" sx={{ m: 10 }}>
+        {/* <Container maxWidth="xl"> */}
+        <Grid container spacing={2}>
+          <Filter />
+          <Grid item xs={12} md={8}>
+            <Grid container spacing={2}>
+              {vehicleData.map((vehicle) => {
+                return (
+                  <Grid item xs={12} sm={6} md={4} key={vehicle.vehicleID}>
+                    <Card elevation={3}>
+                      {vehicle.images && vehicle.images.length > 0 && (
+                        <CardMedia
+                          component="img"
+                          src={vehicle.images[0].imagePath}
+                          alt={vehicle.name}
+                          style={{
+                            width: "100%",
+                            height: "200px", // Thay đổi kích thước theo ý muốn
+                            objectFit: "contain", // Sử dụng cover để bóp hình
+                          }}
+                          onClick={() =>
+                            openImageDialog(vehicle.images[0].imagePath)
+                          }
+                        />
+                      )}
+                      <CardContent>
+                        <Stack>
+                          <Typography variant="body2" color="error">
+                            ${vehicle.price}
+                          </Typography>
+                          <Typography variant="h6" sx={{ mt: 0 }}>
+                            {vehicle.name}
+                          </Typography>
+                        </Stack>
+                        <Stack sx={{ mt: 1 }} direction="row" spacing={2}>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "text.secondary" }}
+                          >
+                            <SpeedIcon /> {vehicle.mileage}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "text.secondary" }}
+                          >
+                            <SettingsIcon />
+                            {vehicle.transmissionType}
+                          </Typography>
+                          <Typography
+                            variant="body2"
+                            sx={{ color: "text.secondary" }}
+                          >
+                            <LocalGasStationIcon /> {vehicle.fuelType}
+                          </Typography>
+                        </Stack>
+                      </CardContent>
+                      <CardActions>
+                        <Button
+                          startIcon={<RemoveRedEyeIcon />}
+                          varirant="contained"
+                          fullWidth
+                          onClick={() =>
+                            navigate(`/vehicle/${vehicle.vehicleID}`)
+                          }
                         >
-                          Price: ${vehicle.price}
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                  );
-                })}
-              </Grid>
+                          View
+                        </Button>
+                      </CardActions>
+                    </Card>
+                  </Grid>
+                );
+              })}
             </Grid>
           </Grid>
-        </Container>
+        </Grid>
+        {/* </Container> */}
       </Box>
+      <Dialog open={selectedImage !== null} onClose={closeImageDialog}>
+        <DialogContent sx={{ padding: 0 }}>
+          <img
+            src={selectedImage}
+            alt="Full Size"
+            style={{ width: "100%", height: "auto" }}
+          />
+        </DialogContent>
+      </Dialog>
     </LayoutUser>
   );
 }

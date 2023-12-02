@@ -17,6 +17,7 @@ import {
   Switch,
   FormControlLabel,
   Typography,
+  InputAdornment,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
@@ -27,17 +28,17 @@ import {
 } from "./VehicleLibrary";
 import { FastField, Form, Formik } from "formik";
 import { useState } from "react";
-import { DataContext } from "../../context/DataContext";
+import { VehicleContext } from "../../context/VehicleContext";
 import { successToast } from "../Message";
 import { getBrandList } from "../Brand/BrandLibrary";
 const VehicleForm = ({ open, onSetOpen, handleClose, refreshVehicleData }) => {
   const [isUsed, setIsUsed] = useState(false);
-  const { entry, setVehicle, setVehicleData } = useContext(DataContext);
+  const { entry, setVehicle, setVehicleData } = useContext(VehicleContext);
   const [brand, setBrand] = useState([]);
   const validationSchema = generateValidationSchema(entry);
   const initialValues = {
     name: entry ? entry.name : "",
-    price: entry ? entry.price : 0,
+    price: entry ? entry.price : "",
     brandId: entry ? entry.brand?.brandId : "",
     manufacturingYear: entry ? entry.manufacturingYear : "",
     registrationNumber: entry ? entry.registrationNumber : "",
@@ -279,6 +280,17 @@ const VehicleForm = ({ open, onSetOpen, handleClose, refreshVehicleData }) => {
                                 onBlur={onBlur}
                                 type={field.type}
                                 value={value}
+                                InputProps={
+                                  field.name === "price"
+                                    ? {
+                                        startAdornment: (
+                                          <InputAdornment position="start">
+                                            $
+                                          </InputAdornment>
+                                        ),
+                                      }
+                                    : undefined
+                                }
                               />
                             </>
                           )}

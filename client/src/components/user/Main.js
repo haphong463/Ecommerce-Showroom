@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Header from "../../components/user/Header";
+import { VehicleContext } from "../../context/VehicleContext";
 const images = [
   {
     imgPath:
@@ -9,11 +10,17 @@ const images = [
   },
   // Add more images as needed
 ];
-export function Main({ title, description, labelImg, img, colorHeader }) {
+export function Main({
+  title,
+  description,
+  labelImg,
+  img,
+  colorHeader,
+  imgDetail,
+}) {
   const [state, setState] = useState({
     left: false,
   });
-
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleImageLoad = () => {
@@ -22,23 +29,49 @@ export function Main({ title, description, labelImg, img, colorHeader }) {
 
   return (
     <Box sx={{ maxWidth: "100%", flexGrow: 1, position: "relative" }}>
-      {img && (
+      {(img && (
         <Box
           component="img"
           sx={{
-            height: "100vh",
+            height: {
+              xs: "40vh", // Đối với breakpoint xs, sử dụng chiều cao tự động
+              md: "50vh", // Đối với breakpoint md, sử dụng chiều cao là 300px
+              lg: "70vh", // Đối với breakpoint lg, sử dụng chiều cao là 400px
+              xl: "90vh", // Đối với breakpoint xl, sử dụng chiều cao là 500px
+            },
             display: "block",
             maxWidth: "100%",
             overflow: "hidden",
             width: "100%",
             position: "relative",
             filter: "brightness(50%)",
+            objectFit: "cover",
           }}
           src={img}
           alt={labelImg}
           onLoad={handleImageLoad}
         />
-      )}
+      )) ||
+        (imgDetail && (
+          <Box
+            component="img"
+            sx={{
+              display: "block",
+              maxWidth: "100%",
+              height: "auto",
+              overflow: "hidden",
+              width: "100%",
+              position: "relative",
+              filter: "brightness(50%)",
+              objectFit: "cover",
+              transform: imageLoaded ? "scale(1.1)" : "scale(1)",
+              transition: "transform 0.5s ease-in-out",
+            }}
+            src={imgDetail.images[0].imagePath}
+            alt={labelImg}
+            onLoad={handleImageLoad}
+          />
+        ))}
       {imageLoaded && (
         <Box
           sx={{

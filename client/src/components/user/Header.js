@@ -9,21 +9,22 @@ const Header = ({ title, state, setState, colorHeader }) => {
       sx={{
         width: "100%",
         position: "absolute",
-        top: 10,
-        color: "#fff",
-        padding: 1,
+        top: 0,
+        color: "#333",
+        padding: 3,
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
+        background: "#fff",
+        boxShadow: "0 2px 3px rgba(28, 28, 28, 0.1)",
       }}
     >
       <Typography
         variant="h6"
         sx={{
           ml: 3,
-          letterSpacing: 3,
-          fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
-          color: colorHeader ? "#333" : "#fff",
+          fontSize: { xs: "1.2rem", sm: "1.2rem", md: "1.5rem" },
+          fontWeight: "800",
         }}
       >
         {title}

@@ -145,7 +145,7 @@ export function Sidebar() {
           <Box>
             <List>
               <Divider sx={{ borderTop: "1px solid #2f2f2f" }} />
-
+                  
               {routes.map(
                 (route, index) =>
                   route.position === "bot" && (
