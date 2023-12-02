@@ -1,0 +1,32 @@
+/* DetailPage.css */
+.slick-dots {
+    position: relative;
+    top: 15px; /* Di chuyển dots xuống dưới */
+    
+  }
+  
+ .slick-thumb img {
+  margin-right: 10px;
+  filter: grayscale(100%);
+  object-fit: contain;
+
+}
+
+.slick-thumb img.active {
+  filter: grayscale(0%);
+}
+
+.slick-slider .slick-dots .dot img {
+  filter: grayscale(100%);
+  
+}
+
+.slick-slider .slick-dots .dot.slick-active img {
+  filter: grayscale(0%);
+}
+  .slick-dots li{
+    width: 100px;
+    height: 0;
+  }
+ 
+  

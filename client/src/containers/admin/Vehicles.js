@@ -1,19 +1,22 @@
-import { Box, Fab, Paper } from "@mui/material";
-import React from "react";
+import { Box, CircularProgress, Fab, Paper } from "@mui/material";
+import React, { useContext } from "react";
 import { Sidebar } from "../../components/admin/Sidebar";
 import Navbar from "../../components/admin/Navbar";
 import AddIcon from "@mui/icons-material/Add";
-import VehicleForm from "../../components/admin/Vehicle/VehicleForm";
-import { VehicleList } from "../../components/admin/Vehicle/VehicleList";
+import VehicleForm from "../../components/Vehicle/VehicleForm";
+import { VehicleList } from "../../components/Vehicle/VehicleList";
+import { DataContext } from "../../context/DataContext";
 
 export const Vehicles = () => {
   const [open, setOpen] = React.useState(false);
-
+  const { setEntry } = useContext(DataContext);
+  const {loading} = useContext(DataContext);
   const handleClickOpen = () => {
     setOpen(true);
   };
 
   const handleClose = () => {
+    setEntry();
     setOpen(false);
   };
   return (
@@ -29,12 +32,15 @@ export const Vehicles = () => {
             handleClose={handleClose}
           />
         </Box>
-        <Paper
-          sx={{
-            width: "100%",
-            p: 3,
-          }}
-        >
+        <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
+          {loading && (
+            <CircularProgress
+              sx={{
+                position: "absolute",
+                left: "50%",
+              }}
+            />
+          )}
           <Fab
             color="primary"
             size="medium"

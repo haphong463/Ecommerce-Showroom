@@ -1,9 +1,11 @@
+// eslint-disable-next-line
+import React, { useState, useEffect } from "react";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import "./assets/styles/Body.css";
-import { ThemeProvider, createTheme } from "@mui/material";
+import { CircularProgress, ThemeProvider, createTheme } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { publicRoutes } from "./route/Route";
+import { privateRoutes, publicRoutes } from "./route/Route";
 import { ToastContainer } from "react-toastify";
 
 const theme = createTheme({
@@ -15,31 +17,8 @@ const theme = createTheme({
     },
   },
 });
+
 function App() {
-  // const [loading, setLoading] = useState(true);
-
-  // useEffect(() => {
-  //   // Simulate an API call or any asynchronous operation
-  //   const fetchData = async () => {
-  //     try {
-  //       // Perform your data fetching logic here
-  //       // For example, you can use fetch or axios
-  //       // await fetch('https://api.example.com/data');
-  //       // Or any other async operation
-
-  //       // Simulate a delay
-  //       await new Promise((resolve) => setTimeout(resolve, 2000));
-
-  //       // Set loading to false when the data is fetched
-  //       setLoading(false);
-  //     } catch (error) {
-  //       console.error("Error fetching data:", error);
-  //       setLoading(false);
-  //     }
-  //   };
-
-  //   fetchData();
-  // }, []);
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div
@@ -54,9 +33,15 @@ function App() {
               {publicRoutes.map((route) => (
                 <Route
                   key={route.path}
-                  element={route.component}
-                  exact
                   path={route.path}
+                  element={route.component}
+                />
+              ))}
+              {privateRoutes.map((route) => (
+                <Route
+                  key={route.path}
+                  path={route.path}
+                  element={route.component}
                 />
               ))}
             </Routes>

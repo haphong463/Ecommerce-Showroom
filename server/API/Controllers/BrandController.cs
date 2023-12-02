@@ -15,15 +15,17 @@ namespace API.Controllers
     {
         public readonly DatabaseContext _dbContext;
         private readonly IMapper _mapper;
-        public BrandController (DatabaseContext dbContext, IMapper mapper)
+        private readonly IWebHostEnvironment _env;
+        public BrandController(DatabaseContext dbContext, IMapper mapper, IWebHostEnvironment env)
         {
             _dbContext = dbContext;
             _mapper = mapper;
+            _env = env;
         }
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<BrandDTO>>>> GetBrands()
         {
-            var brands = await _dbContext.Brands.ToListAsync();
+            var brands = await _dbContext.Brands.Include(x=>x.Vehicles).ToListAsync();
             var brandDtos = _mapper.Map<List<BrandDTO>>(brands);
             return Ok(new ApiResponse<IEnumerable<BrandDTO>>(brandDtos, "Get all brands successfully"));
         }
@@ -31,7 +33,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<BrandDTO>>> GetBrandById(int id)
         {
-            var brand = await _dbContext.Brands.FindAsync(id);
+            var brand = await _dbContext.Brands.Include(x => x.Vehicles).SingleOrDefaultAsync(x=>x.BrandId == id);
 
             if (brand == null)
             {
@@ -72,7 +74,7 @@ namespace API.Controllers
                     return ApiResponse<BrandDTO>.BadRequest(ModelState);
                 }
 
-                var brand = await _dbContext.Brands.FindAsync(id);
+                var brand = await _dbContext.Brands.Include(x => x.Vehicles).SingleOrDefaultAsync(x => x.BrandId == id);
                 if (brand != null)
                 {
                     if (file != null)
@@ -80,7 +82,7 @@ namespace API.Controllers
                         if (brand.ImagePath != null)
                         {
                             // Xoá hình ảnh
-                            FileUpload.DeleteImage(brand.ImagePath);
+                            FileUpload.DeleteImage(brand.ImagePath, _env);
                         }
                         brand.ImagePath = FileUpload.SaveImage("BrandImage", file);
                     }
@@ -107,7 +109,7 @@ namespace API.Controllers
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBrand(int id)
         {
-            var brand = await _dbContext.Brands.FindAsync(id);
+            var brand = await _dbContext.Brands.Include(x => x.Vehicles).SingleOrDefaultAsync(x => x.BrandId == id);
             if (brand == null)
             {
                 return NotFound(new ApiResponse<BrandDTO>(null, "Not found!", 404));
@@ -116,7 +118,7 @@ namespace API.Controllers
             if (brand.ImagePath != null)
             {
                 // Xoá hình ảnh
-                FileUpload.DeleteImage(brand.ImagePath);
+                FileUpload.DeleteImage(brand.ImagePath, _env);
             }
 
             _dbContext.Brands.Remove(brand);

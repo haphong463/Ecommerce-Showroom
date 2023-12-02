@@ -1,18 +1,16 @@
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import Navbar from "../../components/admin/Navbar";
-import { Box } from "@mui/material";
+import { Box, CircularProgress, Fab, Paper } from "@mui/material";
 import { Sidebar } from "../../components/admin/Sidebar";
-import BrandForm from "../../components/admin/Brand/BrandForm";
-import { BrandList } from "../../components/admin/Brand/BrandList";
+import BrandForm from "../../components/Brand/BrandForm";
+import { BrandList } from "../../components/Brand/BrandList";
+import { BrandContext } from "../../context/BrandContext";
+import AddIcon from "@mui/icons-material/Add";
+import { DataContext } from "../../context/DataContext";
 
 export const Brand = () => {
-  const [openBrandForm, setOpenBrandForm] = useState(false);
-  const handleClickOpen = () => {
-    setOpenBrandForm(true);
-  };
-  const onClose = () => {
-    setOpenBrandForm(false);
-  };
+  const { onClose, handleClickOpen, openBrandForm } = useContext(BrandContext);
+  const { loading } = useContext(DataContext);
   return (
     <>
       <Navbar />
@@ -20,13 +18,31 @@ export const Brand = () => {
       <Box sx={{ display: "flex" }}>
         <Sidebar />
         <Box component="main" sx={{ flexGrow: 1 }}>
-          <BrandForm
-            open={openBrandForm}
-            onSetOpen={handleClickOpen}
-            handleClose={onClose}
-          />
+          <BrandForm open={openBrandForm} handleClose={onClose} />
         </Box>
-        <BrandList handleClickOpen={handleClickOpen} />
+        <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
+          {loading && (
+            <CircularProgress
+              sx={{
+                position: "absolute",
+                left: "50%",
+              }}
+            />
+          )}
+
+          <Fab
+            color="primary"
+            size="medium"
+            aria-label="add"
+            onClick={handleClickOpen}
+            sx={{
+              m: "10px",
+            }}
+          >
+            <AddIcon />
+          </Fab>
+          <BrandList />
+        </Paper>
       </Box>
     </>
   );

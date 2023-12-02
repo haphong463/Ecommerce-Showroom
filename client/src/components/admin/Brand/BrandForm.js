@@ -1,137 +1,119 @@
+// BrandForm.jsx
 import React, { useContext, useEffect, useState } from "react";
-import CloudUploadIcon from "@mui/icons-material/CloudUpload";
+import { Form, Formik } from "formik";
 import {
-  Grid,
-  TextField,
   Button,
   Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
-  Avatar,
 } from "@mui/material";
-import { useFormik } from "formik";
-import { initialValues, postBrand, validationSchema } from "./BrandLibrary";
-import { BrandContext } from "../../../context/BrandContext";
-const BrandForm = ({ open, onSetOpen, handleClose }) => {
-  const { setData } = useContext(BrandContext);
-  const formik = useFormik({
-    initialValues: initialValues,
-    validationSchema: validationSchema,
-    onSubmit: (values) => {
-      const formData = new FormData();
-      formData.append("name", values.name);
-      formData.append("description", values.description);
-      formData.append("file", values.image);
+
+import { BrandContext } from "../../context/BrandContext";
+import {
+  generateValidationSchemaBrand,
+  postBrand,
+  putBrand,
+} from "../../Brand/BrandLibrary";
+import { BrandFormFields } from "./BrandFormField";
+import { successToast } from "../../Message";
+
+const BrandForm = () => {
+  const { onClose, setData, openBrandForm, brand, setBrand } =
+    useContext(BrandContext);
+  const initialValues = {
+    name: brand?.name ?? "",
+    description: brand?.description ?? "",
+    image: null,
+  };
+  const validationSchema = generateValidationSchemaBrand(brand);
+  const submitAPI = (brand, values) => {
+    const formData = new FormData();
+    formData.append("name", values.name);
+    formData.append("description", values.description);
+    formData.append("file", values.image);
+    if (!brand) {
       postBrand(formData).then((res) => {
-        if (res.data !== null) {
+        if (res.data) {
           setData((prev) => [...prev, res.data]);
+          setPreview();
+          onClose();
+          successToast("Create a new brand successfully!");
         }
-        handleClose();
       });
-    },
-  });
+    } else {
+      putBrand(formData, brand.brandId).then((res) => {
+        if (res.data) {
+          setData((prev) =>
+            prev.map((item) =>
+              item.brandId === res.data.brandId ? res.data : item
+            )
+          );
+          setPreview();
+          onClose();
+          successToast("Update a brand successfully!");
+        }
+      });
+    }
+  };
+  // preview
   const [preview, setPreview] = useState();
+  const [selectedFile, setSelectedFile] = useState();
   useEffect(() => {
-    const file = formik.values.image;
+    const file = selectedFile;
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setPreview(objectUrl);
       return () => URL.revokeObjectURL(objectUrl);
     }
-  }, [formik.values.image]);
+  }, [selectedFile]);
+  // end preview
   return (
-    <Dialog open={open} onClose={handleClose} maxWidth="100%">
+    <Dialog open={openBrandForm} onClose={onClose} maxWidth="100%">
       <DialogTitle
         variant="h3"
         color="text.secondary"
         align="center"
         letterSpacing={10}
       >
-        NEW BRAND
+        {!brand ? "NEW BRAND" : "EDIT BRAND"}
       </DialogTitle>
       <DialogContent>
-        <form onSubmit={formik.handleSubmit} style={{ marginTop: "10px" }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="name"
-                name="name"
-                label="Name*"
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                helperText={formik.touched.name && formik.errors.name}
-                error={formik.touched.name && !!formik.errors.name}
-              />
-            </Grid>
-            <Grid item xs={12}>
-              <TextField
-                fullWidth
-                id="description"
-                name="description"
-                label="Desctipion*"
-                multiline
-                onChange={formik.handleChange}
-                onBlur={formik.handleBlur}
-                helperText={
-                  formik.touched.description && formik.errors.description
-                }
-                error={
-                  formik.touched.description && !!formik.errors.description
-                }
-              />
-            </Grid>
-
-            <Grid item xs={12}>
-              <label
-                htmlFor="image"
-                style={{ display: "flex", alignItems: "center" }}
-              >
-                <input
-                  type="file"
-                  id="image"
-                  name="image"
-                  accept="image/*"
-                  onChange={(event) => {
-                    formik.setFieldValue("image", event.currentTarget.files[0]);
-                  }}
-                  style={{ display: "none" }}
-                />
-                <Button
-                  variant="contained"
-                  component="span"
-                  startIcon={<CloudUploadIcon />}
-                  sx={{ width: "100%" }}
-                >
-                  Upload Image
-                </Button>
-              </label>
-            </Grid>
-            <Grid item xs={12}>
-              {preview && (
-                <Avatar
-                  alt="Image Preview"
-                  src={preview}
-                  sx={{ width: 100, height: 100 }}
-                />
-              )}
-            </Grid>
-          </Grid>
-          <DialogActions>
-            <Button
-              type="submit"
-              variant="contained"
-              color="info"
-              // onClick={handleSubmit}
+        <Formik
+          initialValues={initialValues}
+          validationSchema={validationSchema}
+          onSubmit={(values, formikBag) => {
+            submitAPI(brand, values);
+          }}
+        >
+          {(formikProps) => (
+            <Form
+              onSubmit={formikProps.handleSubmit}
+              style={{ marginTop: "10px" }}
             >
-              Submit
-            </Button>
-            <Button variant="contained" color="error" onClick={handleClose}>
-              Cancel
-            </Button>
-          </DialogActions>
-        </form>
+              <BrandFormFields
+                formikProps={formikProps}
+                preview={preview}
+                setSelectedFile={setSelectedFile}
+              />
+              <DialogActions>
+                <Button
+                  type="submit"
+                  variant="contained"
+                  color="info"
+                  disabled={
+                    brand && (formikProps.isSubmitting || !formikProps.dirty)
+                  }
+                >
+                  {brand ? "Save" : "Create"}
+                </Button>
+                <Button variant="contained" color="error" onClick={onClose}>
+                  Cancel
+                </Button>
+              </DialogActions>
+            </Form>
+          )}
+        </Formik>
       </DialogContent>
     </Dialog>
   );

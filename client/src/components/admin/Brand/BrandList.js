@@ -1,5 +1,4 @@
 import { useState, useEffect, useContext } from "react";
-import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -7,63 +6,83 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import AddIcon from "@mui/icons-material/Add";
-import { Fab, IconButton, Stack } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getBrandList } from "./BrandLibrary";
-import { BrandContext } from "../../../context/BrandContext";
-const columns = [
-  { id: "image", label: "", minWidth: 170 },
-  { id: "name", label: "Name", minWidth: 100 },
-  {
-    id: "description",
-    label: "Description",
-    minWidth: 170,
-    align: "right",
-    format: (value) => value.toLocaleString("en-US"),
-  },
-  {
-    id: "actions",
-    label: "Actions",
-    minWidth: 170,
-    align: "right",
-  },
-];
+import { columns, deleteBrand, getBrandList } from "../../Brand/BrandLibrary";
+import { BrandContext } from "../../context/BrandContext";
+import { dangerMessage } from "../../Message";
+import Swal from "sweetalert2";
+import { DataContext } from "../../context/DataContext";
 
-export function BrandList({ handleClickOpen }) {
-  const { data, setData } = useContext(BrandContext);
+export const BrandList = () => {
+  const { data, setData, setBrand, handleClickOpen } = useContext(BrandContext);
+  const { setLoading } = useContext(DataContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handleDelete = (id) => {
+    const brand = data.find((item) => item.brandId === id);
 
+    if (brand && brand.vehicles.length > 0) {
+      // Check if the specific brand has associated vehicles
+      Swal.fire({
+        title: "Cannot delete!",
+        text: "This brand has associated vehicles. Please delete the vehicles first.",
+        icon: "error",
+      });
+    } else {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You will not be able to recover this brand!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked 'Yes, delete it!'
+          deleteBrand(id).then((res) => {
+            if (res.data !== null) {
+              setData((prev) =>
+                prev.filter((item) => item.brandId !== res.data.brandId)
+              );
+              dangerMessage("Delete a brand successfully!");
+            }
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // User clicked 'No, cancel!'
+          Swal.fire("Cancelled", "Your brand is safe :)", "info");
+        }
+      });
+    }
+  };
+
+  const handleEdit = (id) => {
+    const brand = data.find((item) => item.brandId === id);
+    if (brand !== null) {
+      setBrand(brand);
+      handleClickOpen();
+    }
+  };
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
-
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-
   useEffect(() => {
+    setLoading(true);
     getBrandList().then((res) => {
-      setData(res.data);
+      if (res.data !== null) {
+        setData(res.data);
+        setLoading(false);
+      }
     });
-  }, [setData]);
+  }, []);
   return (
-    <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
-      <Fab
-        color="primary"
-        size="medium"
-        aria-label="add"
-        onClick={handleClickOpen}
-        sx={{
-          m: "10px",
-        }}
-      >
-        <AddIcon />
-      </Fab>
-      <TableContainer sx={{ maxHeight: 440 }}>
+    <>
+      <TableContainer sx={{ height: "70vh" }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -105,21 +124,26 @@ export function BrandList({ handleClickOpen }) {
                             >
                               <IconButton
                                 aria-label="edit"
-                                onClick={() => console.log(row.name)}
+                                onClick={() => handleEdit(row.brandId)}
                               >
                                 <EditIcon />
                               </IconButton>
                               <IconButton
                                 aria-label="delete"
+<<<<<<< HEAD
                                 onClick={() => console.log(row.code)}
+=======
+                                onClick={() => handleDelete(row.brandId)}
+>>>>>>> 5cb02bfc7ade88e123350a84110e56aa6c36e291
                               >
                                 <DeleteIcon />
                               </IconButton>
                             </Stack>
                           ) : column.id === "image" ? (
                             <img
-                              alt={`${row.name}-image`}
+                              alt={`${row.name}`}
                               src={row.imagePath}
+                              width={100}
                             />
                           ) : column.format && typeof value === "number" ? (
                             column.format(value)
@@ -144,6 +168,6 @@ export function BrandList({ handleClickOpen }) {
         onPageChange={handleChangePage}
         onRowsPerPageChange={handleChangeRowsPerPage}
       />
-    </Paper>
+    </>
   );
-}
+};
