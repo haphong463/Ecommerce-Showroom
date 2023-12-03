@@ -14,8 +14,10 @@ import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import { ListItemIcon } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { AppBar, ListItemIcon, Toolbar } from "@mui/material";
+import { NavLink, useNavigate } from "react-router-dom";
+import { useMediaQuery } from "@mui/material";
+
 const routes = [
   {
     route: "/",
@@ -35,7 +37,6 @@ const routes = [
     position: "top",
     icon: <InfoIcon />,
   },
-
   {
     route: "/signup",
     primary: "Sign Up",
@@ -55,9 +56,25 @@ const routes = [
     position: "bot",
   },
 ];
-export function SideBar({ onSetState, state, colorHeader }) {
-  const navigate = useNavigate();
 
+export function SideBar({ onSetState, state }) {
+  const navigate = useNavigate();
+  const isDesktop = useMediaQuery("(min-width:600px)");
+  const renderNavItems = (position) => {
+    return routes
+      .filter((route) => route.position === position)
+      .map((route) => (
+        <Button
+          key={route.primary}
+          component={NavLink}
+          to={route.route}
+          color="inherit"
+          sx={{ marginRight: 2, fontWeight: 700 }}
+        >
+          {route.primary}
+        </Button>
+      ));
+  };
   const toggleDrawer = (anchor, open) => (event) => {
     if (
       event &&
@@ -70,6 +87,27 @@ export function SideBar({ onSetState, state, colorHeader }) {
     onSetState({ ...state, [anchor]: open });
   };
 
+  if (isDesktop) {
+    // Render app bar for desktop
+    return (
+      <AppBar
+        position="static"
+        sx={{
+          boxShadow: "none",
+          backgroundColor: "#ffffff",
+          color: "#333",
+        }}
+      >
+        <Toolbar>
+          {renderNavItems("top")}
+          <Box sx={{ flexGrow: 1 }} />
+          {renderNavItems("bot")}
+        </Toolbar>
+      </AppBar>
+    );
+  }
+
+  // Render SwipeableDrawer for mobile
   return (
     <React.Fragment>
       <Button

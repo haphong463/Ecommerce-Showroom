@@ -18,6 +18,14 @@ import { DatePicker } from "@mui/x-date-pickers";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import dayjs from "dayjs";
 import { NavLink, useNavigate } from "react-router-dom";
+import {
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import axios from "axios";
 const schema = yup.object().shape({
   name: yup.string().required("First name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -53,12 +61,34 @@ export function SignUp() {
 
   const onSubmit = (data) => {
     const newDate = dayjs(new Date(data.dateOfBirth)).format("YYYY-MM-DD");
-    console.log(data, newDate);
+    const currentDate = dayjs().format("YYYY-MM-DD");
+    console.log(data);
+    const formData = new FormData();
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    formData.append("dateOfBirth", newDate);
+    formData.append("file", data.profileImage);
+    formData.append("name", data.name);
+    formData.append("gender", data.gender);
+    formData.append("phone", data.phone);
+
+    try {
+      const res = axios.post("http://localhost:5251/api/Account", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (res.status === 200) {
+        console.log("Created ok");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-
+    setValue("profileImage", file);
     if (file) {
       const reader = new FileReader();
 
@@ -104,7 +134,7 @@ export function SignUp() {
               src={avatarImage} // Set the source of the Avatar
             ></Avatar>
             <Typography component="h1" variant="h5">
-              Sign up
+              Create account
             </Typography>
             <Box
               component="form"
@@ -114,7 +144,12 @@ export function SignUp() {
             >
               <Grid container spacing={2}>
                 {formFields.map(({ label, name }, index) => (
-                  <Grid item xs={12} sm={6} key={index}>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={name === "profileImage" ? 12 : 6}
+                    key={index}
+                  >
                     {name === "profileImage" ? (
                       <div>
                         <label
@@ -143,13 +178,36 @@ export function SignUp() {
                       </div>
                     ) : name === "dateOfBirth" ? (
                       <DatePicker
+                        label="Date of Birth"
+                        defaultValue={dayjs()}
                         sx={{
                           width: "100%",
                         }}
+                        {...register(name)}
                         onChange={(e) => {
                           setValue(name, e);
                         }}
                       />
+                    ) : name === "gender" ? (
+                      <FormControl fullWidth>
+                        <InputLabel htmlFor="select-gender" shrink>
+                          Gender
+                        </InputLabel>
+                        <Select
+                          {...register(name)}
+                          defaultValue="Male"
+                          fullWidth
+                          label="Gender"
+                          inputProps={{
+                            name: name,
+                            id: "select-gender",
+                          }}
+                        >
+                          <MenuItem value="Male">Male</MenuItem>
+                          <MenuItem value="Female">Female</MenuItem>
+                          <MenuItem value="Other">Other</MenuItem>
+                        </Select>
+                      </FormControl>
                     ) : (
                       <TextField
                         {...register(name)}

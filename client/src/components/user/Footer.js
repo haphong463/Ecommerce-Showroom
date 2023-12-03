@@ -26,7 +26,12 @@ export const Footer = () => {
   return (
     <Box
       component="footer"
-      sx={{ backgroundColor: "#333", color: "#fff", padding: 10 }}
+      sx={{
+        backgroundColor: "#333",
+        color: "#fff",
+        padding: 10,
+        mt: "auto", // This ensures the footer is pushed to the bottom
+      }}
     >
       <Container>
         <Grid container spacing={2}>

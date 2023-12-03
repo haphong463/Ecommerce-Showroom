@@ -14,6 +14,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { privateRoutes, publicRoutes } from "./route/Route";
 import { ToastContainer } from "react-toastify";
 import { DataContext } from "./context/DataContext";
+import axios from "axios";
+axios.defaults.baseURL = "http://localhost:3050/api/";
 
 const theme = createTheme({
   typography: {

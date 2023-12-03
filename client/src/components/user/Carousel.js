@@ -69,7 +69,7 @@ export const Carousel = ({ images, state, setState }) => {
                   <Box
                     sx={{
                       position: "absolute",
-                      top: "50%",
+                      top: ["60%", "60%", "60%", "50%"],
                       left: "50%",
                       transform: "translate(-50%, -50%)",
                       color: "#fff",

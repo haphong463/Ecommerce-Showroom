@@ -1,5 +1,7 @@
 import * as React from "react";
-import { useForm, Controller } from "react-hook-form"; // Import useForm and Controller
+import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup"; // Import yupResolver
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
@@ -14,34 +16,26 @@ import { Stack } from "@mui/material";
 import axios from "axios";
 import { DataContext } from "../../context/DataContext";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
+const validationSchema = yup.object({
+  email: yup
+    .string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: yup.string().required("Password is required"),
+});
 
 export function Login() {
   const {
     handleSubmit,
     control,
     formState: { errors },
-  } = useForm();
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
   const { login } = React.useContext(DataContext);
   const [generalError, setGeneralError] = React.useState("");
+
   const onSubmit = async (data) => {
     console.log(data);
     try {
@@ -101,7 +95,7 @@ export function Login() {
           <Box
             component="form"
             noValidate
-            onSubmit={handleSubmit(onSubmit)} // Use handleSubmit from react-hook-form
+            onSubmit={handleSubmit(onSubmit)}
             sx={{ mt: 1 }}
           >
             {generalError && (
@@ -115,20 +109,19 @@ export function Login() {
               </Typography>
             )}
 
-            <Stack spacing={2}>
+            <Box>
               <Controller
                 name="email"
                 control={control}
                 defaultValue=""
-                rules={{ required: "Required", pattern: /^\S+@\S+$/i }}
                 render={({ field }) => (
                   <TextField
-                    // ... other TextField props ...
                     {...field}
                     id="email"
                     label="Email Address"
                     autoComplete="email"
                     autoFocus
+                    fullWidth
                     error={Boolean(errors.email)}
                     helperText={errors.email?.message}
                   />
@@ -138,10 +131,9 @@ export function Login() {
                 name="password"
                 control={control}
                 defaultValue=""
-                rules={{ required: "Required" }}
                 render={({ field }) => (
                   <TextField
-                    // ... other TextField props ...
+                    sx={{ mt: 3 }}
                     {...field}
                     name="password"
                     label="Password"
@@ -150,11 +142,12 @@ export function Login() {
                     autoComplete="current-password"
                     error={Boolean(errors.password)}
                     helperText={errors.password?.message}
+                    fullWidth
                   />
                 )}
               />
-            </Stack>
-            {/* ... other form fields ... */}
+            </Box>
+
             <Button
               type="submit"
               fullWidth
@@ -163,7 +156,11 @@ export function Login() {
             >
               Sign In
             </Button>
-            {/* ... rest of the code ... */}
+            <Box mt={2}>
+              <Link href="#" variant="body2">
+                Forgot password?
+              </Link>
+            </Box>
           </Box>
         </Box>
       </Grid>

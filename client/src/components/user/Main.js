@@ -1,26 +1,31 @@
-import React, { useContext, useState } from "react";
+import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Header from "../../components/user/Header";
-import { VehicleContext } from "../../context/VehicleContext";
+import { Carousel } from "./Carousel";
 const images = [
   {
+    label: "San Francisco – Oakland Bay Bridge, United States 1",
     imgPath:
-      "https://source.unsplash.com/random?wallpapers?auto=format&fit=crop&w=400&h=250&q=60",
+      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1920&h=940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
   },
-  // Add more images as needed
+  {
+    label: "San Francisco – Oakland Bay Bridge, United States 2",
+    imgPath:
+      "https://images.unsplash.com/photo-1533473359331-0135ef1b58bf?q=80&w=1920&h=940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
+  {
+    label: "San Francisco – Oakland Bay Bridge, United States 3",
+    imgPath:
+      "https://images.unsplash.com/photo-1568605117036-5fe5e7bab0b7?q=80&w=1920&h=940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+  },
 ];
-export function Main({
-  title,
-  description,
-  labelImg,
-  img,
-  colorHeader,
-  imgDetail,
-}) {
+export function Main({ title, description, labelImg, img, home }) {
   const [state, setState] = useState({
     left: false,
+    imagesLoaded: Array(images.length).fill(false),
   });
+
   const [imageLoaded, setImageLoaded] = useState(false);
 
   const handleImageLoad = () => {
@@ -29,15 +34,16 @@ export function Main({
 
   return (
     <Box sx={{ maxWidth: "100%", flexGrow: 1, position: "relative" }}>
-      {(img && (
+      {home && <Carousel images={images} state={state} setState={setState} />}
+      {img && (
         <Box
           component="img"
           sx={{
             height: {
-              xs: "40vh", // Đối với breakpoint xs, sử dụng chiều cao tự động
-              md: "50vh", // Đối với breakpoint md, sử dụng chiều cao là 300px
-              lg: "70vh", // Đối với breakpoint lg, sử dụng chiều cao là 400px
-              xl: "90vh", // Đối với breakpoint xl, sử dụng chiều cao là 500px
+              xs: "40vh",
+              md: "50vh",
+              lg: "70vh",
+              xl: "90vh",
             },
             display: "block",
             maxWidth: "100%",
@@ -51,32 +57,12 @@ export function Main({
           alt={labelImg}
           onLoad={handleImageLoad}
         />
-      )) ||
-        (imgDetail && (
-          <Box
-            component="img"
-            sx={{
-              display: "block",
-              maxWidth: "100%",
-              height: "auto",
-              overflow: "hidden",
-              width: "100%",
-              position: "relative",
-              filter: "brightness(50%)",
-              objectFit: "cover",
-              transform: imageLoaded ? "scale(1.1)" : "scale(1)",
-              transition: "transform 0.5s ease-in-out",
-            }}
-            src={imgDetail.images[0].imagePath}
-            alt={labelImg}
-            onLoad={handleImageLoad}
-          />
-        ))}
+      )}
       {imageLoaded && (
         <Box
           sx={{
             position: "absolute",
-            top: "50%",
+            top: "60%",
             left: "50%",
             transform: "translate(-50%, -50%)",
             color: "#fff",
@@ -102,12 +88,7 @@ export function Main({
           </Typography>
         </Box>
       )}
-      <Header
-        title="AutoCar"
-        state={state}
-        setState={setState}
-        colorHeader={colorHeader}
-      />
+      <Header title="AutoCar" state={state} setState={setState} />
     </Box>
   );
 }

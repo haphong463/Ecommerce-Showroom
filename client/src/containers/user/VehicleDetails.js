@@ -116,7 +116,7 @@ export const VehicleDetails = () => {
         setVehicle(res.data);
         setLoading(true);
       } else {
-        navigate("./vehicles");
+        navigate("/vehicles");
       }
     });
   };
@@ -140,10 +140,12 @@ export const VehicleDetails = () => {
               </Grid>
               <Grid item xs={12} md={5} lg={6}>
                 <Stack>
-                  <Typography variant="h5" fontWeight={700} gutterBottom>
-                    {vehicle.name}
+                  <Typography variant="h5" gutterBottom>
+                    <span className="title-text">{vehicle.name}</span>
                   </Typography>
-                  <Typography variant="h6">${vehicle.purchasePrice}</Typography>
+                  <Typography variant="h6">
+                    <span className="price-text">${vehicle.purchasePrice}</span>
+                  </Typography>
                 </Stack>
                 <Box mt={2}>
                   <Button

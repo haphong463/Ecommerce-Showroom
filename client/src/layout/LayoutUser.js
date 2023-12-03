@@ -8,8 +8,8 @@ export const LayoutUser = ({
   labelImg,
   img,
   children,
-  colorHeader,
   imgDetail,
+  home,
 }) => {
   return (
     <>
@@ -18,8 +18,8 @@ export const LayoutUser = ({
         description={description}
         labelImg={labelImg}
         img={img}
-        colorHeader={colorHeader}
         imgDetail={imgDetail}
+        home={home}
       />
       {children}
       <Footer />
