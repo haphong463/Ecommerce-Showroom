@@ -5,9 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -17,7 +15,7 @@ import "../../assets/styles/Body.css";
 import { DatePicker } from "@mui/x-date-pickers";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import dayjs from "dayjs";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   FormControl,
   FormControlLabel,
@@ -211,6 +209,7 @@ export function SignUp() {
                     ) : (
                       <TextField
                         {...register(name)}
+                        type={name === "password" ? "password" : "text"}
                         required
                         fullWidth
                         id={name}
@@ -239,9 +238,9 @@ export function SignUp() {
               </Button>
               <Grid container justifyContent="flex-end">
                 <Grid item>
-                  <NavLink to="/signin" variant="body2">
+                  <Link to="/login" variant="body2">
                     Already have an account? Sign in
-                  </NavLink>
+                  </Link>
                 </Grid>
               </Grid>
             </Box>

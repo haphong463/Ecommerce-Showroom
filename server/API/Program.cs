@@ -60,6 +60,7 @@ app.UseStaticFiles(new StaticFileOptions
     RequestPath = "/Uploads"
 });
 app.UseCors();
+app.UseAuthentication();
 app.UseAuthorization();
 app.MapControllers();
 

@@ -12,6 +12,8 @@ import { Vehicles } from "../containers/admin/Vehicles";
 import { VehicleDetails } from "../containers/user/VehicleDetails";
 import { VehicleProvider } from "../context/VehicleContext";
 import { Signin } from "../containers/user/Signin";
+import { VehicleUsed } from "../containers/user/VehicleUsed";
+import { Customer } from "../containers/admin/Customer";
 
 export const publicRoutes = [
   {
@@ -29,6 +31,14 @@ export const publicRoutes = [
     component: (
       <VehicleProvider>
         <VehicleUser />
+      </VehicleProvider>
+    ),
+  },
+  {
+    path: "/vehiclesUsed",
+    component: (
+      <VehicleProvider>
+        <VehicleUsed />
       </VehicleProvider>
     ),
   },
@@ -63,6 +73,11 @@ export const privateRoutes = [
         <Brand />
       </BrandProvider>
     ),
+    roles: ["Admin"],
+  },
+  {
+    path: "/admin/customer",
+    component: <Customer />,
     roles: ["Admin"],
   },
   {

@@ -1,53 +1,101 @@
+import React, { useContext, useEffect, useState } from "react";
+import Autocomplete from "@mui/material/Autocomplete";
+import TextField from "@mui/material/TextField";
+import { VehicleContext } from "../../../context/VehicleContext";
+import { DataContext } from "../../../context/DataContext";
 import {
-  Grid,
+  FormControlLabel,
   MenuItem,
-  Paper,
+  RadioGroup,
   Select,
   Stack,
-  TextField,
   Typography,
 } from "@mui/material";
+import { getBrandList } from "../../Brand/BrandLibrary";
 
-export const Filter = () => {
+export const Filter = ({ newVehicle, usedVehicle }) => {
+  const { vehicleData } = useContext(VehicleContext);
+  const [options, setOptions] = useState([]);
+  const [brand, setBrand] = useState();
+  const { setSearchData } = useContext(DataContext);
+  const [inputValue, setInputValue] = useState("");
+  const handleInputChange = (event, newValue) => {
+    setInputValue(newValue);
+  };
+  const [BrandList, setBrandList] = useState([]);
+  const handleChangeBrand = (event) => {
+    setBrand(event.target.value);
+  };
+
+  useEffect(() => {
+    let filterVehicles = usedVehicle ?? newVehicle;
+    if (inputValue) {
+      filterVehicles = filterVehicles.filter((item) =>
+        item.name.toLowerCase().includes(inputValue.toLowerCase())
+      );
+    }
+    if (brand && brand !== "all") {
+      filterVehicles = filterVehicles.filter(
+        (item) => item.brand.brandId === brand
+      );
+    }
+    setSearchData(filterVehicles);
+  }, [inputValue, brand]);
+  useEffect(() => {
+    const uniqueOptions = [
+      ...new Set((newVehicle ?? usedVehicle).map((item) => item.name)),
+    ]; // Lọc các giá trị name duy nhất
+    setOptions(
+      uniqueOptions.map((name, index) => ({
+        label: name,
+      }))
+    );
+  }, [vehicleData]);
+  useEffect(() => {
+    getBrandList().then((res) => {
+      if (res.data !== null) {
+        setBrandList(res.data);
+      }
+    });
+  }, []);
   return (
-    <Grid item xs={12} md={2}>
-      <Paper elevation={3} sx={{ p: 2 }}>
-        <Typography
-          variant="h6"
-          sx={{
-            fontWeight: "700",
-            textAlign: "center",
-            letterSpacing: 3,
-            textTransform: "uppercase",
-          }}
+    <>
+      <Typography variant="body2" sx={{ marginBottom: 2 }}>
+        You want to buy a vehicle
+      </Typography>
+      <Stack>
+        <Autocomplete
+          options={options}
+          getOptionLabel={(option) => option.label}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              label="Vehicle"
+              variant="outlined"
+              placeholder="Search vehicle by name..."
+            />
+          )}
+          freeSolo
+          disableClearable
+          fullWidth
+          inputValue={inputValue}
+          onInputChange={handleInputChange}
+          open={inputValue.length > 0}
+        />
+        <Select
+          onChange={handleChangeBrand}
+          value={
+            brand ? brand : BrandList.length > 0 ? BrandList[0].brandId : ""
+          }
         >
-          Filter
-        </Typography>
-        <Stack spacing={2}>
-          <TextField fullWidth label="Name" variant="outlined" />
-          <TextField fullWidth label="Model ID" variant="outlined" />
-          <TextField fullWidth label="Color" variant="outlined" />
-          <TextField
-            fullWidth
-            label="Mileage"
-            variant="outlined"
-            type="number"
-          />
-          <TextField fullWidth label="Engine Type" variant="outlined" />
-          <TextField fullWidth label="Transmission Type" variant="outlined" />
-          <TextField fullWidth label="Fuel Type" variant="outlined" />
-          <TextField
-            fullWidth
-            label="Number of Seats"
-            variant="outlined"
-            type="number"
-          />
-          <Select fullWidth label="Brand" defaultValue="1" variant="outlined">
-            <MenuItem value={"1"}>Brand 1</MenuItem>
-            <MenuItem value={"2"}>Brand 2</MenuItem>
-          </Select>
-        </Stack>
-      </Paper>
-    </Grid>
+          <MenuItem value="all">All</MenuItem>
+          {BrandList.map((item) => (
+            <MenuItem value={item.brandId} key={item.brandId}>
+              {item.name}
+            </MenuItem>
+          ))}
+        </Select>
+      </Stack>
+    </>
   );
 };

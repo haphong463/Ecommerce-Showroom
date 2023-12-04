@@ -7,16 +7,16 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import LogoutIcon from "@mui/icons-material/ExitToApp";
 import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import { AppBar, ListItemIcon, Toolbar } from "@mui/material";
-import { NavLink, useNavigate } from "react-router-dom";
-import { useMediaQuery } from "@mui/material";
+import { ListItemIcon, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { DataContext } from "../../context/DataContext";
 
 const routes = [
   {
@@ -27,7 +27,13 @@ const routes = [
   },
   {
     route: "/vehicles",
-    primary: "Vehicles",
+    primary: "New vehicles",
+    position: "top",
+    icon: <DirectionsCarIcon />,
+  },
+  {
+    route: "/vehiclesUsed",
+    primary: "Used vehicles",
     position: "top",
     icon: <DirectionsCarIcon />,
   },
@@ -49,31 +55,13 @@ const routes = [
     icon: <LoginIcon />,
     position: "bot",
   },
-  {
-    route: "/logout",
-    primary: "Logout",
-    icon: <LogoutIcon />,
-    position: "bot",
-  },
 ];
 
 export function SideBar({ onSetState, state }) {
   const navigate = useNavigate();
-  const isDesktop = useMediaQuery("(min-width:600px)");
-  const renderNavItems = (position) => {
-    return routes
-      .filter((route) => route.position === position)
-      .map((route) => (
-        <Button
-          key={route.primary}
-          component={NavLink}
-          to={route.route}
-          color="inherit"
-          sx={{ marginRight: 2, fontWeight: 700 }}
-        >
-          {route.primary}
-        </Button>
-      ));
+  const { user, logout } = React.useContext(DataContext);
+  const handleLogout = () => {
+    logout();
   };
   const toggleDrawer = (anchor, open) => (event) => {
     if (
@@ -87,27 +75,6 @@ export function SideBar({ onSetState, state }) {
     onSetState({ ...state, [anchor]: open });
   };
 
-  if (isDesktop) {
-    // Render app bar for desktop
-    return (
-      <AppBar
-        position="static"
-        sx={{
-          boxShadow: "none",
-          backgroundColor: "#ffffff",
-          color: "#333",
-        }}
-      >
-        <Toolbar>
-          {renderNavItems("top")}
-          <Box sx={{ flexGrow: 1 }} />
-          {renderNavItems("bot")}
-        </Toolbar>
-      </AppBar>
-    );
-  }
-
-  // Render SwipeableDrawer for mobile
   return (
     <React.Fragment>
       <Button
@@ -137,6 +104,16 @@ export function SideBar({ onSetState, state }) {
           onClick={toggleDrawer("right", false)}
           onKeyDown={toggleDrawer("right", false)}
         >
+          {user && (
+            <Typography
+              sx={{
+                my: 2,
+              }}
+              align="center"
+            >
+              {user.Name}
+            </Typography>
+          )}
           <List>
             {routes.map(
               (route, index) =>
@@ -158,7 +135,9 @@ export function SideBar({ onSetState, state }) {
           <List>
             {routes.map(
               (route) =>
-                route.position === "bot" && (
+                route.position === "bot" &&
+                ((user && route.primary === "Sign Up") ||
+                (user && route.primary === "Login") ? null : (
                   <ListItem
                     key={route.primary}
                     onClick={() => navigate(route.route)}
@@ -169,9 +148,19 @@ export function SideBar({ onSetState, state }) {
                       <ListItemText primary={route.primary} />
                     </ListItemButton>
                   </ListItem>
-                )
+                ))
             )}
           </List>
+          {user && (
+            <ListItem disablePadding onClick={handleLogout}>
+              <ListItemButton>
+                <ListItemIcon>
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText>Logout</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          )}
         </Box>
       </SwipeableDrawer>
     </React.Fragment>

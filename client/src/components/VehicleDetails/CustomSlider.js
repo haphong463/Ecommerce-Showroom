@@ -1,14 +1,15 @@
 // Slider.js
-import React, { useContext, useState } from "react";
+import React from "react";
 import Slider from "react-slick";
-import { VehicleContext } from "../../context/VehicleContext";
 
 const CustomSlider = ({ vehicleImages }) => {
   const sliderSettings = {
-    dots: true,
+    dots: false,
     dotsClass: "slick-dots slick-thumb",
     infinite: true,
     speed: 500,
+    autoplay: true,
+    autoplaySpeed: 1000,
     arrows: false,
     slidesToShow: 1,
     slidesToScroll: 1,

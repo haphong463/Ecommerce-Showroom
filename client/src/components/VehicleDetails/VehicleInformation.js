@@ -11,7 +11,7 @@ const VehicleInformation = ({
 }) => {
   return (
     <Box mt={2}>
-      <Typography variant="h6">Vehicle Information</Typography>
+      <Typography variant="h4">Vehicle Information</Typography>
       <Grid
         container
         spacing={4}
@@ -21,10 +21,17 @@ const VehicleInformation = ({
       >
         {infoArray.map((info, index) => (
           <Grid item xs={info.title === "Description" ? 12 : 6} key={index}>
-            <Stack direction="row" spacing={2}>
-              <Tooltip title={info.title}>{info.icon}</Tooltip>
-              <Typography variant="body2">{info.value}</Typography>
-            </Stack>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Tooltip sx={{ marginRight: 2 }} title={info.title}>
+                {info.icon}
+              </Tooltip>
+              <Typography variant="h6">{info.value}</Typography>
+            </Box>
           </Grid>
         ))}
       </Grid>

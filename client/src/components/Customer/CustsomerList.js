@@ -9,61 +9,18 @@ import TableRow from "@mui/material/TableRow";
 import { IconButton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { columns, deleteBrand, getBrandList } from "../../Brand/BrandLibrary";
-import { BrandContext } from "../../context/BrandContext";
-import { dangerMessage } from "../../Message";
-import Swal from "sweetalert2";
 import { DataContext } from "../../context/DataContext";
+import { columns, getCustomer } from "./CustomerLibrary";
 
-export const BrandList = () => {
-  const { data, setData, setBrand, handleClickOpen } = useContext(BrandContext);
+export const CustomerList = () => {
+  const [data, setData] = useState([]);
   const { setLoading } = useContext(DataContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const handleDelete = (id) => {
     const brand = data.find((item) => item.brandId === id);
-
-    if (brand && brand.vehicles.length > 0) {
-      // Check if the specific brand has associated vehicles
-      Swal.fire({
-        title: "Cannot delete!",
-        text: "This brand has associated vehicles. Please delete the vehicles first.",
-        icon: "error",
-      });
-    } else {
-      Swal.fire({
-        title: "Are you sure?",
-        text: "You will not be able to recover this brand!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonText: "Yes, delete it!",
-        cancelButtonText: "No, cancel!",
-      }).then((result) => {
-        if (result.isConfirmed) {
-          // User clicked 'Yes, delete it!'
-          deleteBrand(id).then((res) => {
-            if (res.data !== null) {
-              setData((prev) =>
-                prev.filter((item) => item.brandId !== res.data.brandId)
-              );
-              dangerMessage("Delete a brand successfully!");
-            }
-          });
-        } else if (result.dismiss === Swal.DismissReason.cancel) {
-          // User clicked 'No, cancel!'
-          Swal.fire("Cancelled", "Your brand is safe :)", "info");
-        }
-      });
-    }
   };
 
-  const handleEdit = (id) => {
-    const brand = data.find((item) => item.brandId === id);
-    if (brand !== null) {
-      setBrand(brand);
-      handleClickOpen();
-    }
-  };
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -73,13 +30,13 @@ export const BrandList = () => {
   };
   useEffect(() => {
     setLoading(true);
-    getBrandList().then((res) => {
-      if (res.data !== null) {
-        setData(res.data);
-        setLoading(false);
+    getCustomer().then((data) => {
+      if (data !== null) {
+        setData(data);
       }
     });
   }, []);
+  console.log(data);
   return (
     <>
       <TableContainer sx={{ height: "70vh" }}>
@@ -108,41 +65,16 @@ export const BrandList = () => {
                     hover
                     role="checkbox"
                     tabIndex={-1}
-                    key={row.brandId}
+                    key={row.accountId}
                   >
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
                         <TableCell key={column.id} align={column.align}>
-                          {column.id === "actions" ? (
-                            <Stack
-                              direction="row"
-                              sx={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                              }}
-                            >
-                              <IconButton
-                                aria-label="edit"
-                                onClick={() => handleEdit(row.brandId)}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                              <IconButton
-                                aria-label="delete"
-<<<<<<< HEAD
-                                onClick={() => console.log(row.code)}
-=======
-                                onClick={() => handleDelete(row.brandId)}
->>>>>>> 5cb02bfc7ade88e123350a84110e56aa6c36e291
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Stack>
-                          ) : column.id === "image" ? (
+                          {column.id === "avatarUrl" ? (
                             <img
                               alt={`${row.name}`}
-                              src={row.imagePath}
+                              src={row.avatarUrl}
                               width={100}
                             />
                           ) : column.format && typeof value === "number" ? (

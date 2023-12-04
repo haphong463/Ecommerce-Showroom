@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -7,6 +7,9 @@ import { TextField, Button, Container, Typography, Box } from "@mui/material";
 import Icon from "@mui/material/Icon";
 import axios from "axios";
 import { DataContext } from "../../context/DataContext";
+import { Link } from "react-router-dom";
+import { successToast } from "../../components/Message";
+import { loginAuth } from "../../components/Auth";
 
 // Define validation schema using yup
 const schema = yup.object().shape({
@@ -16,6 +19,7 @@ const schema = yup.object().shape({
 
 export const Signin = () => {
   const { login } = useContext(DataContext);
+  const [generalError, setGeneralError] = useState("");
   const {
     control,
     handleSubmit,
@@ -24,24 +28,16 @@ export const Signin = () => {
     resolver: yupResolver(schema),
   });
 
-  const onSubmit = async (data) => {
-    // Xử lý Sign in ở đây
-    console.log("Dữ liệu form:", data);
-    try {
-      const res = await axios.post("http://localhost:5251/api/Auth", data);
-      if (res.status === 200) {
-        console.log(res.data);
-        let tokenString = res.data.token;
-        login(tokenString);
+  const onSubmit = (data) => {
+    loginAuth(data).then((data) => {
+      if (data !== null) {
+        login(data);
       } else {
-        console.log("Login failed");
+        setGeneralError(
+          "An error occurred during login. Please try again later."
+        );
       }
-    } catch (error) {
-      console.log(error);
-      setGeneralError(
-        "An error occurred during login. Please try again later."
-      );
-    }
+    });
   };
 
   return (
@@ -83,6 +79,11 @@ export const Signin = () => {
               Sign in
             </Typography>
             <form onSubmit={handleSubmit(onSubmit)}>
+              {generalError && (
+                <Typography variant="h6" color="error">
+                  {generalError}
+                </Typography>
+              )}
               <Controller
                 name="email"
                 control={control}
@@ -125,6 +126,12 @@ export const Signin = () => {
               >
                 Sign in
               </Button>
+              <Typography variant="body2" style={{ marginTop: "16px" }}>
+                Don't have an account?{" "}
+                <Link to="/signup" style={{ textDecoration: "underline" }}>
+                  Sign up here
+                </Link>
+              </Typography>
             </form>
           </Container>
         </Container>

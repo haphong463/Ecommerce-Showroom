@@ -27,20 +27,23 @@ import { Filter } from "../../components/user/Vehicles/Filter";
 import { useNavigate } from "react-router-dom";
 import { DataContext } from "../../context/DataContext";
 
-export function Vehicles() {
+export function VehicleUsed() {
   const { vehicleData, setVehicleData } = useContext(VehicleContext);
   const { searchData } = useContext(DataContext);
-  const [newCar, setNewCar] = useState([]);
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
+  const [usedCar, setUsedCar] = useState([]);
   const vehiclesPerPage = 4; // Số lượng phương tiện trên mỗi trang
 
   useEffect(() => {
     getVehicles().then((res) => {
       if (res.data && res.data.length > 0) {
-        const usedCars = res.data.filter((vehicle) => vehicle.isUsed === true);
-        setNewCar(usedCars);
+        // Lọc phương tiện đã qua sử dụng
+        const usedCars = res.data.filter((vehicle) => vehicle.isUsed === false);
+        setUsedCar(usedCars);
+
+        // Set dữ liệu phương tiện vào context
         setVehicleData(res.data);
       }
     });
@@ -60,29 +63,27 @@ export function Vehicles() {
 
   const indexOfLastVehicle = currentPage * vehiclesPerPage;
   const indexOfFirstVehicle = indexOfLastVehicle - vehiclesPerPage;
-  const currentVehicles = (searchData.length > 0 ? searchData : newCar).slice(
+  const currentVehicles = (searchData.length > 0 ? searchData : usedCar).slice(
     indexOfFirstVehicle,
     indexOfLastVehicle
   );
 
   const totalPages = Math.ceil(
-    (searchData.length > 0 ? searchData : newCar).length / vehiclesPerPage
+    (searchData.length > 0 ? searchData : usedCar).length / vehiclesPerPage
   );
-
   return (
     <LayoutUser>
       <Box
         component="section"
         sx={{
           m: 10,
-          height:
-            vehicleData.length > 0 || searchData.length > 0 ? "100%" : "90vh",
+          height: usedCar.length > 0 || searchData.length > 0 ? "100%" : "90vh",
         }}
       >
         <Container maxWidth="xl">
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Filter newVehicle={newCar} />
+              <Filter usedVehicle={usedCar} />
             </Grid>
             <Grid item xs={12}>
               <Grid container spacing={2}>
@@ -114,9 +115,15 @@ export function Vehicles() {
                         )}
                         <CardContent>
                           <Stack>
-                            <Typography variant="body2" color="error">
-                              ${vehicle.price}
-                            </Typography>
+                            <Stack
+                              direction="row"
+                              justifyContent="space-between"
+                            >
+                              <Typography variant="body2" color="error">
+                                ${vehicle.price}
+                              </Typography>
+                              <Typography variant="body2">Used</Typography>
+                            </Stack>
                             <Typography variant="h6" sx={{ mt: 0 }}>
                               {vehicle.name}
                             </Typography>

@@ -15,6 +15,7 @@ import Typography from "@mui/material/Typography";
 import { Stack } from "@mui/material";
 import axios from "axios";
 import { DataContext } from "../../context/DataContext";
+import { loginAuth } from "../../components/Auth";
 
 const validationSchema = yup.object({
   email: yup
@@ -37,24 +38,16 @@ export function Login() {
   const [generalError, setGeneralError] = React.useState("");
 
   const onSubmit = async (data) => {
-    console.log(data);
-    try {
-      const res = await axios.post("http://localhost:5251/api/Auth", data);
-      if (res.status === 200) {
-        console.log(res.data);
-        let tokenString = res.data.token;
-        login(tokenString);
+    loginAuth(data).then((data) => {
+      if (data !== null) {
+        login(data);
       } else {
-        console.log("Login failed");
+        setGeneralError(
+          "An error occurred during login. Please try again later."
+        );
       }
-    } catch (error) {
-      console.log(error);
-      setGeneralError(
-        "An error occurred during login. Please try again later."
-      );
-    }
+    });
   };
-
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
       <CssBaseline />
