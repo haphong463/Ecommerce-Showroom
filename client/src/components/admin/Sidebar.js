@@ -4,7 +4,7 @@ import Box from "@mui/material/Box";
 import MuiDrawer from "@mui/material/Drawer";
 import List from "@mui/material/List";
 import CssBaseline from "@mui/material/CssBaseline";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { useAppStore } from "../../appStore";
 import { RouteItem } from "./RouteItem";
 import CarIcon from "@mui/icons-material/DriveEta";
@@ -12,6 +12,7 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/ExitToApp";
 import LoginIcon from "@mui/icons-material/Login";
 import MenuIcon from "@mui/icons-material/Menu";
+import PersonIcon from "@mui/icons-material/Person";
 import CategoryIcon from "@mui/icons-material/Category";
 import BackgroundImage from "../../assets/images/HD-wallpaper-black-background-car-cars-vehicles.jpg";
 import { Divider } from "@mui/material";
@@ -88,6 +89,12 @@ const routes = [
     position: "top",
   },
   {
+    route: "/admin/customer",
+    primary: "Customer",
+    icon: <PersonIcon />,
+    position: "top",
+  },
+  {
     route: "/admin/settings",
     primary: "Settings",
     icon: <SettingsIcon />,
@@ -109,7 +116,7 @@ const routes = [
 export function Sidebar() {
   const navigate = useNavigate();
   const open = useAppStore((state) => state.dopen);
-
+  const location = useLocation();
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -138,6 +145,7 @@ export function Sidebar() {
                     primary={route.primary}
                     open={open}
                     icon={route.icon}
+                    disabled={location.pathname === route.route}
                   />
                 )
             )}
@@ -145,7 +153,7 @@ export function Sidebar() {
           <Box>
             <List>
               <Divider sx={{ borderTop: "1px solid #2f2f2f" }} />
-                  
+
               {routes.map(
                 (route, index) =>
                   route.position === "bot" && (

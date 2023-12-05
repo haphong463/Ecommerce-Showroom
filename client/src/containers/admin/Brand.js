@@ -27,6 +27,7 @@ export const Brand = () => {
               sx={{
                 position: "absolute",
                 left: "50%",
+                top: "50%",
               }}
             />
           )}

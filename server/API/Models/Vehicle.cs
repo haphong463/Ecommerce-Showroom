@@ -51,6 +51,7 @@ public class Vehicle
     public VehicleStatus Status { get; set; }
     public bool IsUsed { get; set; }
     public List<Images>? Images { get; set; }
+    public List<Cart>? Carts { get; set; }
     public Brand? Brand { get; set; }
 }
 

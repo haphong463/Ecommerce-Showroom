@@ -11,15 +11,13 @@ import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DataContext } from "../../context/DataContext";
 import { columns, getCustomer } from "./CustomerLibrary";
+import dayjs from "dayjs";
 
 export const CustomerList = () => {
   const [data, setData] = useState([]);
   const { setLoading } = useContext(DataContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  const handleDelete = (id) => {
-    const brand = data.find((item) => item.brandId === id);
-  };
 
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
@@ -33,10 +31,10 @@ export const CustomerList = () => {
     getCustomer().then((data) => {
       if (data !== null) {
         setData(data);
+        setLoading(false);
       }
     });
   }, []);
-  console.log(data);
   return (
     <>
       <TableContainer sx={{ height: "70vh" }}>
@@ -77,8 +75,8 @@ export const CustomerList = () => {
                               src={row.avatarUrl}
                               width={100}
                             />
-                          ) : column.format && typeof value === "number" ? (
-                            column.format(value)
+                          ) : column.id === "dateOfBirth" ? (
+                            dayjs(row.dateOfBirth).format("MMMM DD, YYYY")
                           ) : (
                             value
                           )}

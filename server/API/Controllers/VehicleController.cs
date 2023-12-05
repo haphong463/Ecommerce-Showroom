@@ -3,6 +3,7 @@ using API.DTO;
 using API.Helper;
 using API.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Employee, Admin")]
         public async Task<ActionResult<ApiResponse<VehicleDTO>>> PostVehicle([FromForm] Vehicle vehicle, List<IFormFile> files)
         {
             if (!ModelState.IsValid)

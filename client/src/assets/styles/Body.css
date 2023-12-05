@@ -1,4 +1,3 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
 .custom-progress{
     background-color: #fff;
 }
@@ -31,3 +30,17 @@
     color: red;
     font-weight: 600
   }
+
+  .title-section{
+    color: #fa921f;
+    font-weight: 600;
+  }
+  .brand-card {
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0.2; /* Initial opacity */
+  }
+  
+  .brand-card.hovered {
+    opacity: 1; /* Opacity on hover */
+  }
+  

@@ -30,7 +30,7 @@ const VehicleInformation = ({
               <Tooltip sx={{ marginRight: 2 }} title={info.title}>
                 {info.icon}
               </Tooltip>
-              <Typography variant="h6">{info.value}</Typography>
+              <Typography variant="body1">{info.value}</Typography>
             </Box>
           </Grid>
         ))}

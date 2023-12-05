@@ -76,6 +76,7 @@ namespace API.Controllers
                 {
                     account.Role = "User";
                 }
+
                 account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
                 var resource = await _dbContext.Accounts.AddAsync(account);
                 await _dbContext.SaveChangesAsync();

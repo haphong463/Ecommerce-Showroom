@@ -13,7 +13,6 @@ import { columns, deleteBrand, getBrandList } from "./BrandLibrary";
 import { BrandContext } from "../../context/BrandContext";
 import { dangerMessage } from "../Message";
 import Swal from "sweetalert2";
-import { VehicleContext } from "../../context/VehicleContext";
 import { DataContext } from "../../context/DataContext";
 
 export const BrandList = () => {
@@ -42,10 +41,10 @@ export const BrandList = () => {
       }).then((result) => {
         if (result.isConfirmed) {
           // User clicked 'Yes, delete it!'
-          deleteBrand(id).then((res) => {
-            if (res.data !== null) {
+          deleteBrand(id).then((data) => {
+            if (data !== null) {
               setData((prev) =>
-                prev.filter((item) => item.brandId !== res.data.brandId)
+                prev.filter((item) => item.brandId !== data.brandId)
               );
               dangerMessage("Delete a brand successfully!");
             }
@@ -74,16 +73,16 @@ export const BrandList = () => {
   };
   useEffect(() => {
     setLoading(true);
-    getBrandList().then((res) => {
-      if (res.data !== null) {
-        setData(res.data);
+    getBrandList().then((data) => {
+      if (data !== null) {
+        setData(data);
         setLoading(false);
       }
     });
   }, []);
   return (
     <>
-      <TableContainer sx={{ height: "70vh" }}>
+      <TableContainer sx={{ height: "75vh" }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>

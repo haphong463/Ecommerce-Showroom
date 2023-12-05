@@ -39,6 +39,7 @@ export const Vehicles = () => {
               sx={{
                 position: "absolute",
                 left: "50%",
+                top: "50%",
               }}
             />
           )}

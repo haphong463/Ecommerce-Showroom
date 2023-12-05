@@ -28,16 +28,17 @@ export function VehicleList() {
   };
   useEffect(() => {
     setLoading(true);
-    getVehicles().then((res) => {
-      if (res.data !== null) {
-        setVehicleData(res.data);
+    getVehicles().then((data) => {
+      console.log(data);
+      if (data !== null) {
+        setVehicleData(data);
         setLoading(false);
       }
     });
   }, [setVehicleData]);
   return (
     <>
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: "75vh" }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>

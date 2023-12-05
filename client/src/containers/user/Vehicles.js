@@ -13,6 +13,8 @@ import {
   DialogContent,
   Container,
   Pagination,
+  Skeleton,
+  useMediaQuery,
 } from "@mui/material";
 import {
   Settings as SettingsIcon,
@@ -24,27 +26,35 @@ import { VehicleContext } from "../../context/VehicleContext";
 import { getVehicles } from "../../components/Vehicle/VehicleLibrary";
 import { LayoutUser } from "../../layout/LayoutUser";
 import { Filter } from "../../components/user/Vehicles/Filter";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { DataContext } from "../../context/DataContext";
 
 export function Vehicles() {
   const { vehicleData, setVehicleData } = useContext(VehicleContext);
-  const { searchData } = useContext(DataContext);
-  const [newCar, setNewCar] = useState([]);
+  const { searchData, setSearchData } = useContext(DataContext);
   const navigate = useNavigate();
   const [selectedImage, setSelectedImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const vehiclesPerPage = 4; // Số lượng phương tiện trên mỗi trang
-
+  const [loading, setLoading] = useState(true); // New loading state
+  const vehiclesPerPage = 9; // Số lượng phương tiện trên mỗi trang
+  const location = useLocation();
   useEffect(() => {
-    getVehicles().then((res) => {
-      if (res.data && res.data.length > 0) {
-        const usedCars = res.data.filter((vehicle) => vehicle.isUsed === true);
-        setNewCar(usedCars);
-        setVehicleData(res.data);
+    setLoading(true);
+    getVehicles().then((data) => {
+      if (data && data.length > 0) {
+        let checkIsUsed;
+        if (location.pathname === "/vehicles") {
+          checkIsUsed = true;
+        } else if (location.pathname === "/vehiclesUsed") {
+          checkIsUsed = false;
+        }
+        const newCar = data.filter((vehicle) => vehicle.isUsed === checkIsUsed);
+        setSearchData(newCar);
+        setVehicleData(newCar);
+        setLoading(false); // Set loading to false when data is loaded
       }
     });
-  }, [setVehicleData]);
+  }, [setVehicleData, setSearchData, location]);
 
   const openImageDialog = (imagePath) => {
     setSelectedImage(imagePath);
@@ -60,13 +70,9 @@ export function Vehicles() {
 
   const indexOfLastVehicle = currentPage * vehiclesPerPage;
   const indexOfFirstVehicle = indexOfLastVehicle - vehiclesPerPage;
-  const currentVehicles = (searchData.length > 0 ? searchData : newCar).slice(
+  const currentVehicles = searchData.slice(
     indexOfFirstVehicle,
     indexOfLastVehicle
-  );
-
-  const totalPages = Math.ceil(
-    (searchData.length > 0 ? searchData : newCar).length / vehiclesPerPage
   );
 
   return (
@@ -75,27 +81,36 @@ export function Vehicles() {
         component="section"
         sx={{
           m: 10,
-          height:
-            vehicleData.length > 0 || searchData.length > 0 ? "100%" : "90vh",
+          height: searchData.length > 0 ? "100%" : "90vh",
         }}
       >
-        <Container maxWidth="xl">
+        <Container maxWidth="lg">
           <Grid container spacing={2}>
             <Grid item xs={12}>
-              <Filter newVehicle={newCar} />
+              <Filter vehicles={vehicleData} />
             </Grid>
             <Grid item xs={12}>
-              <Grid container spacing={2}>
-                {currentVehicles.map((vehicle) => {
-                  return (
-                    <Grid
-                      item
-                      xs={12}
-                      sm={6}
-                      md={4}
-                      lg={3}
-                      key={vehicle.vehicleID}
-                    >
+              {loading ? (
+                // Render skeleton when loading
+                <Grid container spacing={2}>
+                  {[...Array(vehiclesPerPage)].map((_, index) => (
+                    <Grid item xs={12} sm={6} lg={4} key={index}>
+                      <Skeleton
+                        variant="rectangular"
+                        width="100%"
+                        height={200}
+                        sx={{
+                          borderRadius: "12px",
+                        }}
+                      />
+                    </Grid>
+                  ))}
+                </Grid>
+              ) : (
+                // Render actual data when not loading
+                <Grid container spacing={2}>
+                  {currentVehicles.map((vehicle) => (
+                    <Grid item xs={12} sm={6} lg={4} key={vehicle.vehicleID}>
                       <Card elevation={3}>
                         {vehicle.images && vehicle.images.length > 0 && (
                           <CardMedia
@@ -126,7 +141,7 @@ export function Vehicles() {
                               variant="body2"
                               sx={{ color: "text.secondary" }}
                             >
-                              <SpeedIcon /> {vehicle.mileage}
+                              <SpeedIcon /> {vehicle.mileage} km
                             </Typography>
                             <Typography
                               variant="body2"
@@ -157,14 +172,14 @@ export function Vehicles() {
                         </CardActions>
                       </Card>
                     </Grid>
-                  );
-                })}
-              </Grid>
+                  ))}
+                </Grid>
+              )}
             </Grid>
             <Grid item xs={12}>
               <Box sx={{ mt: 2, display: "flex", justifyContent: "center" }}>
                 <Pagination
-                  count={totalPages}
+                  count={Math.ceil(searchData.length / vehiclesPerPage)}
                   page={currentPage}
                   onChange={handlePageChange}
                   color="secondary"

@@ -39,7 +39,12 @@ export const Signin = () => {
       }
     });
   };
+  const [capsLockEnabled, setCapsLockEnabled] = React.useState(false);
 
+  const handleKeyPress = (e) => {
+    const isCapsLockOn = e.getModifierState("CapsLock");
+    setCapsLockEnabled(isCapsLockOn);
+  };
   return (
     <LayoutUser>
       <Box
@@ -113,7 +118,12 @@ export const Signin = () => {
                     variant="outlined"
                     type="password"
                     error={!!errors.password}
-                    helperText={errors.password?.message}
+                    helperText={
+                      capsLockEnabled
+                        ? "Capslock is ON"
+                        : errors.password?.message
+                    }
+                    onKeyDown={handleKeyPress}
                   />
                 )}
               />

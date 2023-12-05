@@ -24,6 +24,7 @@ import {
   Select,
 } from "@mui/material";
 import axios from "axios";
+import { postCustomer } from "../../components/Customer/CustomerLibrary";
 const schema = yup.object().shape({
   name: yup.string().required("First name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
@@ -69,19 +70,9 @@ export function SignUp() {
     formData.append("name", data.name);
     formData.append("gender", data.gender);
     formData.append("phone", data.phone);
+    formData.append("role", "User");
 
-    try {
-      const res = axios.post("http://localhost:5251/api/Account", formData, {
-        headers: {
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      if (res.status === 200) {
-        console.log("Created ok");
-      }
-    } catch (error) {
-      console.log(error);
-    }
+    postCustomer(formData);
   };
 
   const handleFileChange = (event) => {

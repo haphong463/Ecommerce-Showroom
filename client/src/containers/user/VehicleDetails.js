@@ -110,9 +110,9 @@ export const VehicleDetails = () => {
     },
   ];
   const refreshVehicleData = () => {
-    getVehicleById(id).then((res) => {
-      if (res.data !== null) {
-        setVehicle(res.data);
+    getVehicleById(id).then((data) => {
+      if (data !== null) {
+        setVehicle(data);
         setLoading(true);
       } else {
         navigate("/vehicles");

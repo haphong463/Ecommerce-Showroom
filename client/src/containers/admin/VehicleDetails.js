@@ -32,6 +32,7 @@ import { VehicleContext } from "../../context/VehicleContext";
 import CustomSlider from "../../components/VehicleDetails/CustomSlider";
 import VehicleInformation from "../../components/VehicleDetails/VehicleInformation";
 import { dangerMessage } from "../../components/Message";
+import Swal from "sweetalert2";
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { setEntry, vehicle, setVehicle, setVehicleData } =
@@ -50,13 +51,24 @@ export const VehicleDetails = () => {
   };
 
   const handleDelete = (id) => {
-    deleteVehicle(id).then((res) => {
-      if (res.data !== null) {
-        setVehicleData((prev) =>
-          prev.filter((item) => item.vehicleID !== res.data.vehicleID)
-        );
-        navigate("../admin/vehicles");
-        dangerMessage(`Deleted vehicle successfully.`);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will not be able to recover this vehicle!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteVehicle(id).then((data) => {
+          if (data !== null) {
+            setVehicleData((prev) =>
+              prev.filter((item) => item.vehicleID !== data.vehicleID)
+            );
+            navigate("../admin/vehicles");
+            dangerMessage(`Deleted vehicle successfully.`);
+          }
+        });
       }
     });
   };
@@ -132,9 +144,9 @@ export const VehicleDetails = () => {
   ];
 
   const refreshVehicleData = () => {
-    getVehicleById(id).then((res) => {
-      if (res.data !== null) {
-        setVehicle(res.data);
+    getVehicleById(id).then((data) => {
+      if (data !== null) {
+        setVehicle(data);
         setLoading(true);
       } else {
         navigate("../admin/vehicles");

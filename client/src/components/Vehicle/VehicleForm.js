@@ -83,10 +83,9 @@ const VehicleForm = ({ open, onSetOpen, handleClose, refreshVehicleData }) => {
     },
   ];
   useEffect(() => {
-    getBrandList().then((res) => {
-      console.log(res);
-      if (res.data !== null) {
-        res.data.forEach((item) => {
+    getBrandList().then((data) => {
+      if (data !== null) {
+        data.forEach((item) => {
           const newData = {
             value: item.brandId,
             label: item.name,
@@ -131,18 +130,18 @@ const VehicleForm = ({ open, onSetOpen, handleClose, refreshVehicleData }) => {
             });
             formData.append("modelId", "asd");
             if (!entry) {
-              postVehicle(formData).then((res) => {
-                if (res.data !== null) {
-                  setVehicleData((prev) => [...prev, res.data]);
+              postVehicle(formData).then((data) => {
+                if (data) {
+                  setVehicleData((prev) => [...prev, data]);
                   successToast("Created a new vehicle successfully");
                   handleClose();
                 }
               });
             } else {
               formData.append("vehicleID", entry.vehicleID);
-              putVehicle(formData, entry.vehicleID).then((res) => {
-                if (res.data !== null) {
-                  setVehicle(res.data);
+              putVehicle(formData, entry.vehicleID).then((data) => {
+                if (data !== null) {
+                  setVehicle(data);
                   successToast("Updated a vehicle successfully");
                   handleClose();
                   refreshVehicleData();

@@ -48,6 +48,13 @@ export function Login() {
       }
     });
   };
+  const [capsLockEnabled, setCapsLockEnabled] = React.useState(false);
+
+  const handleKeyPress = (e) => {
+    const isCapsLockOn = e.getModifierState("CapsLock");
+    setCapsLockEnabled(isCapsLockOn);
+  };
+
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
       <CssBaseline />
@@ -133,9 +140,14 @@ export function Login() {
                     type="password"
                     id="password"
                     autoComplete="current-password"
-                    error={Boolean(errors.password)}
-                    helperText={errors.password?.message}
+                    error={Boolean(errors.password || capsLockEnabled)}
+                    helperText={
+                      capsLockEnabled
+                        ? "Capslock is ON"
+                        : errors.password?.message
+                    }
                     fullWidth
+                    onKeyDown={handleKeyPress}
                   />
                 )}
               />

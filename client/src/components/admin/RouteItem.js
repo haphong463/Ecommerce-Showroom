@@ -13,6 +13,7 @@ export const RouteItem = ({
   route,
   open,
   icon,
+  disabled,
   ...props
 }) => {
   const { logout } = useContext(DataContext);
@@ -20,7 +21,9 @@ export const RouteItem = ({
     if (primary === "Logout") {
       logout();
     } else {
-      navigate(route);
+      if (!disabled) {
+        navigate(route);
+      }
     }
   };
   return (
@@ -31,6 +34,7 @@ export const RouteItem = ({
           justifyContent: open ? "initial" : "center",
           px: 2.5,
         }}
+        disabled={disabled}
       >
         <ListItemIcon
           sx={{

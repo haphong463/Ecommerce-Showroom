@@ -14,7 +14,17 @@ import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import { ListItemIcon, Typography } from "@mui/material";
+import {
+  Avatar,
+  Badge,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { DataContext } from "../../context/DataContext";
 
@@ -27,13 +37,13 @@ const routes = [
   },
   {
     route: "/vehicles",
-    primary: "New vehicles",
+    primary: "New car",
     position: "top",
     icon: <DirectionsCarIcon />,
   },
   {
     route: "/vehiclesUsed",
-    primary: "Used vehicles",
+    primary: "Buy used car",
     position: "top",
     icon: <DirectionsCarIcon />,
   },
@@ -59,7 +69,7 @@ const routes = [
 
 export function SideBar({ onSetState, state }) {
   const navigate = useNavigate();
-  const { user, logout } = React.useContext(DataContext);
+  const { token, logout } = React.useContext(DataContext);
   const handleLogout = () => {
     logout();
   };
@@ -77,19 +87,9 @@ export function SideBar({ onSetState, state }) {
 
   return (
     <React.Fragment>
-      <Button
-        onClick={toggleDrawer("right", true)}
-        sx={{
-          color: "#fff",
-          mr: 3,
-          letterSpacing: 5,
-          fontSize: { xs: "1.2rem", sm: "1.2rem", md: "1.5rem" },
-          color: "#333",
-        }}
-        endIcon={<MenuIcon />}
-      >
-        MENU
-      </Button>
+      <IconButton onClick={toggleDrawer("right", true)}>
+        <MenuIcon />
+      </IconButton>
       <SwipeableDrawer
         anchor="right"
         open={state["right"]}
@@ -104,14 +104,15 @@ export function SideBar({ onSetState, state }) {
           onClick={toggleDrawer("right", false)}
           onKeyDown={toggleDrawer("right", false)}
         >
-          {user && (
+          {token && (
             <Typography
               sx={{
                 my: 2,
               }}
               align="center"
+              variant="h6"
             >
-              {user.Name}
+              {token.Name}
             </Typography>
           )}
           <List>
@@ -136,8 +137,8 @@ export function SideBar({ onSetState, state }) {
             {routes.map(
               (route) =>
                 route.position === "bot" &&
-                ((user && route.primary === "Sign Up") ||
-                (user && route.primary === "Login") ? null : (
+                ((token && route.primary === "Sign Up") ||
+                (token && route.primary === "Login") ? null : (
                   <ListItem
                     key={route.primary}
                     onClick={() => navigate(route.route)}
@@ -151,7 +152,7 @@ export function SideBar({ onSetState, state }) {
                 ))
             )}
           </List>
-          {user && (
+          {token && (
             <ListItem disablePadding onClick={handleLogout}>
               <ListItemButton>
                 <ListItemIcon>

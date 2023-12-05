@@ -1,7 +1,24 @@
 import { Box, Container, Grid, Stack, Typography } from "@mui/material";
 import DiamondIcon from "@mui/icons-material/Diamond";
 import React from "react";
-
+import { Link } from "react-router-dom";
+function Copyright(props) {
+  return (
+    <Typography
+      variant="body1"
+      sx={{
+        marginTop: 5,
+      }}
+      color="text.light"
+      align="center"
+      {...props}
+    >
+      {"Copyright © "}
+      <Link color="inherit">AutoCar</Link> {new Date().getFullYear()}
+      {"."}
+    </Typography>
+  );
+}
 const FooterColumn = ({ title, content }) => (
   <Grid item xs={12} sm={6} md={3}>
     <Box
@@ -29,8 +46,9 @@ export const Footer = () => {
       sx={{
         backgroundColor: "#333",
         color: "#fff",
-        padding: 10,
-        mt: "auto", // This ensures the footer is pushed to the bottom
+        mt: "auto",
+        pt: 10,
+        pb: 2,
       }}
     >
       <Container>
@@ -77,6 +95,7 @@ export const Footer = () => {
             }
           />
         </Grid>
+        <Copyright />
       </Container>
     </Box>
   );

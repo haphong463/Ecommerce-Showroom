@@ -1,18 +1,19 @@
 import axios from "axios";
 import * as yup from "yup";
 import { errorToast } from "../Message";
+import axiosRequest from "../../configs/axiosConfig";
 
 const headers = { "Content-Type": "multipart/form-data" };
-const url = "http://localhost:5251/api/Vehicle";
 
 const handleRequest = async (method, endpoint, data = null) => {
   try {
-    const res = await axios[method](url + endpoint, data, { headers });
+    const res = await axiosRequest[method]("/Vehicle" + endpoint, data, {
+      headers,
+    });
     if (res.status === 200 || res.status === 201) return res.data;
-    return { data: null };
   } catch (error) {
     errorToast(error);
-    return { data: null };
+    return null;
   }
 };
 

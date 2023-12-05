@@ -1,33 +1,33 @@
-import axios from "axios";
 import { errorToast } from "../Message";
-const token = localStorage.getItem("token");
+import axiosRequest from "../../configs/axiosConfig";
 const headers = { "Content-Type": "multipart/form-data" };
-
-const url = "http://localhost:5251/api/Account";
 
 const handleRequest = async (method, endpoint, data = null) => {
   try {
-    const res = await axios[method](url + endpoint, data, { headers });
-    if (res.status === 200 || res.status === 201) return res.data;
-    return { data: null };
+    const result = await axiosRequest[method]("/Account" + endpoint, data, {
+      headers,
+    });
+    console.log(result);
+    return result;
   } catch (error) {
     errorToast(error);
-    return { data: null };
+    return null;
   }
 };
 
 export const getCustomer = async () => {
   try {
-    const response = await axios.get(url, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-    const data = response.data;
+    const data = await handleRequest("get", "");
+    console.log(data);
     return data;
   } catch (error) {
-    console.error("Error fetching customer:", error);
+    errorToast(error);
+    return null;
   }
+};
+
+export const postCustomer = async (data) => {
+  await handleRequest("post", "", data);
 };
 
 export const getCustomerById = async (id) =>
@@ -37,9 +37,8 @@ export const putCustomer = async (vehicle, id) =>
   await handleRequest("put", `/${id}`, vehicle);
 
 export const columns = [
-  { id: "accountId", label: "ID", minWidth: 170 },
+  { id: "accountId", label: "ID", minWidth: 30 },
   { id: "name", label: "Name", minWidth: 100 },
-  { id: "dateOfBirth", label: "Description", minWidth: 200, align: "center" },
+  { id: "dateOfBirth", label: "Date of Birth", minWidth: 200, align: "left" },
   { id: "avatarUrl", label: "Avatar", minWidth: 200, align: "center" },
-  { id: "actions", label: "Actions", minWidth: 170, align: "right" },
 ];

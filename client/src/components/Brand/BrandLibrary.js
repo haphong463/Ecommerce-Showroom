@@ -1,17 +1,18 @@
-import axios from "axios";
 import * as yup from "yup";
 import { errorToast } from "../Message";
+import axiosRequest from "../../configs/axiosConfig";
 
-const url = "http://localhost:5251/api/Brand";
 const headers = { "Content-Type": "mulipart/form-data" };
 
 const handleRequest = async (method, endpoint, data = null) => {
   try {
-    const res = await axios[method](url + endpoint, data, { headers });
-    return res.status === 200 ? res.data : { data: null };
+    const res = await axiosRequest[method]("/Brand" + endpoint, data, {
+      headers,
+    });
+    return res.status === 200 || res.status === 201 ? res.data : null;
   } catch (error) {
     errorToast(error);
-    return { data: null };
+    return null;
   }
 };
 

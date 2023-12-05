@@ -5,6 +5,7 @@ import { VehicleContext } from "../../../context/VehicleContext";
 import { DataContext } from "../../../context/DataContext";
 import {
   FormControlLabel,
+  Grid,
   MenuItem,
   RadioGroup,
   Select,
@@ -13,14 +14,25 @@ import {
 } from "@mui/material";
 import { getBrandList } from "../../Brand/BrandLibrary";
 
-export const Filter = ({ newVehicle, usedVehicle }) => {
+export const Filter = ({ vehicles }) => {
   const { vehicleData } = useContext(VehicleContext);
   const [options, setOptions] = useState([]);
   const [brand, setBrand] = useState();
   const { setSearchData } = useContext(DataContext);
   const [inputValue, setInputValue] = useState("");
-  const handleInputChange = (event, newValue) => {
-    setInputValue(newValue);
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => {
+    if (inputValue.length > 0) {
+      setOpen(true);
+    }
+  };
+  const handleInputChange = (event, newInputValue) => {
+    setInputValue(newInputValue);
+    if (newInputValue.length > 0) {
+      setOpen(true);
+    } else {
+      setOpen(false);
+    }
   };
   const [BrandList, setBrandList] = useState([]);
   const handleChangeBrand = (event) => {
@@ -28,7 +40,7 @@ export const Filter = ({ newVehicle, usedVehicle }) => {
   };
 
   useEffect(() => {
-    let filterVehicles = usedVehicle ?? newVehicle;
+    let filterVehicles = vehicles;
     if (inputValue) {
       filterVehicles = filterVehicles.filter((item) =>
         item.name.toLowerCase().includes(inputValue.toLowerCase())
@@ -42,9 +54,7 @@ export const Filter = ({ newVehicle, usedVehicle }) => {
     setSearchData(filterVehicles);
   }, [inputValue, brand]);
   useEffect(() => {
-    const uniqueOptions = [
-      ...new Set((newVehicle ?? usedVehicle).map((item) => item.name)),
-    ]; // Lọc các giá trị name duy nhất
+    const uniqueOptions = [...new Set(vehicles.map((item) => item.name))]; // Lọc các giá trị name duy nhất
     setOptions(
       uniqueOptions.map((name, index) => ({
         label: name,
@@ -52,50 +62,57 @@ export const Filter = ({ newVehicle, usedVehicle }) => {
     );
   }, [vehicleData]);
   useEffect(() => {
-    getBrandList().then((res) => {
-      if (res.data !== null) {
-        setBrandList(res.data);
+    getBrandList().then((data) => {
+      if (data !== null) {
+        setBrandList(data);
       }
     });
   }, []);
   return (
     <>
-      <Typography variant="body2" sx={{ marginBottom: 2 }}>
+      <Typography variant="h6" gutterBottom sx={{ marginBottom: 2 }}>
         You want to buy a vehicle
       </Typography>
-      <Stack>
-        <Autocomplete
-          options={options}
-          getOptionLabel={(option) => option.label}
-          renderInput={(params) => (
-            <TextField
-              {...params}
-              label="Vehicle"
-              variant="outlined"
-              placeholder="Search vehicle by name..."
-            />
-          )}
-          freeSolo
-          disableClearable
-          fullWidth
-          inputValue={inputValue}
-          onInputChange={handleInputChange}
-          open={inputValue.length > 0}
-        />
-        <Select
-          onChange={handleChangeBrand}
-          value={
-            brand ? brand : BrandList.length > 0 ? BrandList[0].brandId : ""
-          }
-        >
-          <MenuItem value="all">All</MenuItem>
-          {BrandList.map((item) => (
-            <MenuItem value={item.brandId} key={item.brandId}>
-              {item.name}
-            </MenuItem>
-          ))}
-        </Select>
-      </Stack>
+      <Grid container spacing={1}>
+        <Grid item xs={12} sm={9}>
+          <Autocomplete
+            options={options}
+            getOptionLabel={(option) => option.label}
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Vehicle"
+                variant="outlined"
+                placeholder="Search vehicle by name..."
+              />
+            )}
+            freeSolo
+            disableClearable
+            fullWidth
+            inputValue={inputValue}
+            open={open}
+            onOpen={handleOpen}
+            onClose={() => setOpen(false)}
+            onInputChange={handleInputChange}
+          />
+        </Grid>
+        <Grid item xs={12} sm={3}>
+          <Select
+            onChange={handleChangeBrand}
+            value={
+              brand ? brand : BrandList.length > 0 ? BrandList[0].brandId : ""
+            }
+            fullWidth
+          >
+            <MenuItem value="all">All</MenuItem>
+            {BrandList.map((item) => (
+              <MenuItem value={item.brandId} key={item.brandId}>
+                {item.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </Grid>
+      </Grid>
     </>
   );
 };
