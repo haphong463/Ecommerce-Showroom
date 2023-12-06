@@ -88,7 +88,7 @@ export const Signin = () => {
           </Box>
           <Container>
             <Typography variant="h4" align="center" gutterBottom>
-              Sign in
+              SIGN IN
             </Typography>
             <form onSubmit={handleSubmit(onSubmit)}>
               {generalError && (
@@ -109,9 +109,10 @@ export const Signin = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Email"
+                    label="Email*"
                     fullWidth
                     margin="normal"
+                    placeholder="enter your email address..."
                     variant="outlined"
                     error={!!errors.email}
                     helperText={errors.email?.message}
@@ -125,10 +126,11 @@ export const Signin = () => {
                 render={({ field }) => (
                   <TextField
                     {...field}
-                    label="Password"
+                    label="Password*"
                     fullWidth
                     margin="normal"
                     variant="outlined"
+                    placeholder="enter your password..."
                     type="password"
                     error={!!errors.password}
                     helperText={

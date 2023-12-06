@@ -7,7 +7,7 @@
   }
   
   .title-specs {
-    position: relative;
+    position: relative; 
   }
   
   .title-specs::after {

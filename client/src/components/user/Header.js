@@ -5,6 +5,7 @@ import {
   Badge,
   Box,
   Button,
+  Container,
   IconButton,
   Menu,
   MenuItem,
@@ -50,7 +51,7 @@ const settings = [
 
 const Header = ({ title, state, setState }) => {
   const isMobile = useMediaQuery("(max-width:900px)");
-  const { token, logout } = useContext(DataContext);
+  const { token, logout, itemCart } = useContext(DataContext);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const navigate = useNavigate();
 
@@ -74,63 +75,64 @@ const Header = ({ title, state, setState }) => {
         color: "#000", // Màu chữ đen
       }}
     >
-      <Toolbar
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-        }}
-      >
-        <Box
+      <Container maxWidth="xl">
+        <Toolbar
           sx={{
             display: "flex",
+            justifyContent: "space-between",
             alignItems: "center",
           }}
         >
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            sx={{
-              mr: 2,
-              fontWeight: 700,
-              letterSpacing: ".3rem",
-              color: "inherit",
-              textDecoration: "none",
-            }}
-          >
-            {title}
-          </Typography>
           <Box
             sx={{
-              flexGrow: 1,
-              display: { xs: "none", md: "flex" },
+              display: "flex",
+              alignItems: "center",
             }}
           >
-            {routes.map((route) => (
-              <Button
-                key={route.primary}
-                onClick={() => navigate(route.route)}
-                sx={{
-                  my: 2,
-                  display: "block",
-                  color: "#333",
-                  fontWeight: 600,
-                }}
-              >
-                {route.primary}
-              </Button>
-            ))}
+            <Typography
+              variant="h5"
+              noWrap
+              component="a"
+              sx={{
+                mr: 2,
+                fontWeight: 700,
+                letterSpacing: ".2rem",
+                color: "inherit",
+                textDecoration: "none",
+                fontFamily: "monospace",
+              }}
+            >
+              {title}
+            </Typography>
+            <Box
+              sx={{
+                flexGrow: 1,
+                display: { xs: "none", md: "flex" },
+              }}
+            >
+              {routes.map((route) => (
+                <Button
+                  key={route.primary}
+                  onClick={() => navigate(route.route)}
+                  sx={{
+                    my: 2,
+                    display: "block",
+                    color: "#333",
+                    fontWeight: 600,
+                  }}
+                >
+                  {route.primary}
+                </Button>
+              ))}
+            </Box>
           </Box>
-        </Box>
 
-        <div sx={{ display: "flex" }}>
-          <IconButton onClick={() => navigate("/cart")}>
-            <Badge badgeContent={4} color="error">
-              <ShoppingBagIcon color="action" />
-            </Badge>
-          </IconButton>
-          <Tooltip title="Open settings">
+          <div sx={{ display: "flex" }}>
+            <IconButton onClick={() => navigate("/cart")}>
+              <Badge badgeContent={itemCart} color="error">
+                <ShoppingBagIcon color="action" />
+              </Badge>
+            </IconButton>
             <IconButton
               onClick={handleOpenUserMenu}
               sx={{ p: 0, display: { xs: "none", md: "inline-block" } }}
@@ -142,56 +144,54 @@ const Header = ({ title, state, setState }) => {
                 }}
               />
             </IconButton>
-          </Tooltip>
-          {isMobile && <SideBar state={state} onSetState={setState} />}
+            {isMobile && <SideBar state={state} onSetState={setState} />}
 
-          <Menu
-            sx={{ mt: "45px" }}
-            id="menu-appbar"
-            anchorEl={anchorElUser}
-            anchorOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right",
-            }}
-            open={Boolean(anchorElUser)}
-            onClose={handleCloseUserMenu}
-          >
-            {token ? (
-              <Box component="div">
-                <MenuItem>
-                  <Typography textAlign="center" fontWeight={600}>
-                    {token.Name}
-                  </Typography>
-                </MenuItem>
-                <MenuItem
-                  onClick={() => {
-                    logout();
-                    setAnchorElUser(null);
-                  }}
-                >
-                  <Typography textAlign="center">Logout</Typography>
-                </MenuItem>
-              </Box>
-            ) : (
-              settings.map((setting) => (
-                <MenuItem
-                  key={setting.primary}
-                  onClick={() => handleNavigate(setting.route)}
-                >
-                  <Typography textAlign="center" fontWeight={600}>
-                    {setting.primary}
-                  </Typography>
-                </MenuItem>
-              ))
-            )}
-          </Menu>
-        </div>
-      </Toolbar>
+            <Menu
+              sx={{ mt: "45px" }}
+              id="menu-appbar"
+              anchorEl={anchorElUser}
+              anchorOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              keepMounted
+              transformOrigin={{
+                vertical: "top",
+                horizontal: "right",
+              }}
+              open={Boolean(anchorElUser)}
+              onClose={handleCloseUserMenu}
+            >
+              {token ? (
+                <Box component="div">
+                  <MenuItem>
+                    <Typography textAlign="center">{token.Name}</Typography>
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      logout();
+                      setAnchorElUser(null);
+                    }}
+                  >
+                    <Typography textAlign="center">Logout</Typography>
+                  </MenuItem>
+                </Box>
+              ) : (
+                settings.map((setting) => (
+                  <MenuItem
+                    key={setting.primary}
+                    onClick={() => handleNavigate(setting.route)}
+                  >
+                    <Typography textAlign="center" fontWeight={600}>
+                      {setting.primary}
+                    </Typography>
+                  </MenuItem>
+                ))
+              )}
+            </Menu>
+          </div>
+        </Toolbar>
+      </Container>
     </AppBar>
   );
 };

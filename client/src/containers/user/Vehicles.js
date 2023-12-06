@@ -132,7 +132,7 @@ export function Vehicles() {
         {/* VEHILE CONTENT */}
 
         {!isMobile ? (
-          <Container maxWidth="lg">
+          <Container>
             <VehicleContent
               vehicleData={vehicleData}
               searchData={searchData}

@@ -8,6 +8,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import { LayoutUser } from "../../layout/LayoutUser";
 import { Box, Container, Typography } from "@mui/material";
+import { getVehicleById } from "../../components/Vehicle/VehicleLibrary";
 
 const TAX_RATE = 0.07;
 
@@ -15,30 +16,42 @@ function ccyFormat(num) {
   return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
 
-function priceRow(qty, unit) {
-  return qty * unit;
-}
-
-function createRow(desc, qty, unit) {
-  const price = priceRow(qty, unit);
-  return { desc, qty, unit, price: parseFloat(price.toFixed(2)) };
-}
-
-function subtotal(items) {
-  return items.map(({ price }) => price).reduce((sum, i) => sum + i, 0);
-}
-
-const rows = [
-  createRow("Paperclips (Box)", 100, 1.15),
-  createRow("Paper (Case)", 10, 451231),
-  createRow("Waste Basket", 2, 17.99),
-];
-
-const invoiceSubtotal = subtotal(rows);
-const invoiceTaxes = TAX_RATE * invoiceSubtotal;
-const invoiceTotal = invoiceTaxes + invoiceSubtotal;
-
 export default function Cart() {
+  const [cartItems, setCartItems] = React.useState([]);
+
+  React.useEffect(() => {
+    const fetchCartData = async () => {
+      // Fetch cart items from localStorage
+      const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
+
+      // Fetch additional data for each item
+      const updatedCart = await Promise.all(
+        storedCart.map(async (item) => {
+          const vehicleData = await getVehicleById(item.vehicleId);
+          return { ...item, unitPrice: vehicleData.purchasePrice };
+        })
+      );
+
+      setCartItems(updatedCart);
+    };
+
+    fetchCartData();
+  }, []);
+
+  const calculateSubTotalItem = (item) => {
+    return item.qty * item.unitPrice;
+  };
+
+  const calculateTotal = () => {
+    const subTotal = cartItems.reduce(
+      (total, item) => total + calculateSubTotalItem(item),
+      0
+    );
+    const taxes = TAX_RATE * subTotal;
+    const total = subTotal + taxes;
+
+    return { subTotal, taxes, total };
+  };
   return (
     <LayoutUser>
       <Box
@@ -56,12 +69,13 @@ export default function Cart() {
             <Table sx={{ minWidth: 700 }} aria-label="spanning table">
               <TableHead>
                 <TableRow>
-                  <TableCell align="center" colSpan={3}>
+                  <TableCell align="center" colSpan={4}>
                     Details
                   </TableCell>
                   <TableCell align="right">Price</TableCell>
                 </TableRow>
                 <TableRow>
+                  <TableCell>Desc</TableCell>
                   <TableCell>Desc</TableCell>
                   <TableCell align="right">Qty.</TableCell>
                   <TableCell align="right">Unit</TableCell>
@@ -69,31 +83,48 @@ export default function Cart() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
-                  <TableRow key={row.desc}>
-                    <TableCell>{row.desc}</TableCell>
+                {cartItems.map((row) => (
+                  <TableRow key={row.vehicleId}>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.name}</TableCell>
                     <TableCell align="right">{row.qty}</TableCell>
-                    <TableCell align="right">{row.unit}</TableCell>
-                    <TableCell align="right">{ccyFormat(row.price)}</TableCell>
+                    <TableCell align="right">{row.unitPrice}</TableCell>
+                    <TableCell align="right">
+                      {ccyFormat(calculateSubTotalItem(row))}
+                    </TableCell>
                   </TableRow>
                 ))}
                 <TableRow>
-                  <TableCell rowSpan={3} />
-                  <TableCell colSpan={2}>Subtotal</TableCell>
+                  <TableCell colSpan={1}></TableCell>
+                  <TableCell colSpan={2} align="right" verticalAlign="bottom">
+                    Subtotal
+                  </TableCell>
+                  <TableCell colSpan={1}></TableCell>
                   <TableCell align="right">
-                    {ccyFormat(invoiceSubtotal)}
+                    {ccyFormat(calculateTotal().subTotal)}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell>Tax</TableCell>
+                  <TableCell colSpan={1}></TableCell>
+                  <TableCell colSpan={2} align="right" verticalAlign="bottom">
+                    Tax
+                  </TableCell>
                   <TableCell align="right">{`${(TAX_RATE * 100).toFixed(
                     0
                   )} %`}</TableCell>
-                  <TableCell align="right">{ccyFormat(invoiceTaxes)}</TableCell>
+                  <TableCell align="right">
+                    {ccyFormat(calculateTotal().taxes)}
+                  </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell colSpan={2}>Total</TableCell>
-                  <TableCell align="right">{ccyFormat(invoiceTotal)}</TableCell>
+                  <TableCell colSpan={1}></TableCell>
+                  <TableCell colSpan={2} align="right" verticalAlign="bottom">
+                    Total
+                  </TableCell>
+                  <TableCell colSpan={1}></TableCell>
+                  <TableCell align="right">
+                    {ccyFormat(calculateTotal().total)}
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>

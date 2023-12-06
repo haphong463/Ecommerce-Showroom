@@ -15,15 +15,8 @@ import "../../assets/styles/Body.css";
 import { DatePicker } from "@mui/x-date-pickers";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import dayjs from "dayjs";
-import { Link, useNavigate } from "react-router-dom";
-import {
-  FormControl,
-  FormControlLabel,
-  InputLabel,
-  MenuItem,
-  Select,
-} from "@mui/material";
-import axios from "axios";
+import { Link } from "react-router-dom";
+import { FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { postCustomer } from "../../components/Customer/CustomerLibrary";
 const schema = yup.object().shape({
   name: yup.string().required("First name is required"),
@@ -52,7 +45,6 @@ const formFields = [
 ];
 
 export function SignUp() {
-  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -66,7 +58,6 @@ export function SignUp() {
 
   const onSubmit = (data) => {
     const newDate = dayjs(new Date(data.dateOfBirth)).format("YYYY-MM-DD");
-    const currentDate = dayjs().format("YYYY-MM-DD");
     console.log(data);
     const formData = new FormData();
     formData.append("email", data.email);

@@ -5,6 +5,7 @@ import { successToast } from "../components/Message";
 import Swal from "sweetalert2";
 export const DataContext = createContext();
 export const DataProvider = ({ children }) => {
+  const [itemCart, setItemCart] = useState(0);
   const [searchData, setSearchData] = useState([]);
   const tokenLocal = localStorage.getItem("token");
   const [loading, setLoading] = useState();
@@ -61,6 +62,8 @@ export const DataProvider = ({ children }) => {
     setToken,
     searchData,
     setSearchData,
+    itemCart,
+    setItemCart,
   };
   return <DataContext.Provider value={values}>{children}</DataContext.Provider>;
 };

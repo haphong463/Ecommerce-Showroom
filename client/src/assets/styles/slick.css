@@ -29,15 +29,17 @@
     height: 0;
   }
  
-  .slick-arrow, .slick-prev{
+  .slick-arrow{
     background:  #003580;
+
+    border-radius: 999;
   }
 
   .slick-next{
-    right: -10px;
+    z-index: 10;
   }
   .slick-prev{
-    left: -10px;
+    z-index: 10;
   }
 
   .slick-prev:hover, .slick-prev:focus, .slick-next:hover, .slick-next:focus{

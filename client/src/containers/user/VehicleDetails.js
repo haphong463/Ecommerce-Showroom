@@ -36,12 +36,13 @@ import DescriptionIcon from "@mui/icons-material/Description";
 import dayjs from "dayjs";
 import RelatedVehicles from "../../components/user/Vehicles/RelatedVehicles";
 import { VehicleSpec } from "../../components/user/Vehicles/VehicleSpec";
+import { DataContext } from "../../context/DataContext";
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { vehicle, setVehicle } = useContext(VehicleContext);
+  const { setItemCart } = useContext(DataContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
-
   const infoArray = [
     { icon: <DriveEtaIcon />, title: "Name", value: vehicle.name },
     {
@@ -111,6 +112,34 @@ export const VehicleDetails = () => {
       value: vehicle.description,
     },
   ];
+  const handleAddToCart = () => {
+    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
+    const isVehicleInCart = existingCart.some(
+      (item) => item.vehicleId === vehicle.vehicleID
+    );
+    if (!isVehicleInCart) {
+      const updatedCart = [
+        ...existingCart,
+        {
+          vehicleId: vehicle.vehicleID,
+          name: vehicle.name,
+          imageUrl: vehicle.images[0].imagePath,
+          qty: 1,
+        },
+      ];
+
+      // Save the updated cart in localStorage
+      localStorage.setItem("cart", JSON.stringify(updatedCart));
+
+      // Optionally, you can provide feedback to the user
+      alert("Vehicle added to cart!");
+      setItemCart(existingCart.length + 1);
+    } else {
+      // Optionally, you can provide feedback that the vehicle is already in the cart
+      alert("Vehicle is already in the cart!");
+    }
+  };
+
   const refreshVehicleData = () => {
     getVehicleById(id).then((data) => {
       if (data !== null) {
@@ -180,9 +209,7 @@ export const VehicleDetails = () => {
                       variant="contained"
                       color="warning"
                       fullWidth
-                      onClick={() => {
-                        // Xử lý khi nút được nhấn
-                      }}
+                      onClick={handleAddToCart}
                     >
                       Add to cart
                     </Button>
@@ -195,7 +222,7 @@ export const VehicleDetails = () => {
                 <VehicleSpec infoArray={infoArray} />
               </Grid>
               <Grid item xs={12}>
-                <RelatedVehicles />
+                <RelatedVehicles brandId={vehicle.brand.brandId} />
               </Grid>
             </Grid>
           </Container>

@@ -13,7 +13,7 @@ export function VehicleSpec({ infoArray }) {
         <span className="title-text">Vehicle Specs</span>
       </Typography>
 
-      <Divider sx={{ borderTop: "1px solid #333", mt: 1, mx: 30 }} />
+      <Divider sx={{ borderTop: "2px solid #333", mt: 1 }} />
       <Grid container columnSpacing={3}>
         {infoArray.map(
           (info, index) =>

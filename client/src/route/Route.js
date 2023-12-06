@@ -52,7 +52,7 @@ export const publicRoutes = [
   },
   { path: "/admin/login", component: <Login /> },
   { path: "/login", component: <Signin /> },
-  { path: "/cart", component: <Cart />, roles: ["Admin", "User"] },
+  { path: "/cart", component: <Cart /> },
 ];
 
 export const privateRoutes = [

@@ -58,6 +58,7 @@ export function VehicleItem({ vehicle, openImageDialog, navigate }) {
           <Button
             startIcon={<RemoveRedEyeIcon />}
             variant="contained"
+            color="info"
             fullWidth
             onClick={() => navigate(`/vehicle/${vehicle.vehicleID}`)}
           >

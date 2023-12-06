@@ -1,22 +1,29 @@
-import { Box, Container, Grid, Stack, Typography } from "@mui/material";
+import {
+  Box,
+  Container,
+  Divider,
+  Grid,
+  Stack,
+  Typography,
+} from "@mui/material";
 import DiamondIcon from "@mui/icons-material/Diamond";
 import React from "react";
 import { Link } from "react-router-dom";
 function Copyright(props) {
   return (
-    <Typography
-      variant="body1"
-      sx={{
-        marginTop: 5,
-      }}
-      color="text.light"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit">AutoCar</Link> {new Date().getFullYear()}
-      {"."}
-    </Typography>
+    <>
+      <Divider
+        sx={{
+          border: "1px solid",
+          my: 2,
+        }}
+      />
+      <Typography variant="body1" color="text.light" align="center" {...props}>
+        {"© Copyright  " + new Date().getFullYear() + " "}
+        <Link>AutoCar</Link>
+        {"."}
+      </Typography>
+    </>
   );
 }
 const FooterColumn = ({ title, content }) => (
@@ -44,7 +51,7 @@ export const Footer = () => {
     <Box
       component="footer"
       sx={{
-        backgroundColor: "#333",
+        backgroundColor: "#003580",
         color: "#fff",
         mt: "auto",
         pt: 10,
@@ -55,7 +62,7 @@ export const Footer = () => {
         <Grid container spacing={2}>
           {/* Company Column */}
           <FooterColumn
-            title="Introduction"
+            title="AutoCar"
             content="AutoCar, a diverse automotive showroom exuding confidence and sophistication."
           />
 
@@ -95,8 +102,9 @@ export const Footer = () => {
             }
           />
         </Grid>
-        <Copyright />
       </Container>
+
+      <Copyright />
     </Box>
   );
 };
