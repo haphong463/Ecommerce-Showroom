@@ -3,6 +3,7 @@ using API.DTO;
 using API.Helper;
 using API.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -46,6 +47,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Employee, Admin")]
         public async Task<ActionResult<ApiResponse<VehicleDTO>>> PostVehicle([FromForm] Vehicle vehicle, List<IFormFile> files)
         {
             if (!ModelState.IsValid)
@@ -68,8 +70,9 @@ namespace API.Controllers
 
                 await _dbContext.Vehicles.AddAsync(vehicle);
                 await _dbContext.SaveChangesAsync();
+                var vehicleDTO = await _dbContext.Vehicles.Include(x => x.Brand).Include(x => x.Images).SingleOrDefaultAsync(x => x.VehicleId == vehicle.VehicleId);
 
-                var vehicleDtoResult = _mapper.Map<VehicleDTO>(vehicle);
+                var vehicleDtoResult = _mapper.Map<VehicleDTO>(vehicleDTO);
                 return CreatedAtAction(nameof(GetVehicleById), new { id = vehicle.VehicleId },
                                         new ApiResponse<VehicleDTO>(vehicleDtoResult, "Vehicle created successfully", 201));
             }
@@ -113,7 +116,7 @@ namespace API.Controllers
                     _dbContext.Entry(vehicleExisting).CurrentValues.SetValues(vehicleUpdate);
                     await _dbContext.SaveChangesAsync();
 
-                    var updatedDto = _mapper.Map<VehicleDTO>(vehicleUpdate);
+                    var updatedDto = _mapper.Map<VehicleDTO>(vehicleExisting);
                     return Ok(new ApiResponse<VehicleDTO>(updatedDto, "Vehicle updated successfully"));
                 }
 

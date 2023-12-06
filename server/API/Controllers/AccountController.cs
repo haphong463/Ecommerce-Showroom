@@ -23,7 +23,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Index()
         {
             try
@@ -35,7 +35,7 @@ namespace API.Controllers
                 }
                 else
                 {
-                    return Ok(new ApiResponse<Account>(null,"No accounts found"));
+                    return Ok(new ApiResponse<Account>(null, "No accounts found"));
                 }
             }
             catch (Exception ex)
@@ -76,6 +76,7 @@ namespace API.Controllers
                 {
                     account.Role = "User";
                 }
+
                 account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
                 var resource = await _dbContext.Accounts.AddAsync(account);
                 await _dbContext.SaveChangesAsync();
@@ -111,7 +112,7 @@ namespace API.Controllers
                     _dbContext.Accounts.Remove(account);
                     await _dbContext.SaveChangesAsync();
                     return Ok(new ApiResponse<Account>(account, "Delete account successfully"));
-                  
+
                 }
                 else
                 {
@@ -146,7 +147,7 @@ namespace API.Controllers
                     _dbContext.Entry(existingAccount).CurrentValues.SetValues(account);
                     await _dbContext.SaveChangesAsync();
                     return Ok(new ApiResponse<Account>(account, "Update account successfully"));
-                   
+
                 }
                 else
                 {

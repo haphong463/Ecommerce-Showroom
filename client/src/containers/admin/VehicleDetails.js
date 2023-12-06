@@ -4,7 +4,6 @@ import { Box, Grid } from "@mui/material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate, useParams } from "react-router-dom";
-import "./slick.css";
 import { Sidebar } from "../../components/admin/Sidebar";
 import Navbar from "../../components/admin/Navbar";
 import {
@@ -29,17 +28,18 @@ import {
 } from "../../components/Vehicle/VehicleLibrary";
 import dayjs from "dayjs";
 import VehicleForm from "../../components/Vehicle/VehicleForm";
-import { DataContext } from "../../context/DataContext";
+import { VehicleContext } from "../../context/VehicleContext";
 import CustomSlider from "../../components/VehicleDetails/CustomSlider";
 import VehicleInformation from "../../components/VehicleDetails/VehicleInformation";
 import { dangerMessage } from "../../components/Message";
+import Swal from "sweetalert2";
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { setEntry, vehicle, setVehicle, setVehicleData } =
-    useContext(DataContext);
+    useContext(VehicleContext);
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
-
+  const [loading, setLoading] = useState(false);
   const handleClickOpen = () => {
     setEntry(vehicle);
     setOpen(true);
@@ -51,17 +51,27 @@ export const VehicleDetails = () => {
   };
 
   const handleDelete = (id) => {
-    deleteVehicle(id).then((res) => {
-      if (res.data !== null) {
-        setVehicleData((prev) =>
-          prev.filter((item) => item.vehicleID !== res.data.vehicleID)
-        );
-        navigate("../admin/vehicles");
-        dangerMessage(`Deleted vehicle successfully.`);
+    Swal.fire({
+      title: "Are you sure?",
+      text: "You will not be able to recover this vehicle!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonText: "Yes, delete it!",
+      cancelButtonText: "No, cancel!",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        deleteVehicle(id).then((data) => {
+          if (data !== null) {
+            setVehicleData((prev) =>
+              prev.filter((item) => item.vehicleID !== data.vehicleID)
+            );
+            navigate("../admin/vehicles");
+            dangerMessage(`Deleted vehicle successfully.`);
+          }
+        });
       }
     });
   };
-  const [activeIndex, setActiveIndex] = useState(0);
 
   const infoArray = [
     { icon: <DriveEtaIcon />, title: "Name", value: vehicle.name },
@@ -132,38 +142,12 @@ export const VehicleDetails = () => {
       value: vehicle.description,
     },
   ];
-  const sliderSettings = {
-    dots: true,
-    dotsClass: "slick-dots slick-thumb",
-    infinite: true,
-    speed: 500,
-    arrows: false,
-    slidesToShow: 1,
-    slidesToScroll: 1,
-    beforeChange: (current, next) => {
-      setActiveIndex(next);
-    },
-    customPaging: function (i) {
-      // Sử dụng hình ảnh thay vì dấu chấm
-      return (
-        <img
-          src={vehicle.images[i].imagePath}
-          alt={`Product ${i + 1}`}
-          style={{ width: "100px", height: "100px", marginRight: 5 }} // Set width and height as needed
-          className={`dot img-thumbnail ${i === activeIndex ? "active" : ""}`}
-        />
-      );
-    },
-    appendDots: (dots) => (
-      <div>
-        <ul style={{ margin: "0", padding: "0" }}>{dots}</ul>
-      </div>
-    ),
-  };
+
   const refreshVehicleData = () => {
-    getVehicleById(id).then((res) => {
-      if (res.data !== null) {
-        setVehicle(res.data);
+    getVehicleById(id).then((data) => {
+      if (data !== null) {
+        setVehicle(data);
+        setLoading(true);
       } else {
         navigate("../admin/vehicles");
       }
@@ -187,25 +171,24 @@ export const VehicleDetails = () => {
           handleClose={handleClose}
           refreshVehicleData={refreshVehicleData}
         />
-        <Box sx={{ ml: 10 }}>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={6}>
-              <CustomSlider
-                vehicleImages={vehicle.images}
-                sliderSettings={sliderSettings}
-              />
-            </Grid>
+        {loading && (
+          <Box sx={{ ml: 10 }}>
+            <Grid container spacing={2}>
+              <Grid item xs={12} md={6}>
+                <CustomSlider vehicleImages={vehicle.images} />
+              </Grid>
 
-            <Grid item xs={12} md={6}>
-              <VehicleInformation
-                infoArray={infoArray}
-                handleClickOpen={handleClickOpen}
-                handleDelete={handleDelete}
-                vehicleID={id}
-              />
+              <Grid item xs={12} md={6}>
+                <VehicleInformation
+                  infoArray={infoArray}
+                  handleClickOpen={handleClickOpen}
+                  handleDelete={handleDelete}
+                  vehicleID={id}
+                />
+              </Grid>
             </Grid>
-          </Grid>
-        </Box>
+          </Box>
+        )}
       </Box>
     </>
   );

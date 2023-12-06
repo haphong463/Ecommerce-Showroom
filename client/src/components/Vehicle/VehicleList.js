@@ -6,13 +6,15 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { DataContext } from "../../context/DataContext";
+import { VehicleContext } from "../../context/VehicleContext";
 import { columns, getVehicles } from "./VehicleLibrary";
 import { IconButton, Stack } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { useNavigate } from "react-router-dom";
+import { DataContext } from "../../context/DataContext";
 export function VehicleList() {
-  const { setVehicleData, vehicleData, setLoading } = useContext(DataContext);
+  const { setVehicleData, vehicleData } = useContext(VehicleContext);
+  const { setLoading } = useContext(DataContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const navigate = useNavigate();
@@ -26,16 +28,17 @@ export function VehicleList() {
   };
   useEffect(() => {
     setLoading(true);
-    getVehicles().then((res) => {
-      if (res.data !== null) {
-        setVehicleData(res.data);
+    getVehicles().then((data) => {
+      console.log(data);
+      if (data !== null) {
+        setVehicleData(data);
         setLoading(false);
       }
     });
   }, [setVehicleData]);
   return (
     <>
-      <TableContainer sx={{ maxHeight: 440 }}>
+      <TableContainer sx={{ maxHeight: "75vh" }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>

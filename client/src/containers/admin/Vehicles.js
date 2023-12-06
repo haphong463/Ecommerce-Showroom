@@ -1,16 +1,24 @@
-import { Box, CircularProgress, Fab, Paper } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Fab,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useContext } from "react";
 import { Sidebar } from "../../components/admin/Sidebar";
 import Navbar from "../../components/admin/Navbar";
 import AddIcon from "@mui/icons-material/Add";
 import VehicleForm from "../../components/Vehicle/VehicleForm";
 import { VehicleList } from "../../components/Vehicle/VehicleList";
+import { VehicleContext } from "../../context/VehicleContext";
 import { DataContext } from "../../context/DataContext";
 
 export const Vehicles = () => {
   const [open, setOpen] = React.useState(false);
-  const { setEntry } = useContext(DataContext);
-  const {loading} = useContext(DataContext);
+  const { setEntry } = useContext(VehicleContext);
+  const { loading } = useContext(DataContext);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -38,20 +46,31 @@ export const Vehicles = () => {
               sx={{
                 position: "absolute",
                 left: "50%",
+                top: "50%",
               }}
             />
           )}
-          <Fab
-            color="primary"
-            size="medium"
-            aria-label="add"
-            onClick={handleClickOpen}
-            sx={{
-              m: "10px",
-            }}
+          <Stack
+            justifyContent="space-between"
+            alignItems="center"
+            direction="row"
           >
-            <AddIcon />
-          </Fab>
+            <Typography variant="h4">
+              <span className="title-text">Vehicles</span>
+            </Typography>
+
+            <Fab
+              color="primary"
+              size="medium"
+              aria-label="add"
+              onClick={handleClickOpen}
+              sx={{
+                m: "10px",
+              }}
+            >
+              <AddIcon />
+            </Fab>
+          </Stack>
           <VehicleList />
         </Paper>
       </Box>

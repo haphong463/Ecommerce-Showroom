@@ -72,7 +72,7 @@ namespace API.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Brand", b =>
@@ -97,7 +97,25 @@ namespace API.Migrations
 
                     b.HasKey("BrandId");
 
-                    b.ToTable("Brands");
+                    b.ToTable("Brands", (string)null);
+                });
+
+            modelBuilder.Entity("API.Models.Employee", b =>
+                {
+                    b.Property<int>("EmployeeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"), 1L, 1);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EmployeeId");
+
+                    b.HasIndex("AccountId");
+
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Images", b =>
@@ -118,7 +136,7 @@ namespace API.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("Images");
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("Vehicle", b =>
@@ -195,7 +213,18 @@ namespace API.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.ToTable("Vehicles");
+                    b.ToTable("Vehicles", (string)null);
+                });
+
+            modelBuilder.Entity("API.Models.Employee", b =>
+                {
+                    b.HasOne("API.Models.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("API.Models.Images", b =>

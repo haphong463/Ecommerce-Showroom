@@ -42,3 +42,16 @@ export const successToast = (msg) => {
     theme: "light",
   });
 };
+
+export const infoToast = (msg) => {
+  toast.info(msg, {
+    position: "bottom-right",
+    autoClose: 5000,
+    hideProgressBar: false,
+    closeOnClick: true,
+    pauseOnHover: true,
+    draggable: true,
+    progress: undefined,
+    theme: "light",
+  });
+};

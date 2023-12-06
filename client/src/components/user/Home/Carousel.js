@@ -49,9 +49,13 @@ export const Carousel = ({ images, state, setState }) => {
                 <Box
                   component="img"
                   sx={{
-                    height: "100vh",
+                    height: {
+                      xs: "40vh", // Đối với breakpoint xs, sử dụng chiều cao tự động
+                      md: "50vh", // Đối với breakpoint md, sử dụng chiều cao là 300px
+                      lg: "70vh", // Đối với breakpoint lg, sử dụng chiều cao là 400px
+                      xl: "90vh", // Đối với breakpoint xl, sử dụng chiều cao là 500px
+                    },
                     display: "block",
-                    maxWidth: "100%",
                     overflow: "hidden",
                     width: "100%",
                     position: "relative",
@@ -65,7 +69,7 @@ export const Carousel = ({ images, state, setState }) => {
                   <Box
                     sx={{
                       position: "absolute",
-                      top: "50%",
+                      top: ["60%", "60%", "60%", "50%"],
                       left: "50%",
                       transform: "translate(-50%, -50%)",
                       color: "#fff",
@@ -77,7 +81,12 @@ export const Carousel = ({ images, state, setState }) => {
                       variant="h1"
                       sx={{
                         mb: 2,
-                        fontSize: { xs: "2rem", sm: "2.5rem", md: "3rem" },
+                        fontSize: {
+                          xs: "1rem",
+                          sm: "1.5rem",
+                          md: "2rem",
+                          lg: "2.5rem",
+                        },
                       }}
                       component="div"
                     >

@@ -5,9 +5,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
-import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
@@ -17,11 +15,26 @@ import "../../assets/styles/Body.css";
 import { DatePicker } from "@mui/x-date-pickers";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import dayjs from "dayjs";
-import { NavLink, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import {
+  FormControl,
+  FormControlLabel,
+  InputLabel,
+  MenuItem,
+  Select,
+} from "@mui/material";
+import axios from "axios";
+import { postCustomer } from "../../components/Customer/CustomerLibrary";
 const schema = yup.object().shape({
   name: yup.string().required("First name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup.string().required("Password is required"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .matches(
+      /^(?=.*[A-Z])(?=.*[\W_]).+$/,
+      "Password must contain at least one uppercase letter and one special character or underscore."
+    ),
   phone: yup
     .string()
     .required("Phone number is required")
@@ -53,12 +66,24 @@ export function SignUp() {
 
   const onSubmit = (data) => {
     const newDate = dayjs(new Date(data.dateOfBirth)).format("YYYY-MM-DD");
-    console.log(data, newDate);
+    const currentDate = dayjs().format("YYYY-MM-DD");
+    console.log(data);
+    const formData = new FormData();
+    formData.append("email", data.email);
+    formData.append("password", data.password);
+    formData.append("dateOfBirth", newDate);
+    formData.append("file", data.profileImage);
+    formData.append("name", data.name);
+    formData.append("gender", data.gender);
+    formData.append("phone", data.phone);
+    formData.append("role", "User");
+
+    postCustomer(formData);
   };
 
   const handleFileChange = (event) => {
     const file = event.target.files[0];
-
+    setValue("profileImage", file);
     if (file) {
       const reader = new FileReader();
 
@@ -104,7 +129,7 @@ export function SignUp() {
               src={avatarImage} // Set the source of the Avatar
             ></Avatar>
             <Typography component="h1" variant="h5">
-              Sign up
+              Create account
             </Typography>
             <Box
               component="form"
@@ -114,7 +139,12 @@ export function SignUp() {
             >
               <Grid container spacing={2}>
                 {formFields.map(({ label, name }, index) => (
-                  <Grid item xs={12} sm={6} key={index}>
+                  <Grid
+                    item
+                    xs={12}
+                    sm={name === "profileImage" ? 12 : 6}
+                    key={index}
+                  >
                     {name === "profileImage" ? (
                       <div>
                         <label
@@ -143,16 +173,40 @@ export function SignUp() {
                       </div>
                     ) : name === "dateOfBirth" ? (
                       <DatePicker
+                        label="Date of Birth"
+                        defaultValue={dayjs()}
                         sx={{
                           width: "100%",
                         }}
+                        {...register(name)}
                         onChange={(e) => {
                           setValue(name, e);
                         }}
                       />
+                    ) : name === "gender" ? (
+                      <FormControl fullWidth>
+                        <InputLabel htmlFor="select-gender" shrink>
+                          Gender
+                        </InputLabel>
+                        <Select
+                          {...register(name)}
+                          defaultValue="Male"
+                          fullWidth
+                          label="Gender"
+                          inputProps={{
+                            name: name,
+                            id: "select-gender",
+                          }}
+                        >
+                          <MenuItem value="Male">Male</MenuItem>
+                          <MenuItem value="Female">Female</MenuItem>
+                          <MenuItem value="Other">Other</MenuItem>
+                        </Select>
+                      </FormControl>
                     ) : (
                       <TextField
                         {...register(name)}
+                        type={name === "password" ? "password" : "text"}
                         required
                         fullWidth
                         id={name}
@@ -181,9 +235,9 @@ export function SignUp() {
               </Button>
               <Grid container justifyContent="flex-end">
                 <Grid item>
-                  <NavLink to="/signin" variant="body2">
+                  <Link to="/login" variant="body2">
                     Already have an account? Sign in
-                  </NavLink>
+                  </Link>
                 </Grid>
               </Grid>
             </Box>

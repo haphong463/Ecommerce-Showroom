@@ -7,10 +7,11 @@ const VehicleInformation = ({
   handleClickOpen,
   handleDelete,
   vehicleID,
+  userLayout,
 }) => {
   return (
     <Box mt={2}>
-      <Typography variant="h6">Vehicle Information</Typography>
+      <Typography variant="h4">Vehicle Information</Typography>
       <Grid
         container
         spacing={4}
@@ -20,25 +21,34 @@ const VehicleInformation = ({
       >
         {infoArray.map((info, index) => (
           <Grid item xs={info.title === "Description" ? 12 : 6} key={index}>
-            <Stack direction="row" spacing={2}>
-              <Tooltip title={info.title}>{info.icon}</Tooltip>
-              <Typography variant="body2">{info.value}</Typography>
-            </Stack>
+            <Box
+              sx={{
+                display: "flex",
+                alignItems: "center",
+              }}
+            >
+              <Tooltip sx={{ marginRight: 2 }} title={info.title}>
+                {info.icon}
+              </Tooltip>
+              <Typography variant="body1">{info.value}</Typography>
+            </Box>
           </Grid>
         ))}
       </Grid>
-      <Stack direction="row" sx={{ mt: 3 }} spacing={1}>
-        <Button variant="contained" color="info" onClick={handleClickOpen}>
-          Edit
-        </Button>
-        <Button
-          variant="contained"
-          color="error"
-          onClick={() => handleDelete(vehicleID)}
-        >
-          Delete
-        </Button>
-      </Stack>
+      {!userLayout && (
+        <Stack direction="row" sx={{ mt: 3 }} spacing={1}>
+          <Button variant="contained" color="info" onClick={handleClickOpen}>
+            Edit
+          </Button>
+          <Button
+            variant="contained"
+            color="error"
+            onClick={() => handleDelete(vehicleID)}
+          >
+            Delete
+          </Button>
+        </Stack>
+      )}
     </Box>
   );
 };

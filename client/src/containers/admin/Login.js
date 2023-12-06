@@ -1,45 +1,58 @@
 import * as React from "react";
+import { useForm, Controller } from "react-hook-form";
+import * as yup from "yup";
+import { yupResolver } from "@hookform/resolvers/yup"; // Import yupResolver
 import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import Checkbox from "@mui/material/Checkbox";
 import Link from "@mui/material/Link";
 import Paper from "@mui/material/Paper";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
+import { Alert, Stack } from "@mui/material";
+import axios from "axios";
+import { DataContext } from "../../context/DataContext";
+import { loginAuth } from "../../components/Auth";
 
-function Copyright(props) {
-  return (
-    <Typography
-      variant="body2"
-      color="text.secondary"
-      align="center"
-      {...props}
-    >
-      {"Copyright © "}
-      <Link color="inherit" href="https://mui.com/">
-        Your Website
-      </Link>{" "}
-      {new Date().getFullYear()}
-      {"."}
-    </Typography>
-  );
-}
-
-// TODO remove, this demo shouldn't need to reset the theme.
+const validationSchema = yup.object({
+  email: yup
+    .string()
+    .email("Invalid email address")
+    .required("Email is required"),
+  password: yup.string().required("Password is required"),
+});
 
 export function Login() {
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get("email"),
-      password: data.get("password"),
+  const {
+    handleSubmit,
+    control,
+    formState: { errors },
+  } = useForm({
+    resolver: yupResolver(validationSchema),
+  });
+
+  const { login, token } = React.useContext(DataContext);
+  const [generalError, setGeneralError] = React.useState("");
+
+  const onSubmit = async (data) => {
+    loginAuth(data).then((data) => {
+      if (data !== null) {
+        login(data);
+      } else {
+        setGeneralError(
+          "An error occurred during login. Please try again later."
+        );
+      }
     });
+  };
+  const [capsLockEnabled, setCapsLockEnabled] = React.useState(false);
+
+  const handleKeyPress = (e) => {
+    const isCapsLockOn = e.getModifierState("CapsLock");
+    setCapsLockEnabled(isCapsLockOn);
   };
 
   return (
@@ -68,6 +81,7 @@ export function Login() {
           sx={{
             my: 8,
             mx: 4,
+            position: "relative",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -82,33 +96,64 @@ export function Login() {
           <Box
             component="form"
             noValidate
-            onSubmit={handleSubmit}
+            onSubmit={handleSubmit(onSubmit)}
             sx={{ mt: 1 }}
           >
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              id="email"
-              label="Email Address"
-              name="email"
-              autoComplete="email"
-              autoFocus
-            />
-            <TextField
-              margin="normal"
-              required
-              fullWidth
-              name="password"
-              label="Password"
-              type="password"
-              id="password"
-              autoComplete="current-password"
-            />
-            <FormControlLabel
-              control={<Checkbox value="remember" color="primary" />}
-              label="Remember me"
-            />
+            {generalError && (
+              <Alert
+                severity="error"
+                sx={{
+                  my: 2,
+                }}
+              >
+                {generalError}
+              </Alert>
+            )}
+
+            <Box>
+              <Controller
+                name="email"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    {...field}
+                    id="email"
+                    label="Email Address"
+                    autoComplete="email"
+                    autoFocus
+                    fullWidth
+                    error={Boolean(errors.email)}
+                    helperText={errors.email?.message}
+                  />
+                )}
+              />
+              <Controller
+                name="password"
+                control={control}
+                defaultValue=""
+                render={({ field }) => (
+                  <TextField
+                    sx={{ mt: 3 }}
+                    {...field}
+                    name="password"
+                    label="Password"
+                    type="password"
+                    id="password"
+                    autoComplete="current-password"
+                    error={Boolean(errors.password || capsLockEnabled)}
+                    helperText={
+                      capsLockEnabled
+                        ? "Capslock is ON"
+                        : errors.password?.message
+                    }
+                    fullWidth
+                    onKeyDown={handleKeyPress}
+                  />
+                )}
+              />
+            </Box>
+
             <Button
               type="submit"
               fullWidth
@@ -117,19 +162,6 @@ export function Login() {
             >
               Sign In
             </Button>
-            <Grid container>
-              <Grid item xs>
-                <Link href="#" variant="body2">
-                  Forgot password?
-                </Link>
-              </Grid>
-              <Grid item>
-                <Link href="#" variant="body2">
-                  {"Don't have an account? Sign Up"}
-                </Link>
-              </Grid>
-            </Grid>
-            <Copyright sx={{ mt: 5 }} />
           </Box>
         </Box>
       </Grid>

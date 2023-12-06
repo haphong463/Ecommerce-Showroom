@@ -33,21 +33,19 @@ const BrandForm = () => {
     formData.append("description", values.description);
     formData.append("file", values.image);
     if (!brand) {
-      postBrand(formData).then((res) => {
-        if (res.data) {
-          setData((prev) => [...prev, res.data]);
+      postBrand(formData).then((data) => {
+        if (data !== null) {
+          setData((prev) => [...prev, data]);
           setPreview();
           onClose();
           successToast("Create a new brand successfully!");
         }
       });
     } else {
-      putBrand(formData, brand.brandId).then((res) => {
-        if (res.data) {
+      putBrand(formData, brand.brandId).then((data) => {
+        if (data) {
           setData((prev) =>
-            prev.map((item) =>
-              item.brandId === res.data.brandId ? res.data : item
-            )
+            prev.map((item) => (item.brandId === data.brandId ? data : item))
           );
           setPreview();
           onClose();

@@ -1,128 +1,176 @@
-import React, { useContext, useEffect } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
-  Container,
   Grid,
-  TextField,
-  Select,
-  MenuItem,
-  Paper,
+  Dialog,
+  DialogContent,
+  Container,
+  Pagination,
+  useMediaQuery,
   Typography,
-  Stack,
 } from "@mui/material";
-import { Footer } from "../../components/user/Footer";
-import { Main } from "../../components/user/Main";
-import { DataContext } from "../../context/DataContext";
+
+import { VehicleContext } from "../../context/VehicleContext";
 import { getVehicles } from "../../components/Vehicle/VehicleLibrary";
 import { LayoutUser } from "../../layout/LayoutUser";
+import { Filter } from "../../components/user/Vehicles/Filter";
+import { useLocation, useNavigate } from "react-router-dom";
+import { DataContext } from "../../context/DataContext";
+import { WaitVehicles } from "../../components/user/Vehicles/WaitVehicles";
+import { VehicleItem } from "../../components/user/Vehicles/VehicleItem";
+import { PaginationVehicles } from "../../components/user/Vehicles/PaginationVehicles";
 
-export function Vehicles() {
-  const { vehicleData, setVehicleData } = useContext(DataContext);
-  useEffect(() => {
-    getVehicles().then((res) => {
-      if (res.data.length > 0) {
-        setVehicleData(res.data);
-      }
-    });
-  }, []);
+function VehicleContent(props) {
   return (
-    <LayoutUser
-      title="Vehicles"
-      description="Discover elegance at AutoCar, where a diverse range of top-quality vehicles awaits. From stylish sedans to powerful SUVs, find your perfect companion for every journey. Step into our showroom and experience unmatched service, ensuring your satisfaction at every turn."
-      img="https://images.unsplash.com/photo-1608369010965-2a946b0130f4?q=80&w=1920&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
-      labelImg="Vehicle Banner"
-    >
-      <Box component="section" sx={{ mt: 10, height: "100vh" }}>
-        <Container maxWidth="xl">
+    <Grid container spacing={2}>
+      <Grid item xs={12}>
+        {/* FILTER VEHICLES: dùng để filter vehicle theo tên, brand */}
+
+        <Filter vehicles={props.vehicleData} />
+
+        {/* END FILTER VEHICLES */}
+      </Grid>
+      <Grid item xs={12}>
+        {props.loading ? ( // Render skeleton when loading
+          <WaitVehicles vehiclesPerPage={props.vehiclesPerPage} /> // Render actual data when not loading
+        ) : (
           <Grid container spacing={2}>
-            {/* Filter Section (Left Column) */}
-            <Grid item xs={12} md={2}>
-              <Paper elevation={3} sx={{ p: 2 }}>
+            {props.currentVehicles.map((vehicle, index) => (
+              <VehicleItem
+                key={index}
+                vehicle={vehicle}
+                openImageDialog={props.openImageDialog}
+                navigate={props.navigate}
+              />
+            ))}
+            {props.searchData.length === 0 && (
+              <Grid item xs={12}>
                 <Typography
-                  variant="h6"
                   sx={{
-                    fontWeight: "700",
-                    textAlign: "center",
-                    letterSpacing: 3,
-                    textTransform: "uppercase",
+                    position: "relative",
                   }}
                 >
-                  Filter
+                  No vehicles found!
                 </Typography>
-                <Stack spacing={2}>
-                  <TextField fullWidth label="Name" variant="outlined" />
-                  <TextField fullWidth label="Model ID" variant="outlined" />
-                  <TextField fullWidth label="Color" variant="outlined" />
-                  <TextField
-                    fullWidth
-                    label="Mileage"
-                    variant="outlined"
-                    type="number"
-                  />
-                  <TextField fullWidth label="Engine Type" variant="outlined" />
-                  <TextField
-                    fullWidth
-                    label="Transmission Type"
-                    variant="outlined"
-                  />
-                  <TextField fullWidth label="Fuel Type" variant="outlined" />
-                  <TextField
-                    fullWidth
-                    label="Number of Seats"
-                    variant="outlined"
-                    type="number"
-                  />
-                  <Select
-                    fullWidth
-                    label="Brand"
-                    defaultValue="1"
-                    variant="outlined"
-                  >
-                    <MenuItem value={"1"}>Brand 1</MenuItem>
-                    <MenuItem value={"2"}>Brand 2</MenuItem>
-                    {/* Add more brands as needed */}
-                  </Select>
-                </Stack>
-                {/* Add components for other filter fields (e.g., checkboxes, radio buttons) */}
-              </Paper>
-            </Grid>
-
-            {/* Vehicle List Section (Right Column) */}
-            <Grid item xs={12} md={8}>
-              <Grid container spacing={2}>
-                {vehicleData.map((vehicle) => {
-                  return (
-                    <Grid item xs={12} sm={6} md={4} key={vehicle.vehicleID}>
-                      <Paper elevation={3} sx={{ p: 2, textAlign: "center" }}>
-                        {vehicle.images && vehicle.images.length > 0 && (
-                          <img
-                            src={vehicle.images[0].imagePath}
-                            alt={vehicle.name}
-                            style={{
-                              width: "100%",
-                              height: "20vh",
-                              objectFit: "contain",
-                            }}
-                          />
-                        )}
-                        <Typography variant="h6" sx={{ mt: 2 }}>
-                          {vehicle.name}
-                        </Typography>
-                        <Typography
-                          variant="body2"
-                          sx={{ color: "text.secondary" }}
-                        >
-                          Price: ${vehicle.price}
-                        </Typography>
-                      </Paper>
-                    </Grid>
-                  );
-                })}
               </Grid>
-            </Grid>
+            )}
           </Grid>
-        </Container>
+        )}
+      </Grid>
+      <Grid item xs={12}>
+        {/* Pagination vehicles theo search data */}
+        <PaginationVehicles
+          searchData={props.searchData}
+          vehiclesPerPage={props.vehiclesPerPage}
+          currentPage={props.currentPage}
+          handlePageChange={props.handlePageChange}
+        />
+        {/* END PAGINATION VEHICLES */}
+      </Grid>
+    </Grid>
+  );
+}
+
+export function Vehicles() {
+  const isMobile = useMediaQuery("(max-width:800px)");
+  const { vehicleData, setVehicleData } = useContext(VehicleContext);
+  const { searchData, setSearchData } = useContext(DataContext);
+  const navigate = useNavigate();
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [loading, setLoading] = useState(true); // New loading state
+  const vehiclesPerPage = 9; // Số lượng phương tiện trên mỗi trang
+  const location = useLocation();
+  useEffect(() => {
+    setLoading(true);
+    getVehicles().then((data) => {
+      if (data && data.length > 0) {
+        let checkIsUsed;
+        if (location.pathname === "/vehicles") {
+          checkIsUsed = true;
+        } else if (location.pathname === "/vehiclesUsed") {
+          checkIsUsed = false;
+        }
+        const newCar = data.filter((vehicle) => vehicle.isUsed === checkIsUsed);
+        setSearchData(newCar);
+        setVehicleData(newCar);
+        setLoading(false); // Set loading to false when data is loaded
+      }
+    });
+  }, [setVehicleData, setSearchData, location]);
+
+  const openImageDialog = (imagePath) => {
+    setSelectedImage(imagePath);
+  };
+
+  const closeImageDialog = () => {
+    setSelectedImage(null);
+  };
+
+  const handlePageChange = (event, value) => {
+    setCurrentPage(value);
+  };
+
+  const indexOfLastVehicle = currentPage * vehiclesPerPage;
+  const indexOfFirstVehicle = indexOfLastVehicle - vehiclesPerPage;
+  const currentVehicles = searchData.slice(
+    indexOfFirstVehicle,
+    indexOfLastVehicle
+  );
+  return (
+    <LayoutUser>
+      <Box
+        component="section"
+        sx={{
+          height: searchData.length > 0 ? "100%" : "90vh",
+          my: 10,
+          mx: {
+            xs: 3,
+          },
+        }}
+      >
+        {/* VEHILE CONTENT */}
+
+        {!isMobile ? (
+          <Container maxWidth="lg">
+            <VehicleContent
+              vehicleData={vehicleData}
+              searchData={searchData}
+              navigate={navigate}
+              currentPage={currentPage}
+              loading={loading}
+              vehiclesPerPage={vehiclesPerPage}
+              openImageDialog={openImageDialog}
+              handlePageChange={handlePageChange}
+              currentVehicles={currentVehicles}
+            />
+          </Container>
+        ) : (
+          <VehicleContent
+            vehicleData={vehicleData}
+            searchData={searchData}
+            navigate={navigate}
+            currentPage={currentPage}
+            loading={loading}
+            vehiclesPerPage={vehiclesPerPage}
+            openImageDialog={openImageDialog}
+            handlePageChange={handlePageChange}
+            currentVehicles={currentVehicles}
+          />
+        )}
       </Box>
+
+      {/* END VEHICLE CONTENT */}
+
+      <Dialog open={selectedImage !== null} onClose={closeImageDialog}>
+        <DialogContent sx={{ padding: 0 }}>
+          <img
+            src={selectedImage}
+            alt="Full Size"
+            style={{ width: "100%", height: "auto" }}
+          />
+        </DialogContent>
+      </Dialog>
     </LayoutUser>
   );
 }

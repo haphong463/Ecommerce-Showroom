@@ -7,15 +7,27 @@ import Divider from "@mui/material/Divider";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemText from "@mui/material/ListItemText";
-import LogoutIcon from "@mui/icons-material/ExitToApp";
 import LoginIcon from "@mui/icons-material/Login";
+import LogoutIcon from "@mui/icons-material/Logout";
 import MenuIcon from "@mui/icons-material/Menu";
 import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
-import { ListItemIcon } from "@mui/material";
+import {
+  Avatar,
+  Badge,
+  IconButton,
+  ListItemIcon,
+  Menu,
+  MenuItem,
+  Stack,
+  Tooltip,
+  Typography,
+} from "@mui/material";
 import { useNavigate } from "react-router-dom";
+import { DataContext } from "../../context/DataContext";
+
 const routes = [
   {
     route: "/",
@@ -25,17 +37,22 @@ const routes = [
   },
   {
     route: "/vehicles",
-    primary: "Vehicles",
+    primary: "New car",
     position: "top",
     icon: <DirectionsCarIcon />,
   },
   {
-    route: "/about",
-    primary: "About Us",
+    route: "/vehiclesUsed",
+    primary: "Buy used car",
+    position: "top",
+    icon: <DirectionsCarIcon />,
+  },
+  {
+    route: "/service",
+    primary: "Service",
     position: "top",
     icon: <InfoIcon />,
   },
-
   {
     route: "/signup",
     primary: "Sign Up",
@@ -48,16 +65,14 @@ const routes = [
     icon: <LoginIcon />,
     position: "bot",
   },
-  {
-    route: "/logout",
-    primary: "Logout",
-    icon: <LogoutIcon />,
-    position: "bot",
-  },
 ];
-export function SideBar({ onSetState, state, colorHeader }) {
-  const navigate = useNavigate();
 
+export function SideBar({ onSetState, state }) {
+  const navigate = useNavigate();
+  const { token, logout } = React.useContext(DataContext);
+  const handleLogout = () => {
+    logout();
+  };
   const toggleDrawer = (anchor, open) => (event) => {
     if (
       event &&
@@ -72,20 +87,9 @@ export function SideBar({ onSetState, state, colorHeader }) {
 
   return (
     <React.Fragment>
-      <Button
-        onClick={toggleDrawer("right", true)}
-        sx={{
-          color: "#fff",
-          mr: 3,
-          letterSpacing: 5,
-          fontSize: { xs: "2rem", sm: "1.5rem", md: "1rem" },
-          color: colorHeader ? "#333" : "#fff",
-        }}
-        size="large"
-        endIcon={<MenuIcon />}
-      >
-        MENU
-      </Button>
+      <IconButton onClick={toggleDrawer("right", true)}>
+        <MenuIcon />
+      </IconButton>
       <SwipeableDrawer
         anchor="right"
         open={state["right"]}
@@ -100,6 +104,17 @@ export function SideBar({ onSetState, state, colorHeader }) {
           onClick={toggleDrawer("right", false)}
           onKeyDown={toggleDrawer("right", false)}
         >
+          {token && (
+            <Typography
+              sx={{
+                my: 2,
+              }}
+              align="center"
+              variant="h6"
+            >
+              {token.Name}
+            </Typography>
+          )}
           <List>
             {routes.map(
               (route, index) =>
@@ -121,7 +136,9 @@ export function SideBar({ onSetState, state, colorHeader }) {
           <List>
             {routes.map(
               (route) =>
-                route.position === "bot" && (
+                route.position === "bot" &&
+                ((token && route.primary === "Sign Up") ||
+                (token && route.primary === "Login") ? null : (
                   <ListItem
                     key={route.primary}
                     onClick={() => navigate(route.route)}
@@ -132,9 +149,19 @@ export function SideBar({ onSetState, state, colorHeader }) {
                       <ListItemText primary={route.primary} />
                     </ListItemButton>
                   </ListItem>
-                )
+                ))
             )}
           </List>
+          {token && (
+            <ListItem disablePadding onClick={handleLogout}>
+              <ListItemButton>
+                <ListItemIcon>
+                  <LogoutIcon />
+                </ListItemIcon>
+                <ListItemText>Logout</ListItemText>
+              </ListItemButton>
+            </ListItem>
+          )}
         </Box>
       </SwipeableDrawer>
     </React.Fragment>

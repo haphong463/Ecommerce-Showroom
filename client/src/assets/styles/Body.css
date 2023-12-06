@@ -1,9 +1,46 @@
-@import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@600&display=swap');
 .custom-progress{
     background-color: #fff;
 }
 
 .custom-avatar img {
     object-fit: contain;
+  }
+  
+  .title-specs {
+    position: relative;
+  }
+  
+  .title-specs::after {
+    content: '';
+    position: absolute;
+    width: 5%;
+    height: 3px;
+    background: rgb(255, 184, 0);
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+  }
+  
+  .title-text {
+    color: #003580;
+    font-weight: 700;
+  }
+
+  .price-text{
+    color: red;
+    font-weight: 600
+  }
+
+  .title-section{
+    color: #fa921f;
+    font-weight: 600;
+  }
+  .brand-card {
+    transition: opacity 0.3s ease-in-out;
+    opacity: 0.2; /* Initial opacity */
+  }
+  
+  .brand-card.hovered {
+    opacity: 1; /* Opacity on hover */
   }
   

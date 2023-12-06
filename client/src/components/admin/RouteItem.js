@@ -4,7 +4,8 @@ import {
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
-import React from "react";
+import React, { useContext } from "react";
+import { DataContext } from "../../context/DataContext";
 
 export const RouteItem = ({
   primary,
@@ -12,13 +13,17 @@ export const RouteItem = ({
   route,
   open,
   icon,
+  disabled,
   ...props
 }) => {
+  const { logout } = useContext(DataContext);
   const handleClick = () => {
     if (primary === "Logout") {
-      console.log("Logout clicked!");
+      logout();
     } else {
-      navigate(route);
+      if (!disabled) {
+        navigate(route);
+      }
     }
   };
   return (
@@ -29,6 +34,7 @@ export const RouteItem = ({
           justifyContent: open ? "initial" : "center",
           px: 2.5,
         }}
+        disabled={disabled}
       >
         <ListItemIcon
           sx={{
