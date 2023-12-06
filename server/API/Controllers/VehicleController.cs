@@ -67,6 +67,19 @@ namespace API.Controllers
                         vehicle.Images.Add(new Images { ImagePath = imagePath });
                     }
                 }
+                // Kiểm tra và tạo modelID dựa trên Brand và Name
+                if (vehicle.Brand != null && !string.IsNullOrEmpty(vehicle.Brand.Name) && !string.IsNullOrEmpty(vehicle.Name))
+                {
+                    string brandInitial = vehicle.Brand.Name.Substring(0, 1).ToUpper();
+                    string nameInitial = vehicle.Name.Substring(0, 1).ToUpper();
+
+                    Random random = new Random();
+                    int randomNumber = random.Next(100, 1000);
+
+                    string modelID = $"{brandInitial}{nameInitial}-{randomNumber}";
+
+                    vehicle.ModelId = modelID; // Thêm modelID vào đối tượng Vehicle
+                }
 
                 await _dbContext.Vehicles.AddAsync(vehicle);
                 await _dbContext.SaveChangesAsync();
@@ -88,6 +101,20 @@ namespace API.Controllers
         {
             try
             {
+                // Kiểm tra và tạo modelID dựa trên Brand và Name
+                if (vehicleUpdate.Brand != null && !string.IsNullOrEmpty(vehicleUpdate.Brand.Name) && !string.IsNullOrEmpty(vehicleUpdate.Name))
+                {
+                    string brandInitial = vehicleUpdate.Brand.Name.Substring(0, 1).ToUpper();
+                    string nameInitial = vehicleUpdate.Name.Substring(0, 1).ToUpper();
+
+                    Random random = new Random();
+                    int randomNumber = random.Next(100, 1000);
+
+                    string modelID = $"{brandInitial}{nameInitial}-{randomNumber}";
+
+                    vehicleUpdate.ModelId = modelID; // Thêm modelID vào đối tượng Vehicle
+                }
+
                 if (!ModelState.IsValid)
                 {
                     return ApiResponse<VehicleDTO>.BadRequest(ModelState);
@@ -112,6 +139,10 @@ namespace API.Controllers
                             var imagePath = FileUpload.SaveImage("VehicleImage", file);
                             vehicleExisting.Images.Add(new Images { ImagePath = imagePath });
                         }
+                    }
+                    else
+                    {
+                        vehicleUpdate.Images = vehicleExisting.Images;
                     }
                     _dbContext.Entry(vehicleExisting).CurrentValues.SetValues(vehicleUpdate);
                     await _dbContext.SaveChangesAsync();
