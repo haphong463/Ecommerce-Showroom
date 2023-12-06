@@ -28,7 +28,13 @@ import { postCustomer } from "../../components/Customer/CustomerLibrary";
 const schema = yup.object().shape({
   name: yup.string().required("First name is required"),
   email: yup.string().email("Invalid email").required("Email is required"),
-  password: yup.string().required("Password is required"),
+  password: yup
+    .string()
+    .required("Password is required")
+    .matches(
+      /^(?=.*[A-Z])(?=.*[\W_]).+$/,
+      "Password must contain at least one uppercase letter and one special character or underscore."
+    ),
   phone: yup
     .string()
     .required("Phone number is required")

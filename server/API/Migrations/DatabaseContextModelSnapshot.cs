@@ -33,9 +33,6 @@ namespace API.Migrations
                     b.Property<string>("AvatarUrl")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<int?>("CartId")
-                        .HasColumnType("int");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -75,9 +72,7 @@ namespace API.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.HasIndex("CartId");
-
-                    b.ToTable("Accounts");
+                    b.ToTable("Accounts", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Brand", b =>
@@ -102,29 +97,7 @@ namespace API.Migrations
 
                     b.HasKey("BrandId");
 
-                    b.ToTable("Brands");
-                });
-
-            modelBuilder.Entity("API.Models.Cart", b =>
-                {
-                    b.Property<int>("CartId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("CartId"), 1L, 1);
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("Quantity")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CartId");
-
-                    b.ToTable("Cart");
+                    b.ToTable("Brands", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Employee", b =>
@@ -142,7 +115,7 @@ namespace API.Migrations
 
                     b.HasIndex("AccountId");
 
-                    b.ToTable("Employees");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Images", b =>
@@ -163,22 +136,7 @@ namespace API.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("Images");
-                });
-
-            modelBuilder.Entity("CartVehicle", b =>
-                {
-                    b.Property<int>("CartsCartId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("CartsCartId", "VehicleId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("CartVehicle");
+                    b.ToTable("Images", (string)null);
                 });
 
             modelBuilder.Entity("Vehicle", b =>
@@ -255,16 +213,7 @@ namespace API.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.ToTable("Vehicles");
-                });
-
-            modelBuilder.Entity("API.Models.Account", b =>
-                {
-                    b.HasOne("API.Models.Cart", "Cart")
-                        .WithMany("Account")
-                        .HasForeignKey("CartId");
-
-                    b.Navigation("Cart");
+                    b.ToTable("Vehicles", (string)null);
                 });
 
             modelBuilder.Entity("API.Models.Employee", b =>
@@ -289,21 +238,6 @@ namespace API.Migrations
                     b.Navigation("Vehicle");
                 });
 
-            modelBuilder.Entity("CartVehicle", b =>
-                {
-                    b.HasOne("API.Models.Cart", null)
-                        .WithMany()
-                        .HasForeignKey("CartsCartId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Vehicle", null)
-                        .WithMany()
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-                });
-
             modelBuilder.Entity("Vehicle", b =>
                 {
                     b.HasOne("API.Models.Brand", "Brand")
@@ -318,11 +252,6 @@ namespace API.Migrations
             modelBuilder.Entity("API.Models.Brand", b =>
                 {
                     b.Navigation("Vehicles");
-                });
-
-            modelBuilder.Entity("API.Models.Cart", b =>
-                {
-                    b.Navigation("Account");
                 });
 
             modelBuilder.Entity("Vehicle", b =>

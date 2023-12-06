@@ -1,4 +1,11 @@
-import { Box, CircularProgress, Fab, Paper } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Fab,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import React, { useContext } from "react";
 import { Sidebar } from "../../components/admin/Sidebar";
 import Navbar from "../../components/admin/Navbar";
@@ -43,17 +50,27 @@ export const Vehicles = () => {
               }}
             />
           )}
-          <Fab
-            color="primary"
-            size="medium"
-            aria-label="add"
-            onClick={handleClickOpen}
-            sx={{
-              m: "10px",
-            }}
+          <Stack
+            justifyContent="space-between"
+            alignItems="center"
+            direction="row"
           >
-            <AddIcon />
-          </Fab>
+            <Typography variant="h4">
+              <span className="title-text">Vehicles</span>
+            </Typography>
+
+            <Fab
+              color="primary"
+              size="medium"
+              aria-label="add"
+              onClick={handleClickOpen}
+              sx={{
+                m: "10px",
+              }}
+            >
+              <AddIcon />
+            </Fab>
+          </Stack>
           <VehicleList />
         </Paper>
       </Box>

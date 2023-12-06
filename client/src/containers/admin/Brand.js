@@ -1,6 +1,13 @@
 import React, { useContext, useState } from "react";
 import Navbar from "../../components/admin/Navbar";
-import { Box, CircularProgress, Fab, Paper } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Fab,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { Sidebar } from "../../components/admin/Sidebar";
 import BrandForm from "../../components/Brand/BrandForm";
 import { BrandList } from "../../components/Brand/BrandList";
@@ -31,18 +38,27 @@ export const Brand = () => {
               }}
             />
           )}
-
-          <Fab
-            color="primary"
-            size="medium"
-            aria-label="add"
-            onClick={handleClickOpen}
-            sx={{
-              m: "10px",
-            }}
+          <Stack
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
           >
-            <AddIcon />
-          </Fab>
+            <Typography variant="h4">
+              <span className="title-text">Brand</span>
+            </Typography>
+
+            <Fab
+              color="primary"
+              size="medium"
+              aria-label="add"
+              onClick={handleClickOpen}
+              sx={{
+                m: "10px",
+              }}
+            >
+              <AddIcon />
+            </Fab>
+          </Stack>
           <BrandList />
         </Paper>
       </Box>

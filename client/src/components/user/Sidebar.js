@@ -48,8 +48,8 @@ const routes = [
     icon: <DirectionsCarIcon />,
   },
   {
-    route: "/about",
-    primary: "About Us",
+    route: "/service",
+    primary: "Service",
     position: "top",
     icon: <InfoIcon />,
   },

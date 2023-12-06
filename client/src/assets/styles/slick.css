@@ -29,4 +29,18 @@
     height: 0;
   }
  
+  .slick-arrow, .slick-prev{
+    background:  #003580;
+  }
+
+  .slick-next{
+    right: -10px;
+  }
+  .slick-prev{
+    left: -10px;
+  }
+
+  .slick-prev:hover, .slick-prev:focus, .slick-next:hover, .slick-next:focus{
+    background:  #003580
+  }
   

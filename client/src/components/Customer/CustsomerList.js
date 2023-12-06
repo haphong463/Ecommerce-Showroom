@@ -6,12 +6,41 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { IconButton, Stack } from "@mui/material";
+import { Avatar, Badge, IconButton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { DataContext } from "../../context/DataContext";
 import { columns, getCustomer } from "./CustomerLibrary";
 import dayjs from "dayjs";
+import styled from "@emotion/styled";
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  "& .MuiBadge-badge": {
+    backgroundColor: "#44b700",
+    color: "#44b700",
+    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+    "&::after": {
+      position: "absolute",
+      top: 0,
+      left: 0,
+      width: "100%",
+      height: "100%",
+      borderRadius: "50%",
+      animation: "ripple 1.2s infinite ease-in-out",
+      border: "1px solid currentColor",
+      content: '""',
+    },
+  },
+  "@keyframes ripple": {
+    "0%": {
+      transform: "scale(.8)",
+      opacity: 1,
+    },
+    "100%": {
+      transform: "scale(2.4)",
+      opacity: 0,
+    },
+  },
+}));
 
 export const CustomerList = () => {
   const [data, setData] = useState([]);
@@ -37,7 +66,7 @@ export const CustomerList = () => {
   }, []);
   return (
     <>
-      <TableContainer sx={{ height: "70vh" }}>
+      <TableContainer sx={{ height: "75vh" }}>
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
@@ -70,11 +99,16 @@ export const CustomerList = () => {
                       return (
                         <TableCell key={column.id} align={column.align}>
                           {column.id === "avatarUrl" ? (
-                            <img
-                              alt={`${row.name}`}
-                              src={row.avatarUrl}
-                              width={100}
-                            />
+                            <StyledBadge
+                              overlap="circular"
+                              anchorOrigin={{
+                                vertical: "bottom",
+                                horizontal: "right",
+                              }}
+                              variant="dot"
+                            >
+                              <Avatar alt="Remy Sharp" src={row.avatarUrl} />
+                            </StyledBadge>
                           ) : column.id === "dateOfBirth" ? (
                             dayjs(row.dateOfBirth).format("MMMM DD, YYYY")
                           ) : (

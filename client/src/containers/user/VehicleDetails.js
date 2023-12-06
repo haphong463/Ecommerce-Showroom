@@ -34,6 +34,8 @@ import {
 import DescriptionIcon from "@mui/icons-material/Description";
 
 import dayjs from "dayjs";
+import RelatedVehicles from "../../components/user/Vehicles/RelatedVehicles";
+import { VehicleSpec } from "../../components/user/Vehicles/VehicleSpec";
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { vehicle, setVehicle } = useContext(VehicleContext);
@@ -133,12 +135,6 @@ export const VehicleDetails = () => {
           }}
         >
           <Container>
-            <Button
-              onClick={() => navigate("/vehicles")}
-              startIcon={<ArrowBackIcon />}
-            >
-              Back to vehicles
-            </Button>
             <Grid container spacing={3}>
               <Grid item xs={12} md={7} lg={6}>
                 <CustomSlider vehicleImages={vehicle.images} />
@@ -151,17 +147,29 @@ export const VehicleDetails = () => {
                 >
                   {/* Stack ở trên cùng */}
                   <Stack>
+                    <Typography
+                      variant="body1"
+                      sx={{
+                        userSelect: "none",
+                        color: "#b9b1b1",
+                      }}
+                    >
+                      AutoCar
+                    </Typography>
                     <Typography variant="h4" gutterBottom>
                       <span className="title-text">{vehicle.name}</span>
                     </Typography>
-
                     <Breadcrumbs separator="-">
-                      <Typography>{vehicle.mileage}</Typography>
+                      <Typography>{vehicle.mileage} km</Typography>
                       <Typography>{vehicle.fuelType}</Typography>
+                      <Typography>{vehicle.transmissionType}</Typography>
                     </Breadcrumbs>
                     <Typography variant="h6">
                       <span className="price-text">
-                        ${vehicle.purchasePrice}
+                        {vehicle.purchasePrice.toLocaleString("en-US", {
+                          style: "currency",
+                          currency: "USD",
+                        })}
                       </span>
                     </Typography>
                   </Stack>
@@ -183,43 +191,11 @@ export const VehicleDetails = () => {
               </Grid>
 
               {/* Information Grid */}
-              <Grid item xs={12} mt={3}>
-                <Typography variant="h4" align="center" className="title-specs">
-                  <span className="title-text">Vehicle Specs</span>
-                </Typography>
-
-                <Divider sx={{ borderTop: "1px solid #333", mt: 1, mx: 30 }} />
-                <Grid container columnSpacing={3}>
-                  {infoArray.map(
-                    (info, index) =>
-                      info.title !== "Name" &&
-                      info.title !== "Purchase Price" &&
-                      info.title !== "Description" && (
-                        <Grid key={index} item xs={12} sm={6}>
-                          <Stack
-                            direction="row"
-                            justifyContent="space-between"
-                            sx={{
-                              borderBottom: "1px solid #333",
-                              p: 1.5,
-                            }}
-                          >
-                            <Stack direction="row" spacing={2}>
-                              {React.cloneElement(info.icon, {
-                                style: { color: "rgb(190 140 9)" },
-                              })}
-                              <Typography variant="body2">
-                                {info.title}
-                              </Typography>
-                            </Stack>
-                            <Stack>
-                              <Typography>{info.value}</Typography>
-                            </Stack>
-                          </Stack>
-                        </Grid>
-                      )
-                  )}
-                </Grid>
+              <Grid item xs={12}>
+                <VehicleSpec infoArray={infoArray} />
+              </Grid>
+              <Grid item xs={12}>
+                <RelatedVehicles />
               </Grid>
             </Grid>
           </Container>

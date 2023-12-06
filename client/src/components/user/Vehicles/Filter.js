@@ -1,9 +1,12 @@
 import React, { useContext, useEffect, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import { VehicleContext } from "../../../context/VehicleContext";
-import { DataContext } from "../../../context/DataContext";
 import {
+  Button,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
   FormControlLabel,
   Grid,
   MenuItem,
@@ -12,20 +15,26 @@ import {
   Stack,
   Typography,
 } from "@mui/material";
+import { VehicleContext } from "../../../context/VehicleContext";
+import { DataContext } from "../../../context/DataContext";
 import { getBrandList } from "../../Brand/BrandLibrary";
 
-export const Filter = ({ vehicles }) => {
+export const Filter = () => {
   const { vehicleData } = useContext(VehicleContext);
+  const { setSearchData } = useContext(DataContext);
   const [options, setOptions] = useState([]);
   const [brand, setBrand] = useState();
-  const { setSearchData } = useContext(DataContext);
   const [inputValue, setInputValue] = useState("");
   const [open, setOpen] = React.useState(false);
+  const [BrandList, setBrandList] = useState([]);
+  const [dialogOpen, setDialogOpen] = useState(false); // State for dialog visibility
+
   const handleOpen = () => {
     if (inputValue.length > 0) {
       setOpen(true);
     }
   };
+
   const handleInputChange = (event, newInputValue) => {
     setInputValue(newInputValue);
     if (newInputValue.length > 0) {
@@ -34,13 +43,21 @@ export const Filter = ({ vehicles }) => {
       setOpen(false);
     }
   };
-  const [BrandList, setBrandList] = useState([]);
+
   const handleChangeBrand = (event) => {
     setBrand(event.target.value);
   };
 
+  const handleFilterButtonClick = () => {
+    setDialogOpen(true);
+  };
+
+  const handleDialogClose = () => {
+    setDialogOpen(false);
+  };
+
   useEffect(() => {
-    let filterVehicles = vehicles;
+    let filterVehicles = vehicleData;
     if (inputValue) {
       filterVehicles = filterVehicles.filter((item) =>
         item.name.toLowerCase().includes(inputValue.toLowerCase())
@@ -53,14 +70,16 @@ export const Filter = ({ vehicles }) => {
     }
     setSearchData(filterVehicles);
   }, [inputValue, brand]);
+
   useEffect(() => {
-    const uniqueOptions = [...new Set(vehicles.map((item) => item.name))]; // Lọc các giá trị name duy nhất
+    const uniqueOptions = [...new Set(vehicleData.map((item) => item.name))];
     setOptions(
       uniqueOptions.map((name, index) => ({
         label: name,
       }))
     );
   }, [vehicleData]);
+
   useEffect(() => {
     getBrandList().then((data) => {
       if (data !== null) {
@@ -68,6 +87,7 @@ export const Filter = ({ vehicles }) => {
       }
     });
   }, []);
+
   return (
     <>
       <Typography variant="h6" gutterBottom sx={{ marginBottom: 2 }}>
@@ -99,9 +119,7 @@ export const Filter = ({ vehicles }) => {
         <Grid item xs={12} sm={3}>
           <Select
             onChange={handleChangeBrand}
-            value={
-              brand ? brand : BrandList.length > 0 ? BrandList[0].brandId : ""
-            }
+            value={brand ? brand : "all"}
             fullWidth
           >
             <MenuItem value="all">All</MenuItem>

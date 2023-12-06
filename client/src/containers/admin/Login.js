@@ -12,7 +12,7 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
 import Typography from "@mui/material/Typography";
-import { Stack } from "@mui/material";
+import { Alert, Stack } from "@mui/material";
 import axios from "axios";
 import { DataContext } from "../../context/DataContext";
 import { loginAuth } from "../../components/Auth";
@@ -34,7 +34,7 @@ export function Login() {
     resolver: yupResolver(validationSchema),
   });
 
-  const { login } = React.useContext(DataContext);
+  const { login, token } = React.useContext(DataContext);
   const [generalError, setGeneralError] = React.useState("");
 
   const onSubmit = async (data) => {
@@ -81,6 +81,7 @@ export function Login() {
           sx={{
             my: 8,
             mx: 4,
+            position: "relative",
             display: "flex",
             flexDirection: "column",
             alignItems: "center",
@@ -99,14 +100,14 @@ export function Login() {
             sx={{ mt: 1 }}
           >
             {generalError && (
-              <Typography
-                variant="body2"
-                color="error"
-                align="center"
-                sx={{ m: 1 }}
+              <Alert
+                severity="error"
+                sx={{
+                  my: 2,
+                }}
               >
                 {generalError}
-              </Typography>
+              </Alert>
             )}
 
             <Box>
@@ -161,11 +162,6 @@ export function Login() {
             >
               Sign In
             </Button>
-            <Box mt={2}>
-              <Link href="#" variant="body2">
-                Forgot password?
-              </Link>
-            </Box>
           </Box>
         </Box>
       </Grid>

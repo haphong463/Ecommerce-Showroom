@@ -25,6 +25,6 @@ namespace API.Models
         public DateTime DateOfBirth { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
-        public Cart? Cart { get; set; }
+
     }
 }

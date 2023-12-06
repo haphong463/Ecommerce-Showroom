@@ -1,6 +1,13 @@
 import React, { useContext } from "react";
 import Navbar from "../../components/admin/Navbar";
-import { Box, CircularProgress, Fab, Paper } from "@mui/material";
+import {
+  Box,
+  CircularProgress,
+  Fab,
+  Paper,
+  Stack,
+  Typography,
+} from "@mui/material";
 import { Sidebar } from "../../components/admin/Sidebar";
 import AddIcon from "@mui/icons-material/Add";
 import { DataContext } from "../../context/DataContext";
@@ -16,6 +23,11 @@ export const Customer = () => {
         <Sidebar />
         <Box component="main" sx={{ flexGrow: 1 }}></Box>
         <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
+          <Stack alignItems="flex-start" justifyContent="space-between">
+            <Typography variant="h4">
+              <span className="title-text">Customer</span>
+            </Typography>   
+          </Stack>
           {loading && (
             <CircularProgress
               sx={{

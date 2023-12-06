@@ -61,3 +61,33 @@ export const generateValidationSchema = (isEditing) =>
       ? yup.array().nullable()
       : yup.array().min(1, "Please upload at least one image."),
   });
+
+
+  export const formFields = [
+    { name: "name", label: "Name*", type: "text" },
+    { name: "price", label: "Price*", type: "number" },
+    {
+      name: "brandId",
+      label: "Brand*",
+      type: "select",
+    },
+    { name: "manufacturingYear", label: "Manufacturing Year*", type: "number" },
+    { name: "registrationNumber", label: "Registration Number*", type: "text" },
+    { name: "color", label: "Color*", type: "text" },
+    { name: "mileage", label: "Mileage*", type: "number" },
+    { name: "engineType", label: "Engine Type*", type: "text" },
+    { name: "transmissionType", label: "Transmission Type*", type: "text" },
+    { name: "fuelType", label: "Fuel Type*", type: "text" },
+    { name: "numberOfSeats", label: "Number of Seats*", type: "number" },
+    { name: "purchaseDate", label: "Purchased Date*", type: "date" },
+    { name: "purchasePrice", label: "Purchase Price*", type: "number" },
+    { name: "description", label: "Description*", type: "text" },
+    { name: "isUsed", label: "Used/New*" },
+    {
+      name: "files",
+      label: "Image",
+      type: "file",
+      accept: "image/*",
+      multiple: true,
+    },
+  ];

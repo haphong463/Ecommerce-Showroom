@@ -3,7 +3,14 @@ import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 import { LayoutUser } from "../../layout/LayoutUser";
-import { TextField, Button, Container, Typography, Box } from "@mui/material";
+import {
+  TextField,
+  Button,
+  Container,
+  Typography,
+  Box,
+  Alert,
+} from "@mui/material";
 import Icon from "@mui/material/Icon";
 import axios from "axios";
 import { DataContext } from "../../context/DataContext";
@@ -85,10 +92,16 @@ export const Signin = () => {
             </Typography>
             <form onSubmit={handleSubmit(onSubmit)}>
               {generalError && (
-                <Typography variant="h6" color="error">
+                <Alert
+                  severity="error"
+                  sx={{
+                    my: 2,
+                  }}
+                >
                   {generalError}
-                </Typography>
+                </Alert>
               )}
+
               <Controller
                 name="email"
                 control={control}

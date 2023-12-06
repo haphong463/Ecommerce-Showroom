@@ -11,8 +11,8 @@ import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { getBrandList } from "../../Brand/BrandLibrary";
-
-const BrandSection = () => {
+import "../../../assets/styles/slick.css";
+const RelatedVehicles = () => {
   // Sample data for cards
   const [brand, setBrand] = useState([]);
   const [hoveredIndex, setHoveredIndex] = useState(-1);
@@ -32,7 +32,6 @@ const BrandSection = () => {
     autoplaySpeed: 500,
     autoplay: true,
     centerMode: true, // Enable center mode
-    arrows: false,
     responsive: [
       {
         breakpoint: 1024,
@@ -66,10 +65,10 @@ const BrandSection = () => {
     });
   }, []);
   return (
-    <Container maxWidth="lg">
+    <>
       <Box sx={{ my: 4 }} component="section">
-        <Typography variant="h3" align="center" gutterBottom>
-          <span className="title-section">FEATURED BRANDS</span>
+        <Typography variant="h4" align="center" className="title-specs">
+          <span className="title-text">Other Vehicles</span>
         </Typography>
         <Slider {...sliderSettings}>
           {brand.map((product, index) => (
@@ -99,8 +98,8 @@ const BrandSection = () => {
           ))}
         </Slider>
       </Box>
-    </Container>
+    </>
   );
 };
 
-export default BrandSection;
+export default RelatedVehicles;
