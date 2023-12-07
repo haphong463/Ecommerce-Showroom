@@ -11,7 +11,9 @@ const VehicleInformation = ({
 }) => {
   return (
     <Box mt={2}>
-      <Typography variant="h4">Vehicle Information</Typography>
+      <Typography variant="h4" align="left" mb={3}>
+        <span className="title-text">Vehicle Information</span>
+      </Typography>
       <Grid
         container
         spacing={4}

@@ -21,7 +21,6 @@ namespace API.Data
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
-        public DbSet<Employee> Employees { get; set; }
 
     }
 }

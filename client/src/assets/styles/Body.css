@@ -1,7 +1,13 @@
 .custom-progress{
     background-color: #fff;
 }
-
+.active-link{
+  color: #003580  !important;
+}
+.title-banner{
+  color: rgb(255, 184, 0);
+  font-weight: 700;
+}
 .custom-avatar img {
     object-fit: contain;
   }

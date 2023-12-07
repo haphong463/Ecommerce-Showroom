@@ -17,7 +17,7 @@ import {
 import ShoppingBagIcon from "@mui/icons-material/ShoppingBag";
 import { SideBar } from "./Sidebar";
 import { useContext, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { DataContext } from "../../context/DataContext";
 
 const routes = [
@@ -54,6 +54,7 @@ const Header = ({ title, state, setState }) => {
   const { token, logout, itemCart } = useContext(DataContext);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleOpenUserMenu = (event) => {
     setAnchorElUser(event.currentTarget);
@@ -114,6 +115,7 @@ const Header = ({ title, state, setState }) => {
                 <Button
                   key={route.primary}
                   onClick={() => navigate(route.route)}
+                  className={location.pathname === route.route && "active-link"}
                   sx={{
                     my: 2,
                     display: "block",
