@@ -24,7 +24,7 @@ import { useContext, useEffect, useState } from "react";
 const TAX_RATE = 0.07;
 
 function ccyFormat(num) {
-  return num.toLocaleString("en-US", { style: "currency", currency: "USD" });
+  return num?.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
 
 export default function Cart() {
@@ -53,7 +53,7 @@ export default function Cart() {
     const updatedCart = await Promise.all(
       storedCart.map(async (item) => {
         const vehicleData = await getVehicleById(item.vehicleId);
-        return { ...item, unitPrice: vehicleData.purchasePrice };
+        return { ...item, unitPrice: vehicleData?.purchasePrice };
       })
     );
     setCartItems(updatedCart);

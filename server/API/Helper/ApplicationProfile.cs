@@ -22,14 +22,10 @@ namespace API.Helper
                 }))
                 .ReverseMap();
             CreateMap<Brand, BrandDTO>().ReverseMap();
-<<<<<<< HEAD
             CreateMap<Account, AccountDTO>().ReverseMap();
             CreateMap<Employee, EmployeeDTO>().ReverseMap();
             CreateMap<Order, OrderDTO>().ReverseMap();
             CreateMap<OrderDetails, OrderDetailDTO>().ReverseMap();
-=======
-            //CreateMap<Employee, EmployeeDTO>().ReverseMap();
->>>>>>> 149b835c779942b0e27c419baa0bedbc5c2c939e
 
         }
     }

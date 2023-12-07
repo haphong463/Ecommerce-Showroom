@@ -65,7 +65,6 @@ export function SignUp() {
 
   const onSubmit = (data) => {
     const newDate = dayjs(new Date(data.dateOfBirth)).format("YYYY-MM-DD");
-    console.log(data);
     const formData = new FormData();
     formData.append("email", data.email);
     formData.append("password", data.password);
@@ -76,8 +75,9 @@ export function SignUp() {
     formData.append("phone", data.phone);
     formData.append("role", "User");
 
-    postCustomer(formData).then((data) => {
-      if (data !== null) {
+    postCustomer(formData).then((result) => {
+      console.log(result);
+      if (result) {
         successToast("Sign up account successfully.");
         navigate("/");
       }
