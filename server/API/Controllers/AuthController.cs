@@ -16,33 +16,30 @@ namespace API.Controllers
             _configuration = configuration;
             _dbContext = dbContext;
         }
-        [HttpPost]
-        public IActionResult Login([FromBody] AccountCredentials credentials)
-        {
 
+        [HttpPost("login")]
+        public IActionResult Login([FromForm] AccountCredentials credentials)
+        {
             var user = Authenticate(credentials);
             if (user != null)
             {
-                var tokenString = TokenService.GenerateJSONWebToken
-                        (_configuration, user);
+                var tokenString = TokenService.GenerateJSONWebToken(_configuration, user);
                 return Ok(new { Token = tokenString });
-
             }
             return Unauthorized();
         }
-        //To authenticate user
+
+        // To authenticate user
         private Account Authenticate(AccountCredentials userCredentials)
         {
-            var currentUser = _dbContext.Accounts.FirstOrDefault
-                (x => x.Email.ToLower() == userCredentials.Email.ToLower()
-                      && x.Password == userCredentials.Password);
-            if (currentUser != null)
+            var storedUser = _dbContext.Accounts.FirstOrDefault(x => x.Email.ToLower() == userCredentials.Email.ToLower());
+
+            if (storedUser != null && AccountSecurity.VerifyPassword(userCredentials.Password, storedUser.Password))
             {
-                return currentUser;
+                return storedUser;
             }
+
             return null;
         }
-
     }
-
 }

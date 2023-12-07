@@ -3,15 +3,13 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.Models
 {
-    public class OrderDetails
+    public class Cart
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int OrderDetailId { get; set; }
-        public int OrderId { get; set; }
+        public int CartId { get; set; }
         public int VehicleId { get; set; }
         public int Quantity { get; set; }
+        [Column(TypeName = "decimal(10, 2)")]
         public decimal Price { get; set; }
-        public List<Vehicle>? Vehicles { get; set; }
-        public Order? Order { get; set; }
     }
 }

@@ -5,7 +5,7 @@ using API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using BCrypt.Net;
 
 namespace API.Controllers
 {
@@ -23,15 +23,16 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Index()
         {
             try
             {
-                var account = await _dbContext.Accounts.ToListAsync();
-                if (account != null && account.Any())
+                var accounts = await _dbContext.Accounts.ToListAsync();
+
+                if (accounts != null && accounts.Any())
                 {
-                    return Ok(account);
+                    return Ok(new ApiResponse<List<Account>>(accounts, "Successfully"));
                 }
                 else
                 {
@@ -43,6 +44,9 @@ namespace API.Controllers
                 return ApiResponse<Account>.Exception(ex);
             }
         }
+
+
+
 
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<Account>>> GetAccount(int id)
@@ -72,14 +76,18 @@ namespace API.Controllers
         {
             try
             {
+                account.Password = AccountSecurity.HashPassword(account.Password);
+
+
                 if (account.Role == null)
                 {
                     account.Role = "User";
                 }
-
                 account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
+
                 var resource = await _dbContext.Accounts.AddAsync(account);
                 await _dbContext.SaveChangesAsync();
+
                 if (resource != null)
                 {
                     return Ok(new ApiResponse<Account>(account, "Resource created"));
@@ -92,9 +100,9 @@ namespace API.Controllers
             catch (Exception ex)
             {
                 return ApiResponse<Account>.Exception(ex);
-
             }
         }
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAccount(int id)
@@ -127,39 +135,51 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> UpdateAccount([FromForm] Account account, IFormFile? file)
+        public async Task<IActionResult> UpdateAccount(int id, [FromForm] Account account, IFormFile? file)
         {
             try
             {
-                var existingAccount = await _dbContext.Accounts.FindAsync(account.AccountId);
+                var existingAccount = await _dbContext.Accounts.FindAsync(id);
 
                 if (existingAccount != null)
                 {
+                    // Kiểm tra từng trường và cập nhật chỉ khi có giá trị thay đổi
+                    if (!string.IsNullOrWhiteSpace(account.Password))
+                    {
+                        existingAccount.Password = AccountSecurity.HashPassword(account.Password);
+                    }
                     if (file != null)
                     {
-                        if (account.AvatarUrl != null)
+                        if (!string.IsNullOrWhiteSpace(existingAccount.AvatarUrl))
                         {
-                            // Xoá hình ảnh
-                            FileUpload.DeleteImage(account.AvatarUrl, _env);
+                            // Xoá hình ảnh cũ
+                            FileUpload.DeleteImage(existingAccount.AvatarUrl, _env);
                         }
-                        account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
+                        existingAccount.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
                     }
-                    _dbContext.Entry(existingAccount).CurrentValues.SetValues(account);
-                    await _dbContext.SaveChangesAsync();
-                    return Ok(new ApiResponse<Account>(account, "Update account successfully"));
+                    if (!string.IsNullOrWhiteSpace(account.Name))
+                    {
+                        existingAccount.Name = account.Name;
+                    }
+                    if (!string.IsNullOrWhiteSpace(account.Email))
+                    {
+                        existingAccount.Email = account.Email;
+                    }
+                    // Cập nhật các trường khác tương tự ...
 
+                    await _dbContext.SaveChangesAsync();
+                    return Ok(new ApiResponse<Account>(existingAccount, "Update account successfully"));
                 }
                 else
                 {
                     return Ok(new ApiResponse<Account>(account, "Account not found to update"));
-
                 }
             }
             catch (Exception ex)
             {
                 return ApiResponse<Account>.Exception(ex);
-
             }
         }
+
     }
 }

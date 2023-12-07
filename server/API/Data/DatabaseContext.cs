@@ -17,11 +17,23 @@ namespace API.Data
                 .HasMany(x => x.Vehicles)
                 .WithOne(x => x.Brand)
                 .HasForeignKey(x => x.BrandId);
+
+            modelBuilder.Entity<Account>()
+                .HasMany(x => x.Order)
+                .WithOne(x => x.Account)
+                .HasForeignKey(x => x.AccountId);
+            modelBuilder.Entity<Employee>()
+                .HasMany(x => x.Order)
+                .WithOne(x => x.Employee)
+                .HasForeignKey( x => x.EmployeeId)
+                .OnDelete(DeleteBehavior.Restrict);
         }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Employee> Employees { get; set; }
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetails> OrderDetails { get; set; }
 
     }
 }

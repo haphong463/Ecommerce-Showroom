@@ -49,11 +49,11 @@ namespace API.Controllers
             
         }
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<Order>>> PostOders(Order order)
+        public async Task<ActionResult<ApiResponse<OrderDTO>>> PostOders(Order order)
         {
             if (!ModelState.IsValid)
             {
-                return ApiResponse<VehicleDTO>.BadRequest(ModelState);
+                return ApiResponse<OrderDTO>.BadRequest(ModelState);
             }
             try
             {
@@ -65,7 +65,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                return ApiResponse<Order>.Exception(ex);
+                return ApiResponse<OrderDTO>.Exception(ex);
             }
         }
         [HttpPut("{id}")]
