@@ -1,4 +1,3 @@
-import axios from "axios";
 import * as yup from "yup";
 import { errorToast } from "../Message";
 import axiosRequest from "../../configs/axiosConfig";
@@ -38,7 +37,34 @@ export const columns = [
   { id: "used", label: "Used/New", minWidth: 170 },
   { id: "actions", label: "Actions", minWidth: 170, align: "right" },
 ];
+export const fuelType = [
+  {
+    value: "Diesel",
+    label: "Diesel",
+  },
+  { value: "Gasoline", label: "Gasoline" },
+  { value: "Electric", label: "Electric" },
+  { value: "Hybrid", label: "Hybrid" },
+];
 
+export const transmissionType = [
+  {
+    value: "Manual",
+    label: "Manual",
+  },
+  { value: "Automatic", label: "Automatic" },
+  { value: "CVT", label: "CVT" },
+  { value: "DCT", label: "DCT" },
+];
+
+export const generateModelID = (brand, name) => {
+  const brandInitial = brand.charAt(0).toUpperCase();
+  const nameInitial = name.charAt(0).toUpperCase();
+
+  const randomNumber = Math.floor(Math.random() * (1000 - 100) + 100);
+
+  return `${brandInitial}${nameInitial}-${randomNumber}`;
+};
 export const generateValidationSchema = (isEditing) =>
   yup.object({
     name: yup.string().required("Name is required"),
@@ -62,32 +88,31 @@ export const generateValidationSchema = (isEditing) =>
       : yup.array().min(1, "Please upload at least one image."),
   });
 
-
-  export const formFields = [
-    { name: "name", label: "Name*", type: "text" },
-    { name: "price", label: "Price*", type: "number" },
-    {
-      name: "brandId",
-      label: "Brand*",
-      type: "select",
-    },
-    { name: "manufacturingYear", label: "Manufacturing Year*", type: "number" },
-    { name: "registrationNumber", label: "Registration Number*", type: "text" },
-    { name: "color", label: "Color*", type: "text" },
-    { name: "mileage", label: "Mileage*", type: "number" },
-    { name: "engineType", label: "Engine Type*", type: "text" },
-    { name: "transmissionType", label: "Transmission Type*", type: "text" },
-    { name: "fuelType", label: "Fuel Type*", type: "text" },
-    { name: "numberOfSeats", label: "Number of Seats*", type: "number" },
-    { name: "purchaseDate", label: "Purchased Date*", type: "date" },
-    { name: "purchasePrice", label: "Purchase Price*", type: "number" },
-    { name: "description", label: "Description*", type: "text" },
-    { name: "isUsed", label: "Used/New*" },
-    {
-      name: "files",
-      label: "Image",
-      type: "file",
-      accept: "image/*",
-      multiple: true,
-    },
-  ];
+export const formFields = [
+  { name: "name", label: "Name*", type: "text" },
+  { name: "price", label: "Price*", type: "number" },
+  {
+    name: "brandId",
+    label: "Brand*",
+    type: "select",
+  },
+  { name: "manufacturingYear", label: "Manufacturing Year*", type: "number" },
+  { name: "registrationNumber", label: "Registration Number*", type: "text" },
+  { name: "color", label: "Color*", type: "text" },
+  { name: "mileage", label: "Mileage*", type: "number" },
+  { name: "engineType", label: "Engine Type*", type: "text" },
+  { name: "transmissionType", label: "Transmission Type*", type: "select" },
+  { name: "fuelType", label: "Fuel Type*", type: "select" },
+  { name: "numberOfSeats", label: "Number of Seats*", type: "number" },
+  { name: "purchaseDate", label: "Purchased Date*", type: "date" },
+  { name: "purchasePrice", label: "Purchase Price*", type: "number" },
+  { name: "description", label: "Description*", type: "text" },
+  { name: "isUsed", label: "Used/New*" },
+  {
+    name: "files",
+    label: "Image",
+    type: "file",
+    accept: "image/*",
+    multiple: true,
+  },
+];

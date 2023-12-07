@@ -15,7 +15,7 @@ public class Vehicle
     [Required]
     public int BrandId { get; set; }
     [Column(TypeName = "nvarchar(50)")]
-    public string ModelId { get; set; }
+    public string? ModelId { get; set; }
     public int ManufacturingYear { get; set; }
 
     [StringLength(20)]

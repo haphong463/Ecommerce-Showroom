@@ -16,13 +16,13 @@ namespace API.Controllers
     {
         private readonly DatabaseContext _dbContext;
         private readonly IMapper _mapper;
-     
+
 
         public EmployeeController(DatabaseContext context, IMapper mapper)
         {
             _dbContext = context;
             _mapper = mapper;
-           
+
 
         }
 
@@ -48,7 +48,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public ActionResult<ApiResponse<EmployeeDTO>> CreateEmployee([FromForm]  EmployeeDTO employeeDTO)
+        public ActionResult<ApiResponse<EmployeeDTO>> CreateEmployee([FromForm] EmployeeDTO employeeDTO)
         {
             if (!ModelState.IsValid)
             {

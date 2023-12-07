@@ -72,7 +72,7 @@ namespace API.Migrations
 
                     b.HasKey("AccountId");
 
-                    b.ToTable("Accounts", (string)null);
+                    b.ToTable("Accounts");
                 });
 
             modelBuilder.Entity("API.Models.Brand", b =>
@@ -97,25 +97,7 @@ namespace API.Migrations
 
                     b.HasKey("BrandId");
 
-                    b.ToTable("Brands", (string)null);
-                });
-
-            modelBuilder.Entity("API.Models.Employee", b =>
-                {
-                    b.Property<int>("EmployeeId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("EmployeeId"), 1L, 1);
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.HasKey("EmployeeId");
-
-                    b.HasIndex("AccountId");
-
-                    b.ToTable("Employees", (string)null);
+                    b.ToTable("Brands");
                 });
 
             modelBuilder.Entity("API.Models.Images", b =>
@@ -136,7 +118,7 @@ namespace API.Migrations
 
                     b.HasIndex("VehicleId");
 
-                    b.ToTable("Images", (string)null);
+                    b.ToTable("Images");
                 });
 
             modelBuilder.Entity("Vehicle", b =>
@@ -179,7 +161,6 @@ namespace API.Migrations
                         .HasColumnType("real");
 
                     b.Property<string>("ModelId")
-                        .IsRequired()
                         .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("Name")
@@ -213,18 +194,7 @@ namespace API.Migrations
 
                     b.HasIndex("BrandId");
 
-                    b.ToTable("Vehicles", (string)null);
-                });
-
-            modelBuilder.Entity("API.Models.Employee", b =>
-                {
-                    b.HasOne("API.Models.Account", "Account")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Account");
+                    b.ToTable("Vehicles");
                 });
 
             modelBuilder.Entity("API.Models.Images", b =>

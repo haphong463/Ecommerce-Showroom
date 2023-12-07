@@ -9,6 +9,7 @@ import {
   Stack,
   CardActions,
   Button,
+  Avatar,
 } from "@mui/material";
 import {
   Settings as SettingsIcon,
@@ -21,15 +22,14 @@ import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import "../../../assets/styles/slick.css";
 import { getVehicles } from "../../Vehicle/VehicleLibrary";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 const RelatedVehicles = ({ brandId }) => {
-  // Sample data for cards
+  const { id } = useParams();
   const [related, setRelated] = useState([]);
   const navigate = useNavigate();
-  // Settings for react-slick slider
   const sliderSettings = {
     infinite: true,
-    slidesToShow: 3,
+    slidesToShow: related.length > 3 ? 3 : related.length,
     slidesToScroll: 1,
     autoplaySpeed: 2000,
     autoplay: true,
@@ -38,12 +38,12 @@ const RelatedVehicles = ({ brandId }) => {
         breakpoint: 1024,
         settings: {
           arrows: false,
-          slidesToShow: 3,
+          slidesToShow: 2,
           centerPadding: "20%", // Adjust as needed for different breakpoints
         },
       },
       {
-        breakpoint: 600,
+        breakpoint: 900,
         settings: {
           arrows: false,
           slidesToShow: 2,
@@ -51,7 +51,7 @@ const RelatedVehicles = ({ brandId }) => {
         },
       },
       {
-        breakpoint: 480,
+        breakpoint: 600,
         settings: {
           arrows: false,
           slidesToShow: 1,
@@ -65,13 +65,15 @@ const RelatedVehicles = ({ brandId }) => {
     getVehicles().then((data) => {
       setRelated(
         data.filter((item) => {
-          return item.brand.brandId === brandId;
+          return (
+            item.brand.brandId === brandId && item.vehicleID !== Number(id)
+          );
         })
       );
     });
-  }, []);
+  }, [id]);
   return (
-    related.length > 1 && (
+    related.length > 0 && (
       <Box sx={{ my: 4 }} component="section">
         <Typography
           variant="h4"
@@ -88,17 +90,20 @@ const RelatedVehicles = ({ brandId }) => {
               elevation={3}
               sx={{
                 boxShadow: "none",
+                width: "100%", // Set the width to 100%
               }}
             >
-              <CardMedia
-                component="img"
+              <Avatar
                 src={item.images[0].imagePath}
-                alt={item.name}
-                height="100px"
-                width="100px"
+                variant="square"
                 sx={{
-                  objectFit: "contain",
+                  height: "200px",
+                  width: "100%",
+                  "& > img": {
+                    objectFit: "cover",
+                  },
                 }}
+                className="img-thumbnail"
               />
               <CardContent>
                 <Stack>

@@ -191,7 +191,9 @@ export const VehicleDetails = () => {
                     <Breadcrumbs separator="-">
                       <Typography>{vehicle.mileage} km</Typography>
                       <Typography>{vehicle.fuelType}</Typography>
-                      <Typography>{vehicle.transmissionType}</Typography>
+                      <Typography>
+                        {vehicle.transmissionType + " Transmission"}
+                      </Typography>
                     </Breadcrumbs>
                     <Typography variant="h6">
                       <span className="price-text">

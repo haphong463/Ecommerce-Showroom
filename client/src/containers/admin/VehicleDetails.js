@@ -99,7 +99,7 @@ export const VehicleDetails = () => {
     {
       icon: <CommuteIcon />,
       title: "Transmission Type",
-      value: vehicle.transmissionType,
+      value: vehicle.transmissionType + " Transmission",
     },
     {
       icon: <EmojiTransportationIcon />,
@@ -156,7 +156,6 @@ export const VehicleDetails = () => {
   useEffect(() => {
     refreshVehicleData();
   }, [id]);
-  console.log("re-render");
   return (
     <>
       <Navbar />

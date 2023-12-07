@@ -24,40 +24,43 @@ const BrandSection = () => {
   const handleMouseLeave = () => {
     setHoveredIndex(-1);
   };
-  // Settings for react-slick slider
+  console.log(brand.length);
   const sliderSettings = {
     infinite: true,
-    slidesToShow: 3,
+    slidesToShow: brand.length > 0 ? (brand.length > 4 ? 4 : brand.length) : 1,
     slidesToScroll: 1,
     autoplaySpeed: 500,
     autoplay: true,
-    centerMode: true, // Enable center mode
+    centerMode: true,
+    centerPadding: "10%", // Set a specific center padding value
     arrows: false,
     responsive: [
       {
         breakpoint: 1024,
         settings: {
-          slidesToShow: 3,
-          centerPadding: "20%", // Adjust as needed for different breakpoints
+          slidesToShow:
+            brand.length > 0 ? (brand.length > 3 ? 3 : brand.length) : 1,
+          centerPadding: "20%",
         },
       },
       {
         breakpoint: 600,
         settings: {
           slidesToShow: 2,
-          centerPadding: "15%", // Adjust as needed for different breakpoints
+          centerPadding: "15%",
         },
       },
       {
         breakpoint: 480,
         settings: {
           slidesToShow: 1,
-          centerPadding: "10%", // Adjust as needed for different breakpoints
+          centerPadding: "10%",
         },
       },
     ],
     cssEase: "linear",
   };
+
   useEffect(() => {
     getBrandList().then((data) => {
       if (data !== null) {

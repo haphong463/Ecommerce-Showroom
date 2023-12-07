@@ -50,7 +50,7 @@ export function Main({ title, description, labelImg, img, home }) {
             overflow: "hidden",
             width: "100%",
             position: "relative",
-            filter: "brightness(50%)",
+            filter: "brightness(35%)",
             objectFit: "cover",
           }}
           src={img}
@@ -62,11 +62,11 @@ export function Main({ title, description, labelImg, img, home }) {
         <Box
           sx={{
             position: "absolute",
-            top: ["60%", "50%"],
-            left: "50%",
+            top: ["60%", "45%"],
+            left: "70%",
             transform: "translate(-50%, -50%)",
             color: "#fff",
-            textAlign: "center",
+            textAlign: "right",
             width: "50%",
           }}
         >
@@ -81,9 +81,9 @@ export function Main({ title, description, labelImg, img, home }) {
               textTransform: "uppercase",
             }}
           >
-            {title}
+            <span className="title-banner">{title}</span>
           </Typography>
-          <Typography variant="body2" component="div">
+          <Typography variant="body1" component="div">
             {description}
           </Typography>
         </Box>
