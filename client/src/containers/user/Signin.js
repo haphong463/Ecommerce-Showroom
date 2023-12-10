@@ -12,10 +12,8 @@ import {
   Alert,
 } from "@mui/material";
 import Icon from "@mui/material/Icon";
-import axios from "axios";
 import { DataContext } from "../../context/DataContext";
 import { Link } from "react-router-dom";
-import { successToast } from "../../components/Message";
 import { loginAuth } from "../../components/Auth";
 
 // Define validation schema using yup
@@ -135,7 +133,7 @@ export const Signin = () => {
                     error={!!errors.password}
                     helperText={
                       capsLockEnabled
-                        ? "Capslock is ON"
+                        ? "CapsLock is ON"
                         : errors.password?.message
                     }
                     onKeyDown={handleKeyPress}

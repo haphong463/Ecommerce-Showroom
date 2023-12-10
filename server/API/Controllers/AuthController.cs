@@ -18,7 +18,7 @@ namespace API.Controllers
         }
 
         [HttpPost("login")]
-        public IActionResult Login([FromForm] AccountCredentials credentials)
+        public IActionResult Login([FromBody] AccountCredentials credentials)
         {
             var user = Authenticate(credentials);
             if (user != null)

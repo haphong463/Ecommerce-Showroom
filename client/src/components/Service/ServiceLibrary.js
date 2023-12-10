@@ -1,12 +1,10 @@
 import { errorToast } from "../Message";
 import axiosRequest from "../../configs/axiosConfig";
-const headers = { "Content-Type": "multipart/form-data" };
+import * as yup from "yup";
 
 const handleRequest = async (method, endpoint, data = null) => {
   try {
-    const res = await axiosRequest[method]("/Account" + endpoint, data, {
-      headers,
-    });
+    const res = await axiosRequest[method]("/Service" + endpoint, data);
     return res.status === 200 || res.status === 201 ? res.data : null;
   } catch (error) {
     errorToast(error);
@@ -14,16 +12,18 @@ const handleRequest = async (method, endpoint, data = null) => {
   }
 };
 
-export const getCustomer = async () => await handleRequest("get", "");
+export const getService = async () => await handleRequest("get", "");
 
-export const postCustomer = async (data) =>
+export const postService = async (data) =>
   await handleRequest("post", "", data);
 
-export const getCustomerById = async (id) =>
+export const getServiceById = async (id) =>
   await handleRequest("get", `/${id}`);
 
-export const putCustomer = async (vehicle, id) =>
+export const putService = async (vehicle, id) =>
   await handleRequest("put", `/${id}`, vehicle);
+export const deleteService = async (id) =>
+  await handleRequest("delete", `/${id}`);
 
 export const columns = [
   { id: "accountId", label: "ID", minWidth: 30 },
@@ -31,3 +31,9 @@ export const columns = [
   { id: "dateOfBirth", label: "Date of Birth", minWidth: 200, align: "left" },
   { id: "avatarUrl", label: "Avatar", minWidth: 200, align: "center" },
 ];
+
+export const generateValidationSchemaService = () =>
+  yup.object().shape({
+    name: yup.string().required("Name is required!"),
+    description: yup.string().required("Description is required"),
+  });

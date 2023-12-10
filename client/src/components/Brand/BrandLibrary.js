@@ -2,7 +2,7 @@ import * as yup from "yup";
 import { errorToast } from "../Message";
 import axiosRequest from "../../configs/axiosConfig";
 
-const headers = { "Content-Type": "mulipart/form-data" };
+const headers = { "Content-Type": "multipart/form-data" };
 
 const handleRequest = async (method, endpoint, data = null) => {
   try {
@@ -24,16 +24,8 @@ export const postBrand = async (brand) =>
 export const deleteBrand = async (id) =>
   await handleRequest("delete", `/${id}`);
 
-export const putBrand = async (brand, brandId) => {
-  try {
-    const res = await handleRequest("put", `/${brandId}`, brand);
-    const resId = await handleRequest("get", `/${brandId}`);
-    return res.status === 200 ? res.data : resId.data.data;
-  } catch (error) {
-    errorToast(error);
-    return { data: null };
-  }
-};
+export const putBrand = async (brand, brandId) =>
+  await handleRequest("put", `/${brandId}`, brand);
 
 export const columns = [
   { id: "image", label: "", minWidth: 170 },

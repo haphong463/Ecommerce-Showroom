@@ -35,7 +35,6 @@ function App() {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div
-        className="bg-gray"
         style={{
           overflow: "hidden",
         }}

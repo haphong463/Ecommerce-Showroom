@@ -5,7 +5,6 @@ import Slider from "react-slick";
 const CustomSlider = ({ vehicleImages }) => {
   const sliderSettings = {
     dots: false,
-    dotsClass: "slick-dots slick-thumb",
     infinite: true,
     speed: 500,
     autoplay: true,

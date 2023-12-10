@@ -23,7 +23,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
+        [Authorize(Roles = "Admin, User")]
         public async Task<IActionResult> Index()
         {
             try

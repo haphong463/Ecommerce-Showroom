@@ -1,6 +1,6 @@
 // DetailPage.js
 import React, { useContext, useEffect, useState } from "react";
-import { Box, Grid } from "@mui/material";
+import { Box, Grid, Paper } from "@mui/material";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
 import { useNavigate, useParams } from "react-router-dom";
@@ -29,8 +29,8 @@ import {
 import dayjs from "dayjs";
 import VehicleForm from "../../components/Vehicle/VehicleForm";
 import { VehicleContext } from "../../context/VehicleContext";
-import CustomSlider from "../../components/VehicleDetails/CustomSlider";
-import VehicleInformation from "../../components/VehicleDetails/VehicleInformation";
+import CustomSlider from "../../components/admin/VehicleDetails/ImageList";
+import VehicleInformation from "../../components/admin/VehicleDetails/VehicleInformation";
 import { dangerMessage } from "../../components/Message";
 import Swal from "sweetalert2";
 export const VehicleDetails = () => {
@@ -162,32 +162,34 @@ export const VehicleDetails = () => {
       <Box height={70} />
       <Box sx={{ display: "flex" }}>
         <Sidebar />
-      </Box>
-      <Box component="main" sx={{ flexGrow: 1 }}>
-        <VehicleForm
-          open={open}
-          onSetOpen={setOpen}
-          handleClose={handleClose}
-          refreshVehicleData={refreshVehicleData}
-        />
-        {loading && (
-          <Box sx={{ ml: 10 }}>
-            <Grid container spacing={2}>
-              <Grid item xs={12} md={6}>
-                <CustomSlider vehicleImages={vehicle.images} />
-              </Grid>
+        <Box component="main" sx={{ flexGrow: 1 }}>
+          <VehicleForm
+            open={open}
+            onSetOpen={setOpen}
+            handleClose={handleClose}
+            refreshVehicleData={refreshVehicleData}
+          />
+        </Box>
+        <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
+          {loading && (
+            <Box>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={6}>
+                  <CustomSlider vehicleImages={vehicle.images} />
+                </Grid>
 
-              <Grid item xs={12} md={6}>
-                <VehicleInformation
-                  infoArray={infoArray}
-                  handleClickOpen={handleClickOpen}
-                  handleDelete={handleDelete}
-                  vehicleID={id}
-                />
+                <Grid item xs={12} md={6}>
+                  <VehicleInformation
+                    infoArray={infoArray}
+                    handleClickOpen={handleClickOpen}
+                    handleDelete={handleDelete}
+                    vehicleID={id}
+                  />
+                </Grid>
               </Grid>
-            </Grid>
-          </Box>
-        )}
+            </Box>
+          )}
+        </Paper>
       </Box>
     </>
   );

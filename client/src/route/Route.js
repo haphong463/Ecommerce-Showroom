@@ -5,7 +5,7 @@ import { Vehicles as VehicleUser } from "../containers/user/Vehicles";
 import { Brand } from "../containers/admin/Brand";
 import { BrandProvider } from "../context/BrandContext";
 import { Login } from "../containers/admin/Login";
-import { Service } from "../containers/user/Service";
+import { Service as ServiceUser } from "../containers/user/Service";
 import { VehicleDetails as VehicleDetailsAdmin } from "../containers/admin/VehicleDetails";
 import { SignUp } from "../containers/user/SignUp";
 import { Vehicles } from "../containers/admin/Vehicles";
@@ -14,6 +14,9 @@ import { VehicleProvider } from "../context/VehicleContext";
 import { Signin } from "../containers/user/Signin";
 import { Customer } from "../containers/admin/Customer";
 import Cart from "../containers/user/Cart";
+import { Service } from "../containers/admin/Service";
+import { Invoice } from "../containers/admin/Invoice";
+import { ServiceProvider } from "../context/ServiceContext";
 
 export const publicRoutes = [
   {
@@ -24,7 +27,7 @@ export const publicRoutes = [
       </VehicleProvider>
     ),
   },
-  { path: "/service", component: <Service /> },
+  { path: "/service", component: <ServiceUser /> },
   { path: "/signup", component: <SignUp /> },
   {
     path: "/vehicles",
@@ -88,6 +91,20 @@ export const privateRoutes = [
         <VehicleDetailsAdmin />
       </VehicleProvider>
     ),
+    roles: ["Admin"],
+  },
+  {
+    path: "/admin/service",
+    component: (
+      <ServiceProvider>
+        <Service />
+      </ServiceProvider>
+    ),
+    roles: ["Admin"],
+  },
+  {
+    path: "/admin/invoice",
+    component: <Invoice />,
     roles: ["Admin"],
   },
 ];

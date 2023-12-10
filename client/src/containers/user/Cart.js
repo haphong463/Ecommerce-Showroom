@@ -18,7 +18,7 @@ import {
 import RemoveIcon from "@mui/icons-material/Remove";
 import { getVehicleById } from "../../components/Vehicle/VehicleLibrary";
 import { DataContext } from "../../context/DataContext";
-import { json, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 
 const TAX_RATE = 0.07;

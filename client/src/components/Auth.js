@@ -3,7 +3,7 @@ import { errorToast } from "./Message";
 
 export const loginAuth = async (data) => {
   try {
-    const res = await axios.post("http://localhost:5251/api/Auth", data);
+    const res = await axios.post("http://localhost:5251/api/Auth/login", data);
     if (res.status === 200) {
       return res.data.token;
     }

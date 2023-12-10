@@ -115,12 +115,17 @@ const Header = ({ title, state, setState }) => {
                 <Button
                   key={route.primary}
                   onClick={() => navigate(route.route)}
-                  className={location.pathname === route.route && "active-link"}
+                  className={
+                    location.pathname === route.route ? "active-link" : ""
+                  }
                   sx={{
                     my: 2,
                     display: "block",
                     color: "#333",
                     fontWeight: 600,
+                    ":hover": {
+                      color: "#fa921f",
+                    },
                   }}
                 >
                   {route.primary}

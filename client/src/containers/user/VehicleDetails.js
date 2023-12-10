@@ -11,7 +11,6 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import CustomSlider from "../../components/VehicleDetails/CustomSlider";
 import { useNavigate, useParams } from "react-router-dom";
 import { getVehicleById } from "../../components/Vehicle/VehicleLibrary";
 import { VehicleContext } from "../../context/VehicleContext";
@@ -37,6 +36,7 @@ import dayjs from "dayjs";
 import RelatedVehicles from "../../components/user/Vehicles/RelatedVehicles";
 import { VehicleSpec } from "../../components/user/Vehicles/VehicleSpec";
 import { DataContext } from "../../context/DataContext";
+import CustomSlider from "../../components/admin/VehicleDetails/ImageList";
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { vehicle, setVehicle } = useContext(VehicleContext);

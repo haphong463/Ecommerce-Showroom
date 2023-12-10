@@ -12,8 +12,10 @@ import SettingsIcon from "@mui/icons-material/Settings";
 import LogoutIcon from "@mui/icons-material/ExitToApp";
 import LoginIcon from "@mui/icons-material/Login";
 import MenuIcon from "@mui/icons-material/Menu";
+import ReceiptIcon from "@mui/icons-material/Receipt";
 import PersonIcon from "@mui/icons-material/Person";
 import CategoryIcon from "@mui/icons-material/Category";
+import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 import BackgroundImage from "../../assets/images/HD-wallpaper-black-background-car-cars-vehicles.jpg";
 import { Divider } from "@mui/material";
 const drawerWidth = 240;
@@ -92,6 +94,18 @@ const routes = [
     route: "/admin/customer",
     primary: "Customer",
     icon: <PersonIcon />,
+    position: "top",
+  },
+  {
+    route: "/admin/service",
+    primary: "Service",
+    icon: <MiscellaneousServicesIcon />,
+    position: "top",
+  },
+  {
+    route: "/admin/invoice",
+    primary: "Invoice",
+    icon: <ReceiptIcon />,
     position: "top",
   },
   {

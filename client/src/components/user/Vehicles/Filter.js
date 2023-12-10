@@ -48,13 +48,6 @@ export const Filter = () => {
     setBrand(event.target.value);
   };
 
-  const handleFilterButtonClick = () => {
-    setDialogOpen(true);
-  };
-
-  const handleDialogClose = () => {
-    setDialogOpen(false);
-  };
 
   useEffect(() => {
     let filterVehicles = vehicleData;

@@ -50,6 +50,7 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
     color: entry ? entry.color : "",
     mileage: entry ? entry.mileage : "",
     engineType: entry ? entry.engineType : "",
+    status: entry ? entry.status : "",
     transmissionType: entry ? entry.transmissionType : "",
     fuelType: entry ? entry.fuelType : "",
     numberOfSeats: entry ? entry.numberOfSeats : "",
@@ -59,7 +60,7 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
     isUsed: entry ? entry.isUsed : false,
     description: entry ? entry.description : "",
   };
-
+  console.log(entry);
   useEffect(() => {
     getBrandList().then((data) => {
       if (data !== null) {
@@ -140,7 +141,14 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
         >
           {({ errors, touched, isSubmitting, dirty, ...props }) => (
             <Form>
-              <VehicleFormFields props={props} isUsed={isUsed} setIsUsed={setIsUsed} touched={touched} errors={errors} brand={brand} />
+              <VehicleFormFields
+                props={props}
+                isUsed={isUsed}
+                setIsUsed={setIsUsed}
+                touched={touched}
+                errors={errors}
+                brand={brand}
+              />
               <DialogActions>
                 <Button
                   type="submit"
@@ -163,4 +171,3 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
 };
 
 export default VehicleForm;
-

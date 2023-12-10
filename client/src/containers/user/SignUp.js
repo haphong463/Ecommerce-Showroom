@@ -15,7 +15,7 @@ import "../../assets/styles/Body.css";
 import { DatePicker } from "@mui/x-date-pickers";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import dayjs from "dayjs";
-import { Link, Navigate, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import {
   Container,
   FormControl,
@@ -99,7 +99,7 @@ export function SignUp() {
   };
 
   return (
-    <LayoutUser colorHeader>
+    <LayoutUser>
       <Grid
         container
         component="main"
@@ -127,7 +127,7 @@ export function SignUp() {
           <Grid item xs={12} md={7}>
             <img
               src="https://img.freepik.com/free-vector/mobile-login-concept-illustration_114360-135.jpg?w=826&t=st=1701934120~exp=1701934720~hmac=b79007bc3865bf4dfedaa88b97209fa173594eb6f627885dbf27f5daa8aaa23e"
-              alt="Side Image"
+              alt="side sign up"
               width="100%"
               height="100%"
             />

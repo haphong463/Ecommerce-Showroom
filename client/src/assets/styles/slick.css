@@ -4,7 +4,13 @@
     top: 15px; /* Di chuyển dots xuống dưới */
     
   }
-  
+  .slick-thumb {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    white-space: nowrap; /* Prevent dots from wrapping to the next line */
+    overflow: hidden; /* Hide the dots that overflow the container */
+  }
  .slick-thumb img {
   margin: 10px;
   filter: grayscale(100%);
@@ -30,19 +36,15 @@
   }
  
   .slick-arrow{
-    background:  #003580;
 
     border-radius: 999;
   }
 
   .slick-next{
+    right: 0;
     z-index: 10;
   }
   .slick-prev{
+    left: 0;
     z-index: 10;
   }
-
-  .slick-prev:hover, .slick-prev:focus, .slick-next:hover, .slick-next:focus{
-    background:  #003580
-  }
-  

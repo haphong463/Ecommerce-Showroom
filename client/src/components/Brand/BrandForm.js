@@ -19,8 +19,7 @@ import { BrandFormFields } from "./BrandFormField";
 import { successToast } from "../Message";
 
 const BrandForm = () => {
-  const { onClose, setData, openBrandForm, brand, setBrand } =
-    useContext(BrandContext);
+  const { onClose, setData, openBrandForm, brand } = useContext(BrandContext);
   const initialValues = {
     name: brand?.name ?? "",
     description: brand?.description ?? "",

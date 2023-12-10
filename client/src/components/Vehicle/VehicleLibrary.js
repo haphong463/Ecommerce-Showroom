@@ -56,6 +56,13 @@ export const transmissionType = [
   { value: "CVT", label: "CVT" },
   { value: "DCT", label: "DCT" },
 ];
+export const status = [
+  {
+    value: "0",
+    label: "Available",
+  },
+  { value: "1", label: "Unavailable" },
+];
 
 export const generateModelID = (brand, name) => {
   const brandInitial = brand.charAt(0).toUpperCase();
@@ -94,6 +101,11 @@ export const formFields = [
   {
     name: "brandId",
     label: "Brand*",
+    type: "select",
+  },
+  {
+    name: "status",
+    label: "Status*",
     type: "select",
   },
   { name: "manufacturingYear", label: "Manufacturing Year*", type: "number" },

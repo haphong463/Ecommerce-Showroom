@@ -1,16 +1,23 @@
 import {
+  Avatar,
   Box,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
+  CardMedia,
   Container,
   Grid,
   Paper,
+  Skeleton,
   Stack,
   TextField,
   Typography,
 } from "@mui/material";
-
+import ConstructionIcon from "@mui/icons-material/Construction";
 import { LayoutUser } from "../../layout/LayoutUser";
 import { FAQ } from "../../components/sub_components/FAQ";
+import { deepOrange } from "@mui/material/colors";
 export function Service() {
   return (
     <LayoutUser
@@ -18,6 +25,167 @@ export function Service() {
       title="Our Service"
       description="AutoCar is an efficient and convenient vehicle management system for car showrooms. This system facilitates the management of cars, from inventory management, maintenance, repairs to sales. With AutoCar, car showrooms can optimize their business processes and save time and costs."
     >
+      <Box component="section">
+        <Paper sx={{ my: 10 }} elevation={0}>
+          <Typography align="center" variant="h4" className="title-specs">
+            <span className="title-text">Maintenance and repair process</span>
+          </Typography>
+          <Typography align="center" variant="body2">
+            Summary of some services provided at AutoCar car factory:
+          </Typography>
+          <Container
+            sx={{
+              my: 3,
+            }}
+          >
+            <Grid container spacing={4}>
+              <Grid item xs={3}>
+                <Paper elevation={0}>
+                  <Card
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      p: 3,
+                      mt: 2,
+                      borderRadius: "12px",
+                      border: "1px solid #333",
+                    }}
+                    elevation={0}
+                  >
+                    <Avatar
+                      sx={{
+                        bgColor: deepOrange[500],
+                      }}
+                    >
+                      <ConstructionIcon fontSize="large" />
+                    </Avatar>
+                    <CardContent>
+                      <Typography variant="h6" className="title-text">
+                        CHECK CAR
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Paper>
+              </Grid>
+              <Grid item xs={3}>
+                <Paper elevation={0}>
+                  <Card
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      p: 3,
+                      mt: 2,
+                      borderRadius: "12px",
+                      border: "1px solid #333",
+                    }}
+                    elevation={0}
+                  >
+                    <Avatar
+                      sx={{
+                        bgColor: deepOrange[500],
+                      }}
+                    >
+                      <ConstructionIcon fontSize="large" />
+                    </Avatar>
+                    <CardContent>
+                      <Typography variant="h6" className="title-text">
+                        CHECK CAR
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Paper>
+              </Grid>
+              <Grid item xs={3}>
+                <Paper elevation={0}>
+                  <Card
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      p: 3,
+                      mt: 2,
+                      borderRadius: "12px",
+                      border: "1px solid #333",
+                    }}
+                    elevation={0}
+                  >
+                    <Avatar
+                      sx={{
+                        bgColor: deepOrange[500],
+                      }}
+                    >
+                      <ConstructionIcon fontSize="large" />
+                    </Avatar>
+                    <CardContent>
+                      <Typography variant="h6" className="title-text">
+                        CHECK CAR
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Paper>
+              </Grid>
+              <Grid item xs={3}>
+                <Paper elevation={0}>
+                  <Card
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      p: 3,
+                      mt: 2,
+                      borderRadius: "12px",
+                      border: "1px solid #333",
+                    }}
+                    elevation={0}
+                  >
+                    <Avatar
+                      sx={{
+                        bgColor: deepOrange[500],
+                      }}
+                    >
+                      <ConstructionIcon fontSize="large" />
+                    </Avatar>
+                    <CardContent>
+                      <Typography variant="h6" className="title-text">
+                        CHECK CAR
+                      </Typography>
+                    </CardContent>
+                  </Card>
+                </Paper>
+              </Grid>
+              <Grid item xs={3}>
+                <Paper elevation={0}>
+                  <Card
+                    sx={{
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      flexDirection: "column",
+                      p: 3,
+                      mt: 2,
+                      borderRadius: "12px",
+                      border: "1px solid #333",
+                    }}
+                    elevation={0}
+                  >
+                    <Skeleton variant="circular" width={40} height={40} />
+
+                    <CardContent>
+                      <Skeleton variant="text" width={100} />
+                    </CardContent>
+                  </Card>
+                </Paper>
+              </Grid>
+            </Grid>
+          </Container>
+        </Paper>
+      </Box>
       <Box component="section">
         <Paper sx={{ my: 10 }} elevation={0}>
           <Typography align="center" variant="h4" className="title-specs">

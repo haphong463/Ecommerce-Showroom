@@ -136,7 +136,7 @@ namespace API.Controllers
 
                         foreach (var file in files)
                         {
-                            var imagePath = FileUpload.SaveImage("VehicleImage", file);
+                            var imagePath = FileUpload.SaveImage("VehicleImages", file);
                             vehicleExisting.Images.Add(new Images { ImagePath = imagePath });
                         }
                     }

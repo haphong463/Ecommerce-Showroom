@@ -6,46 +6,40 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Avatar, Badge } from "@mui/material";
+import { IconButton, Stack } from "@mui/material";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteIcon from "@mui/icons-material/Delete";
+import { ServiceContext } from "../../context/ServiceContext";
+import { dangerMessage } from "../Message";
+import Swal from "sweetalert2";
 import { DataContext } from "../../context/DataContext";
-import { columns, getCustomer } from "./CustomerLibrary";
-import dayjs from "dayjs";
-import styled from "@emotion/styled";
-const StyledBadge = styled(Badge)(({ theme }) => ({
-  "& .MuiBadge-badge": {
-    backgroundColor: "#44b700",
-    color: "#44b700",
-    boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-    "&::after": {
-      position: "absolute",
-      top: 0,
-      left: 0,
-      width: "100%",
-      height: "100%",
-      borderRadius: "50%",
-      animation: "ripple 1.2s infinite ease-in-out",
-      border: "1px solid currentColor",
-      content: '""',
-    },
-  },
-  "@keyframes ripple": {
-    "0%": {
-      transform: "scale(.8)",
-      opacity: 1,
-    },
-    "100%": {
-      transform: "scale(2.4)",
-      opacity: 0,
-    },
-  },
-}));
+import { columns, deleteService, getService } from "./ServiceLibrary";
 
-export const CustomerList = () => {
-  const [data, setData] = useState([]);
+export const ServiceList = () => {
+  const { serviceData, setServiceData, setService, handleClickOpen } =
+    useContext(ServiceContext);
   const { setLoading } = useContext(DataContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const handleDelete = (id) => {
+    const service = serviceData.find((item) => item.ServiceId === id);
+    deleteService(id).then((data) => {
+      if (data !== null) {
+        setServiceData((prev) =>
+          prev.filter((item) => item.ServiceId !== data.ServiceId)
+        );
+        dangerMessage("Delete a service successfully!");
+      }
+    });
+  };
 
+  const handleEdit = (id) => {
+    const service = serviceData.find((item) => item.serviceId === id);
+    if (service !== null) {
+      setService(service);
+      handleClickOpen();
+    }
+  };
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -55,14 +49,13 @@ export const CustomerList = () => {
   };
   useEffect(() => {
     setLoading(true);
-    getCustomer().then((data) => {
-      console.log(data);
-      if (data) {
-        setData(data);
+    getService().then((data) => {
+      if (data !== null) {
+        setServiceData(data);
         setLoading(false);
       }
     });
-  }, [setLoading]);
+  }, []);
   return (
     <>
       <TableContainer sx={{ height: "75vh" }}>
@@ -83,7 +76,7 @@ export const CustomerList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data
+            {serviceData
               .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
               .map((row) => {
                 return (
@@ -91,25 +84,41 @@ export const CustomerList = () => {
                     hover
                     role="checkbox"
                     tabIndex={-1}
-                    key={row.accountId}
+                    key={row.ServiceId}
                   >
                     {columns.map((column) => {
                       const value = row[column.id];
                       return (
                         <TableCell key={column.id} align={column.align}>
-                          {column.id === "avatarUrl" ? (
-                            <StyledBadge
-                              overlap="circular"
-                              anchorOrigin={{
-                                vertical: "bottom",
-                                horizontal: "right",
+                          {column.id === "actions" ? (
+                            <Stack
+                              direction="row"
+                              sx={{
+                                display: "flex",
+                                justifyContent: "flex-end",
                               }}
-                              variant="dot"
                             >
-                              <Avatar alt="Remy Sharp" src={row.avatarUrl} />
-                            </StyledBadge>
-                          ) : column.id === "dateOfBirth" ? (
-                            dayjs(row.dateOfBirth).format("MMMM DD, YYYY")
+                              <IconButton
+                                aria-label="edit"
+                                onClick={() => handleEdit(row.ServiceId)}
+                              >
+                                <EditIcon />
+                              </IconButton>
+                              <IconButton
+                                aria-label="delete"
+                                onClick={() => handleDelete(row.ServiceId)}
+                              >
+                                <DeleteIcon />
+                              </IconButton>
+                            </Stack>
+                          ) : column.id === "image" ? (
+                            <img
+                              alt={`${row.name}`}
+                              src={row.imagePath}
+                              width={100}
+                            />
+                          ) : column.format && typeof value === "number" ? (
+                            column.format(value)
                           ) : (
                             value
                           )}
@@ -125,7 +134,7 @@ export const CustomerList = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 15]}
         component="div"
-        count={data.length}
+        count={serviceData.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}
