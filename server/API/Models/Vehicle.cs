@@ -11,6 +11,9 @@ public class Vehicle
     [Required]
     [StringLength(50), Column(TypeName = "nvarchar(50)")]
     public string Name { get; set; }
+    [Column(TypeName = "decimal(10, 2)")]
+    public decimal Price { get; set; }
+    public int Quanttity { get; set; }
     public string Description { get; set; }
     [Required]
     public int BrandId { get; set; }
@@ -52,6 +55,7 @@ public class Vehicle
     public bool IsUsed { get; set; }
     public List<Images>? Images { get; set; }
     public Brand? Brand { get; set; }
+    public List<OrderDetails>? OrderDetails { get; set; }
 }
 
 public enum VehicleStatus

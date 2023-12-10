@@ -11,9 +11,11 @@ namespace API.Models
         public int EmployeeId { get; set; }
         public int OrderStatus { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.Now;
+        public int TotalPrice { get; set; }
         public Account? Account { get; set; }
         public Employee? Employee { get; set; }
-
+        public List<OrderDetails>? OrderDetails { get; set; }
+        public List<OrderService>? OrderServices { get; set; }
     }
 }
 
