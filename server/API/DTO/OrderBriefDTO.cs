@@ -1,8 +1,6 @@
-﻿using API.Models;
-
-namespace API.DTO
+﻿namespace API.DTO
 {
-    public class OrderDTO
+    public class OrderBriefDTO
     {
         public int OrderId { get; set; }
         public int AccountId { get; set; }
@@ -10,5 +8,9 @@ namespace API.DTO
         public int OrderStatus { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public int TotalPrice { get; set; }
+        public AccountDTO Account { get; set; }
+        public EmployeeDTO Employee { get; set; }
+        public List<include_ServiceDTO>? Services { get; set; }
+        public List<include_VehicleDTO>? Vehicles { get; set; }
     }
 }

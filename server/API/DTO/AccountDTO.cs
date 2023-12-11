@@ -4,6 +4,5 @@
     {
         public int AccountId { get; set; }
         public string Name { get; set; }
-        public List<OrderDTO>? Order { get; set; }
     }
 }

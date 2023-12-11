@@ -47,7 +47,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        [Authorize(Roles = "Employee, Admin")]
+        /*[Authorize(Roles = "Employee, Admin")]*/
         public async Task<ActionResult<ApiResponse<VehicleDTO>>> PostVehicle([FromForm] Vehicle vehicle, List<IFormFile> files)
         {
             if (!ModelState.IsValid)

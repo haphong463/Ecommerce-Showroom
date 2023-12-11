@@ -23,7 +23,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin, User")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Index()
         {
             try
@@ -78,7 +78,6 @@ namespace API.Controllers
             {
                 account.Password = AccountSecurity.HashPassword(account.Password);
 
-
                 if (account.Role == null)
                 {
                     account.Role = "User";
@@ -87,6 +86,18 @@ namespace API.Controllers
 
                 var resource = await _dbContext.Accounts.AddAsync(account);
                 await _dbContext.SaveChangesAsync();
+
+                if (account.Role == "Employee")
+                {
+                    var newEmployee = new Employee
+                    {
+                        AccountId = account.AccountId // Sử dụng AccountID từ tài khoản mới tạo
+                                                      // Các trường khác của Employee có thể được cập nhật tùy thuộc vào yêu cầu của bạn
+                    };
+
+                    _dbContext.Employees.Add(newEmployee);
+                    await _dbContext.SaveChangesAsync();
+                }
 
                 if (resource != null)
                 {
@@ -102,7 +113,6 @@ namespace API.Controllers
                 return ApiResponse<Account>.Exception(ex);
             }
         }
-
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAccount(int id)

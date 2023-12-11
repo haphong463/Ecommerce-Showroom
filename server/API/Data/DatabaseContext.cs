@@ -18,16 +18,18 @@ namespace API.Data
                 .WithOne(x => x.Brand)
                 .HasForeignKey(x => x.BrandId);
 
-            modelBuilder.Entity<Account>()
-                .HasMany(x => x.Order)
-                .WithOne(x => x.Account)
-                .HasForeignKey(x => x.AccountId);
+            modelBuilder.Entity<Account>(entity =>
+            {
+                entity.HasKey(a => a.AccountId);
+                entity.HasMany(e => e.Order)
+                    .WithOne(e => e.Account)
+                    .HasForeignKey(e => e.AccountId);
+            });
             modelBuilder.Entity<Employee>()
                 .HasMany(x => x.Order)
                 .WithOne(x => x.Employee)
-                .HasForeignKey( x => x.EmployeeId)
+                .HasForeignKey(x => x.EmployeeId)
                 .OnDelete(DeleteBehavior.Restrict);
-
 
             modelBuilder.Entity<OrderService>()
                 .HasKey(ot => new { ot.OrderId, ot.ServiceId });
