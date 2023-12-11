@@ -24,12 +24,18 @@ namespace API.Helper
             CreateMap<Brand, BrandDTO>().ReverseMap();
             CreateMap<Account, AccountDTO>().ReverseMap();
             CreateMap<Employee, EmployeeDTO>().ReverseMap();
+
+            CreateMap<Order, OrderBriefDTO>().ReverseMap();
             CreateMap<Order, OrderDTO>().ReverseMap();
-            CreateMap<OrderDetails, OrderDetailDTO>().ReverseMap();
+            CreateMap<OrderDTO, Order>().ReverseMap();
 
             CreateMap<Service, ServiceDTO>().ReverseMap();
             CreateMap<ServiceDTO, Service>().ReverseMap();
+            CreateMap<Service, ServiceBriefDTO>().ReverseMap();
 
+            CreateMap<Vehicle, VehicleDTO>().ReverseMap();
+            CreateMap<VehicleDTO, Vehicle>().ReverseMap();
+            CreateMap<Vehicle, VehicleBriefDTO>().ReverseMap();
         }
     }
 }

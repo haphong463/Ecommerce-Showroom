@@ -21,43 +21,46 @@ namespace API.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<Service>>>> GetServices()
+        public async Task<ActionResult<ApiResponse<IEnumerable<ServiceBriefDTO>>>> GetServices()
         {
             var services = await _dbContext.Services
-                /*.Include(s => s.OrderServices)
-                .ThenInclude(os => os.Orders)*/
+                .Include(s => s.OrderServices)
+                .ThenInclude(os => os.Orders)
                 .ToListAsync();
 
-            var serviceDTO = _mapper.Map<List<ServiceDTO>>(services);
-            /*services.Select(s => new ServiceDTO
-        {
-            ServiceId = s.ServiceId,
-            Name = s.Name,
-            Description = s.Description,
-            Price = s.Price,
-            Orders = s.OrderServices.Select(o => new include_OrderDTO
+            /*var serviceDTO = _mapper.Map<List<ServiceDTO>>(services);*/
+            var serviceDTO = services.Select(s => new ServiceBriefDTO
             {
-                OrderId = o.OrderId
-            }).ToList()
-        });*/
-            return Ok(new ApiResponse<IEnumerable<ServiceDTO>>(serviceDTO, "Get all Services successfully"));
+                ServiceId = s.ServiceId,
+                Name = s.Name,
+                Description = s.Description,
+                Price = s.Price,
+                Orders = s.OrderServices.Select(o => new include_OrderDTO
+                {
+                    OrderId = o.OrderId,
+                    AccountId = o.Orders.AccountId,
+                    EmployeeId = o.Orders.EmployeeId,
+                    TotalPrice = o.Orders.TotalPrice
+                }).ToList()
+            });
+            return Ok(new ApiResponse<IEnumerable<ServiceBriefDTO>>(serviceDTO, "Get all Services successfully"));
         }
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<ServiceDTO>>> GetServiceById(int id)
+        public async Task<ActionResult<ApiResponse<ServiceBriefDTO>>> GetServiceById(int id)
         {
             try
             {
                 var service = await _dbContext.Services
-                    /*.Include(s => s.OrderServices)
-                        .ThenInclude(os => os.Orders)*/
+                    .Include(s => s.OrderServices)
+                        .ThenInclude(os => os.Orders)
                     .SingleOrDefaultAsync(x => x.ServiceId == id);
                 if (service == null)
                 {
-                    return NotFound(new ApiResponse<ServiceDTO>(null, "Not found!"));
+                    return NotFound(new ApiResponse<ServiceBriefDTO>(null, "Not found!"));
                 }
 
-                var serviceDTO = _mapper.Map<ServiceDTO>(service);
-                /*new ServiceDTO
+                /*var serviceDTO = _mapper.Map<ServiceDTO>(service);*/
+                var serviceDTO = new ServiceBriefDTO
                 {
                     ServiceId = service.ServiceId,
                     Name = service.Name,
@@ -65,16 +68,19 @@ namespace API.Controllers
                     Price = service.Price,
                     Orders = service.OrderServices.Select(o => new include_OrderDTO
                     {
-                        OrderId = o.OrderId
+                        OrderId = o.OrderId,
+                        AccountId = o.Orders.AccountId,
+                        EmployeeId = o.Orders.EmployeeId,
+                        TotalPrice = o.Orders.TotalPrice
                     }).ToList()
-                };*/
+                };
 
-                return Ok(new ApiResponse<ServiceDTO>(serviceDTO, "Get Service successfully"));
+                return Ok(new ApiResponse<ServiceBriefDTO>(serviceDTO, "Get Service successfully"));
 
             }
             catch (Exception ex)
             {
-                return ApiResponse<Service>.Exception(ex);
+                return ApiResponse<ServiceBriefDTO>.Exception(ex);
 
             }
         }
@@ -112,8 +118,6 @@ namespace API.Controllers
                 }
 
                 var serviceExisting = await _dbContext.Services
-                    /*.Include(s => s.OrderServices)
-                        .ThenInclude(os => os.Orders)*/
                     .SingleOrDefaultAsync(x => x.ServiceId == id);
                 if (serviceExisting != null)
                 {
