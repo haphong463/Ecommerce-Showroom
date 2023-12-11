@@ -8,7 +8,7 @@ import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import { Box, Typography } from "@mui/material";
 const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
-export const Carousel = ({ images, state, setState }) => {
+export const CarouselComponent = ({ images, state, setState }) => {
   const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
   const maxSteps = images.length;
@@ -157,6 +157,28 @@ export const Carousel = ({ images, state, setState }) => {
           }
         />
       )}
+      {/* <Carousel
+      autoPlay={false}
+      // interval={1000}
+      animation="slide"
+      indicators={false}
+      navButtonsAlwaysVisible
+    >
+      {images.map((image, index) => (
+        <Box key={image.imagePath}>
+          <img
+            src={image.imgPath}
+            alt={`Product ${index + 1}`}
+            style={{
+              width: "100%",
+              height: "50vh",
+              objectFit: "cover",
+              border: "1px solid #cbcbcb",
+            }}
+          />
+        </Box>
+      ))}
+    </Carousel> */}
     </>
   );
 };

@@ -24,7 +24,7 @@ const ServiceForm = () => {
   const initialValues = {
     name: service?.name ?? "",
     description: service?.description ?? "",
-    image: null,
+    price: service?.price ?? "",
   };
   const validationSchema = generateValidationSchemaService();
   const submitAPI = (service, values) => {
@@ -37,11 +37,12 @@ const ServiceForm = () => {
         }
       });
     } else {
-      putService(values, service.ServiceId).then((data) => {
+      putService(values, service.serviceId).then((data) => {
+        console.log(data);
         if (data) {
           setServiceData((prev) =>
             prev.map((item) =>
-              item.ServiceId === data.ServiceId ? data : item
+              item.serviceId === data.serviceId ? data : item
             )
           );
           onClose();
@@ -58,7 +59,7 @@ const ServiceForm = () => {
         align="center"
         letterSpacing={10}
       >
-        {!service ? "NEW Service" : "EDIT Service"}
+        {!service ? "NEW SERVICE" : "EDIT SERVICE"}
       </DialogTitle>
       <DialogContent>
         <Formik

@@ -17,9 +17,10 @@ namespace API.Services
                 {
                     new Claim("Email", account.Email),
                     new Claim(ClaimTypes.Role, account.Role),
-                        new Claim("Role", account.Role),
+                    new Claim("Role", account.Role),
                     new Claim("Name", account.Name),
-                };
+                    new Claim("Avatar", account.AvatarUrl)
+        };
 
             var token = new JwtSecurityToken(configuration["Jwt:Issuer"],
                 configuration["Jwt:Audience"],

@@ -1,33 +1,18 @@
 import React, { useContext, useEffect, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
-import {
-  Button,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  FormControlLabel,
-  Grid,
-  MenuItem,
-  RadioGroup,
-  Select,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Grid, MenuItem, Select, Typography } from "@mui/material";
 import { VehicleContext } from "../../../context/VehicleContext";
 import { DataContext } from "../../../context/DataContext";
 import { getBrandList } from "../../Brand/BrandLibrary";
 
-export const Filter = () => {
-  const { vehicleData } = useContext(VehicleContext);
+export const Filter = ({ vehicles }) => {
   const { setSearchData } = useContext(DataContext);
   const [options, setOptions] = useState([]);
   const [brand, setBrand] = useState();
   const [inputValue, setInputValue] = useState("");
   const [open, setOpen] = React.useState(false);
-  const [BrandList, setBrandList] = useState([]);
-  const [dialogOpen, setDialogOpen] = useState(false); // State for dialog visibility
+  const [brandList, setBrandList] = useState([]);
 
   const handleOpen = () => {
     if (inputValue.length > 0) {
@@ -48,9 +33,8 @@ export const Filter = () => {
     setBrand(event.target.value);
   };
 
-
   useEffect(() => {
-    let filterVehicles = vehicleData;
+    let filterVehicles = vehicles.slice();
     if (inputValue) {
       filterVehicles = filterVehicles.filter((item) =>
         item.name.toLowerCase().includes(inputValue.toLowerCase())
@@ -65,13 +49,13 @@ export const Filter = () => {
   }, [inputValue, brand]);
 
   useEffect(() => {
-    const uniqueOptions = [...new Set(vehicleData.map((item) => item.name))];
+    const uniqueOptions = [...new Set(vehicles.map((item) => item.name))];
     setOptions(
       uniqueOptions.map((name, index) => ({
         label: name,
       }))
     );
-  }, [vehicleData]);
+  }, [vehicles]);
 
   useEffect(() => {
     getBrandList().then((data) => {
@@ -116,7 +100,7 @@ export const Filter = () => {
             fullWidth
           >
             <MenuItem value="all">All</MenuItem>
-            {BrandList.map((item) => (
+            {brandList.map((item) => (
               <MenuItem value={item.brandId} key={item.brandId}>
                 {item.name}
               </MenuItem>

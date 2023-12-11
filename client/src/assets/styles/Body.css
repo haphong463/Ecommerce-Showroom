@@ -30,6 +30,7 @@
   .title-text {
     color: #003580;
     font-weight: 700;
+    text-transform: uppercase;
   }
 
   .price-text{

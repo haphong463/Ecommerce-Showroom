@@ -17,6 +17,7 @@ import Cart from "../containers/user/Cart";
 import { Service } from "../containers/admin/Service";
 import { Invoice } from "../containers/admin/Invoice";
 import { ServiceProvider } from "../context/ServiceContext";
+import { Profile } from "../containers/user/Profile";
 
 export const publicRoutes = [
   {
@@ -27,7 +28,14 @@ export const publicRoutes = [
       </VehicleProvider>
     ),
   },
-  { path: "/service", component: <ServiceUser /> },
+  {
+    path: "/service",
+    component: (
+      <ServiceProvider>
+        <ServiceUser />
+      </ServiceProvider>
+    ),
+  },
   { path: "/signup", component: <SignUp /> },
   {
     path: "/vehicles",
@@ -55,7 +63,7 @@ export const publicRoutes = [
   },
   { path: "/admin/login", component: <Login /> },
   { path: "/login", component: <Signin /> },
-  { path: "/cart", component: <Cart /> },
+  { path: "/profile/:id", component: <Profile /> },
 ];
 
 export const privateRoutes = [

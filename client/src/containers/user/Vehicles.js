@@ -83,8 +83,9 @@ export function Vehicles() {
   const location = useLocation();
   useEffect(() => {
     setLoading(true);
+
     getVehicles().then((data) => {
-      if (data && data.length > 0) {
+      if (data) {
         let checkIsUsed;
         if (location.pathname === "/vehicles") {
           checkIsUsed = true;
@@ -94,7 +95,7 @@ export function Vehicles() {
         const newCar = data.filter((vehicle) => vehicle.isUsed === checkIsUsed);
         setSearchData(newCar);
         setVehicleData(newCar);
-        setLoading(false); // Set loading to false when data is loaded
+        setLoading(false); // Set load
       }
     });
   }, [setVehicleData, setSearchData, location]);

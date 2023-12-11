@@ -79,7 +79,7 @@ namespace API.Controllers
             }
         }
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<Service>>> PostService([FromForm] ServiceDTO serviceDTO)
+        public async Task<ActionResult<ApiResponse<Service>>> PostService([FromBody] ServiceDTO serviceDTO)
         {
             if (!ModelState.IsValid)
             {
@@ -102,7 +102,7 @@ namespace API.Controllers
             }
         }
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApiResponse<Service>>> UpdateService(int id, [FromForm] ServiceDTO serviceUpdate)
+        public async Task<ActionResult<ApiResponse<Service>>> UpdateService(int id, [FromBody] ServiceDTO serviceUpdate)
         {
             try
             {

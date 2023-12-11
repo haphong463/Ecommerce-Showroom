@@ -8,7 +8,7 @@ import {
   useLocation,
 } from "react-router-dom";
 import "./assets/styles/Body.css";
-import { ThemeProvider, createTheme, makeStyles } from "@mui/material";
+import { ThemeProvider, createTheme } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { privateRoutes, publicRoutes } from "./route/Route";

@@ -174,9 +174,11 @@ export const VehicleDetails = () => {
           {loading && (
             <Box>
               <Grid container spacing={2}>
-                <Grid item xs={12} md={6}>
-                  <CustomSlider vehicleImages={vehicle.images} />
-                </Grid>
+                {vehicle.images.length > 0 && (
+                  <Grid item xs={12} md={6}>
+                    <CustomSlider vehicleImages={vehicle.images} />
+                  </Grid>
+                )}
 
                 <Grid item xs={12} md={6}>
                   <VehicleInformation

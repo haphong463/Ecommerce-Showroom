@@ -6,7 +6,7 @@ import { Grid, TextField } from "@mui/material";
 export const ServiceFormField = ({ formikProps }) => {
   return (
     <Grid container spacing={2}>
-      <Grid item xs={12}>
+      <Grid item xs={12} md={6}>
         <FastField
           name="name"
           id="name"
@@ -15,6 +15,17 @@ export const ServiceFormField = ({ formikProps }) => {
           label="Name*"
           helperText={formikProps.touched.name && formikProps.errors.name}
           error={formikProps.touched.name && !!formikProps.errors.name}
+        />
+      </Grid>
+      <Grid item xs={12} md={6}>
+        <FastField
+          name="price"
+          id="price"
+          as={TextField}
+          fullWidth
+          label="Price*"
+          helperText={formikProps.touched.price && formikProps.errors.price}
+          error={formikProps.touched.price && !!formikProps.errors.price}
         />
       </Grid>
       <Grid item xs={12}>

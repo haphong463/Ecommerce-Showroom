@@ -84,7 +84,7 @@ export const ServiceList = () => {
                     hover
                     role="checkbox"
                     tabIndex={-1}
-                    key={row.ServiceId}
+                    key={row.serviceId}
                   >
                     {columns.map((column) => {
                       const value = row[column.id];
@@ -100,13 +100,13 @@ export const ServiceList = () => {
                             >
                               <IconButton
                                 aria-label="edit"
-                                onClick={() => handleEdit(row.ServiceId)}
+                                onClick={() => handleEdit(row.serviceId)}
                               >
                                 <EditIcon />
                               </IconButton>
                               <IconButton
                                 aria-label="delete"
-                                onClick={() => handleDelete(row.ServiceId)}
+                                onClick={() => handleDelete(row.serviceId)}
                               >
                                 <DeleteIcon />
                               </IconButton>

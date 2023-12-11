@@ -10,8 +10,10 @@ const CustomSlider = ({ vehicleImages }) => {
   const slickRef = useRef(null);
 
   const handleMaterialUiChange = (index) => {
-    setMaterialUiIndex(index);
-    slickRef.current.slickGoTo(index);
+    if (vehicleImages.length > 1) {
+      setMaterialUiIndex(index);
+      slickRef.current.slickGoTo(index);
+    }
   };
   const handleSlickChange = (index) => {
     setMaterialUiIndex(index);
@@ -38,16 +40,13 @@ const CustomSlider = ({ vehicleImages }) => {
         breakpoint: 1024,
         settings: {
           slidesToShow: 3,
-          slidesToScroll: 3,
           infinite: true,
-          dots: true,
         },
       },
       {
         breakpoint: 600,
         settings: {
           slidesToShow: 2,
-          slidesToScroll: 2,
           initialSlide: 2,
         },
       },
@@ -55,7 +54,6 @@ const CustomSlider = ({ vehicleImages }) => {
         breakpoint: 480,
         settings: {
           slidesToShow: 1,
-          slidesToScroll: 1,
         },
       },
     ],
@@ -64,12 +62,15 @@ const CustomSlider = ({ vehicleImages }) => {
   return (
     <Box component="div">
       <Carousel
-        autoPlay={false}
-        // interval={1000}
-        animation="slide"
+        autoPlay={true}
+        interval={2000}
+        duration={1000}
+        animation="fade"
         indicators={false}
         index={materialUiIndex}
         onChange={handleMaterialUiChange}
+        navButtonsAlwaysVisible
+        navButtonsAlwaysInvisible={vehicleImages.length > 1 ? false : true}
       >
         {vehicleImages.map((image, index) => (
           <Box key={image.imagePath}>
@@ -87,22 +88,24 @@ const CustomSlider = ({ vehicleImages }) => {
         ))}
       </Carousel>
 
-      <Slider ref={slickRef} {...settings}>
-        {vehicleImages.map((image, index) => (
-          <Box key={image.imagePath}>
-            <img
-              src={image.imagePath}
-              alt={`Product ${index + 1}`}
-              style={{
-                width: "100%",
-                height: "50px",
-                objectFit: "contain",
-                border: "1px solid #cbcbcb",
-              }}
-            />
-          </Box>
-        ))}
-      </Slider>
+      {vehicleImages.length > 1 && (
+        <Slider ref={slickRef} {...settings}>
+          {vehicleImages.map((image, index) => (
+            <Box key={image.imagePath}>
+              <img
+                src={image.imagePath}
+                alt={`Product ${index + 1}`}
+                style={{
+                  width: "100%",
+                  height: "50px",
+                  objectFit: "contain",
+                  border: "1px solid #cbcbcb",
+                }}
+              />
+            </Box>
+          ))}
+        </Slider>
+      )}
     </Box>
   );
 };

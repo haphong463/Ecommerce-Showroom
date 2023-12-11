@@ -37,10 +37,11 @@ import RelatedVehicles from "../../components/user/Vehicles/RelatedVehicles";
 import { VehicleSpec } from "../../components/user/Vehicles/VehicleSpec";
 import { DataContext } from "../../context/DataContext";
 import CustomSlider from "../../components/admin/VehicleDetails/ImageList";
+const PREPAY_RATE = 0.35;
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { vehicle, setVehicle } = useContext(VehicleContext);
-  const { setItemCart } = useContext(DataContext);
+  const { setItemCart, token } = useContext(DataContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const infoArray = [
@@ -64,7 +65,7 @@ export const VehicleDetails = () => {
     {
       icon: <SpeedIcon />,
       title: "Mileage",
-      value: `${vehicle.mileage} km`,
+      value: `${vehicle.mileage.toLocaleString("en-US")} km`,
     },
     {
       icon: <CommuteIcon />,
@@ -189,7 +190,9 @@ export const VehicleDetails = () => {
                       <span className="title-text">{vehicle.name}</span>
                     </Typography>
                     <Breadcrumbs separator="-">
-                      <Typography>{vehicle.mileage} km</Typography>
+                      <Typography>
+                        {vehicle.mileage.toLocaleString("en-US")}km
+                      </Typography>
                       <Typography>{vehicle.fuelType}</Typography>
                       <Typography>
                         {vehicle.transmissionType + " Transmission"}
@@ -203,18 +206,47 @@ export const VehicleDetails = () => {
                         })}
                       </span>
                     </Typography>
+                    <Stack direction="row" spacing={1}>
+                      <Typography
+                        variant="body1"
+                        fontWeight={600}
+                        color="text.secondary"
+                      >
+                        Prepay:
+                      </Typography>
+                      <Typography>
+                        {(vehicle.purchasePrice * PREPAY_RATE).toLocaleString(
+                          "en-US",
+                          {
+                            style: "currency",
+                            currency: "USD",
+                          }
+                        )}
+                      </Typography>
+                    </Stack>
                   </Stack>
 
                   {/* Stack ở dưới cùng */}
                   <Stack mt={2}>
-                    <Button
-                      variant="contained"
-                      color="warning"
-                      fullWidth
-                      onClick={handleAddToCart}
-                    >
-                      Add to cart
-                    </Button>
+                    {token ? (
+                      <Button
+                        variant="contained"
+                        color="info"
+                        fullWidth
+                        onClick={handleAddToCart}
+                      >
+                        Contact us
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="contained"
+                        color="info"
+                        fullWidth
+                        onClick={() => navigate("/login")}
+                      >
+                        Contact us
+                      </Button>
+                    )}
                   </Stack>
                 </Stack>
               </Grid>

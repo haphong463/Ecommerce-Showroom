@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Box from "@mui/material/Box";
 import Typography from "@mui/material/Typography";
 import Header from "../../components/user/Header";
-import { Carousel } from "./Home/Carousel";
+import { CarouselComponent } from "./Home/Carousel";
 const images = [
   {
     label: "San Francisco – Oakland Bay Bridge, United States 1",
@@ -34,7 +34,9 @@ export function Main({ title, description, labelImg, img, home }) {
 
   return (
     <Box sx={{ maxWidth: "100%", flexGrow: 1, position: "relative" }}>
-      {home && <Carousel images={images} state={state} setState={setState} />}
+      {home && (
+        <CarouselComponent images={images} state={state} setState={setState} />
+      )}
       {img && (
         <Box
           component="img"

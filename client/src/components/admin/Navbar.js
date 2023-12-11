@@ -10,6 +10,8 @@ import Badge from "@mui/material/Badge";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
+import CloseIcon from "@mui/icons-material/Close";
+import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
 import MailIcon from "@mui/icons-material/Mail";
 import NotificationsIcon from "@mui/icons-material/Notifications";
@@ -181,7 +183,7 @@ export default function Navbar() {
             sx={{ mr: 2 }}
             onClick={() => updateOpen(!dopen)}
           >
-            {dopen ? <ArrowBackIosNewIcon /> : <ArrowForwardIosIcon />}
+            {dopen ? <CloseIcon /> : <MenuIcon />}
           </IconButton>
           <Typography
             variant="h5"

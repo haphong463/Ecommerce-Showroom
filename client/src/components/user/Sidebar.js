@@ -14,6 +14,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import InfoIcon from "@mui/icons-material/Info";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
+import PersonIcon from "@mui/icons-material/Person";
 import {
   Avatar,
   Badge,
@@ -52,6 +53,12 @@ const routes = [
     primary: "Service",
     position: "top",
     icon: <InfoIcon />,
+  },
+  {
+    route: "/profile",
+    primary: "Profile",
+    position: "bot",
+    icon: <PersonIcon />,
   },
   {
     route: "/signup",

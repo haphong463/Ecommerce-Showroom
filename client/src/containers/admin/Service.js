@@ -44,7 +44,7 @@ export const Service = () => {
             alignItems="center"
           >
             <Typography variant="h4">
-              <span className="title-text">Brand</span>
+              <span className="title-text">Services</span>
             </Typography>
 
             <Fab

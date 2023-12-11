@@ -44,6 +44,7 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
   const initialValues = {
     name: entry ? entry.name : "",
     price: entry ? entry.price : "",
+    quantity: entry ? entry.quantity : "",
     brandId: entry ? entry.brand?.brandId : "",
     manufacturingYear: entry ? entry.manufacturingYear : "",
     registrationNumber: entry ? entry.registrationNumber : "",
@@ -60,7 +61,6 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
     isUsed: entry ? entry.isUsed : false,
     description: entry ? entry.description : "",
   };
-  console.log(entry);
   useEffect(() => {
     getBrandList().then((data) => {
       if (data !== null) {

@@ -98,7 +98,7 @@ const routes = [
   },
   {
     route: "/admin/service",
-    primary: "Service",
+    primary: "Services",
     icon: <MiscellaneousServicesIcon />,
     position: "top",
   },

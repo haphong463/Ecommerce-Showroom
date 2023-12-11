@@ -16,96 +16,75 @@ export const FAQ = memo(() => {
   const handleChange = (panel) => (event, isExpanded) => {
     setExpanded(isExpanded ? panel : false);
   };
+
+  const faqData = [
+    {
+      id: "panel1",
+      question: "What products and services does your showroom offer?",
+      answer:
+        "Our showroom provides a range of high-quality products and premium services, including ... (provide detailed information about products and services)",
+    },
+    {
+      id: "panel2",
+      question: "How can I search for products in your showroom?",
+      answer:
+        "To search for products in our showroom, you can use the search function on the website or browse through the product categories we offer.",
+    },
+    {
+      id: "panel3",
+      question:
+        "How do I register for warranty for products purchased from the showroom?",
+      answer:
+        "To register for warranty for products purchased from the showroom, please visit the 'Warranty' page on our website and fill in the necessary information. The system will then guide you through the registration process.",
+    },
+    {
+      id: "panel4",
+      question: "How can I contact the support department of the showroom?",
+      answer:
+        "You can contact our support department by sending an email to support@showroom.com or calling the customer support phone number on the 'Contact' page. We will strive to respond as soon as possible.",
+    },
+    {
+      id: "panel5",
+      question: "Is there a return/exchange policy in your showroom?",
+      answer:
+        "We have a flexible return/exchange policy. If you are not satisfied with the product, you can exchange or return it within 30 days from the date of purchase. Please carefully read the return/exchange policy on our website for more details and applicable conditions.",
+    },
+  ];
+
   return (
     <Box component="section" sx={{ my: 3 }}>
       <Paper sx={{ my: 10 }} elevation={0}>
-        <Typography align="center" variant="h4" className="title-specs">
+        <Typography
+          align="center"
+          variant="h4"
+          sx={{
+            fontSize: ["1.5rem", "2rem"],
+          }}
+          className="title-specs"
+        >
           <span className="title-text">Frequently Asked Questions</span>
         </Typography>
         <Container>
-          <Accordion
-            expanded={expanded === "panel1"}
-            onChange={handleChange("panel1")}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel1bh-content"
-              id="panel1bh-header"
+          {faqData.map((item) => (
+            <Accordion
+              key={item.id}
+              expanded={expanded === item.id}
+              onChange={handleChange(item.id)}
             >
-              <Typography sx={{ color: "text.secondary" }}>
-                I am an accordion
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>
-                Nulla facilisi. Phasellus sollicitudin nulla et quam mattis
-                feugiat. Aliquam eget maximus est, id dignissim quam.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion
-            expanded={expanded === "panel2"}
-            onChange={handleChange("panel2")}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel2bh-content"
-              id="panel2bh-header"
-            >
-              <Typography sx={{ color: "text.secondary" }}>
-                You are currently not an owner
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>
-                Donec placerat, lectus sed mattis semper, neque lectus feugiat
-                lectus, varius pulvinar diam eros in elit. Pellentesque
-                convallis laoreet laoreet.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion
-            expanded={expanded === "panel3"}
-            onChange={handleChange("panel3")}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel3bh-content"
-              id="panel3bh-header"
-            >
-              <Typography sx={{ color: "text.secondary" }}>
-                Filtering has been entirely disabled for whole web server
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>
-                Nunc vitae orci ultricies, auctor nunc in, volutpat nisl.
-                Integer sit amet egestas eros, vitae egestas augue. Duis vel est
-                augue.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
-          <Accordion
-            expanded={expanded === "panel4"}
-            onChange={handleChange("panel4")}
-          >
-            <AccordionSummary
-              expandIcon={<ExpandMoreIcon />}
-              aria-controls="panel4bh-content"
-              id="panel4bh-header"
-            >
-              <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                Personal data
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              <Typography>
-                Nunc vitae orci ultricies, auctor nunc in, volutpat nisl.
-                Integer sit amet egestas eros, vitae egestas augue. Duis vel est
-                augue.
-              </Typography>
-            </AccordionDetails>
-          </Accordion>
+              <AccordionSummary
+                expandIcon={<ExpandMoreIcon />}
+                aria-controls={`${item.id}-content`}
+                id={`${item.id}-header`}
+              >
+                <Typography sx={{ color: "text.secondary" }}>
+                  {item.question}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Typography>{item.answer}</Typography>
+              </AccordionDetails>
+            </Accordion>
+          ))}
         </Container>
       </Paper>
     </Box>

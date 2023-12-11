@@ -109,7 +109,6 @@ export const InvoicePrintable = forwardRef(
         setListAccount(data);
       });
     }, []);
-    console.log(dataToPost);
     return (
       <Box component="div" p={1} ref={ref}>
         <Stack direction="row" justifyContent="space-between">
@@ -124,7 +123,23 @@ export const InvoicePrintable = forwardRef(
             >
               <span className="title-text">AutoCar</span>
             </Typography>
-            {LeftHeaderInvoice()}
+            <Stack>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <HomeIcon />
+                <Typography variant="body2" sx={{ width: "330px" }}>
+                  590 Cach Mang Thang Tam Str, District 3, Ho Chi Minh City,
+                  Vietnam
+                </Typography>
+              </Stack>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <PhoneIcon />
+                <Typography variant="body2">0347337941</Typography>
+              </Stack>
+              <Stack direction="row" alignItems="center" spacing={1}>
+                <EmailIcon />
+                <Typography variant="body2">autocar@gmail.com</Typography>
+              </Stack>
+            </Stack>
           </Stack>
 
           <Stack justifyContent="flex-end">
@@ -151,7 +166,7 @@ export const InvoicePrintable = forwardRef(
               </Stack>
             ) : (
               <Select
-                defaultValue="Select customer"
+                value={selectedAccount?.accountId ?? "Select customer"}
                 onChange={(e) => {
                   setDataToPost({ ...dataToPost, accountId: e.target.value });
                 }}
@@ -325,23 +340,3 @@ export const InvoicePrintable = forwardRef(
     );
   }
 );
-function LeftHeaderInvoice() {
-  return (
-    <Stack>
-      <Stack direction="row" alignItems="center" spacing={1}>
-        <HomeIcon />
-        <Typography variant="body2" sx={{ width: "330px" }}>
-          590 Cach Mang Thang Tam Str, District 3, Ho Chi Minh City, Vietnam
-        </Typography>
-      </Stack>
-      <Stack direction="row" alignItems="center" spacing={1}>
-        <PhoneIcon />
-        <Typography variant="body2">0347337941</Typography>
-      </Stack>
-      <Stack direction="row" alignItems="center" spacing={1}>
-        <EmailIcon />
-        <Typography variant="body2">autocar@gmail.com</Typography>
-      </Stack>
-    </Stack>
-  );
-}

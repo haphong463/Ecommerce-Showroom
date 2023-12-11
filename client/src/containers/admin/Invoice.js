@@ -14,7 +14,7 @@ export const Invoice = () => {
   const [dataToPost, setDataToPost] = useState(null);
   const [isEditMode, setIsEditMode] = useState(false);
   const [listItem, setListItem] = useState([]);
-  
+
   const componentRef = React.useRef();
 
   const handlePrint = useReactToPrint({
@@ -24,7 +24,7 @@ export const Invoice = () => {
         return null;
       }
       if (isEditMode) {
-        dangerMessage("Editing.");
+        dangerMessage("Please save before printing.");
         return null;
       }
       return componentRef.current;
