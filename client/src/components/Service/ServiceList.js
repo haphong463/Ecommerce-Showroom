@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { IconButton, Stack } from "@mui/material";
+import { IconButton, Skeleton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { ServiceContext } from "../../context/ServiceContext";
@@ -18,7 +18,7 @@ import { columns, deleteService, getService } from "./ServiceLibrary";
 export const ServiceList = () => {
   const { serviceData, setServiceData, setService, handleClickOpen } =
     useContext(ServiceContext);
-  const { setLoading } = useContext(DataContext);
+  const { loading, setLoading } = useContext(DataContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const handleDelete = (id) => {
@@ -76,58 +76,66 @@ export const ServiceList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {serviceData
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={row.serviceId}
-                  >
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.id === "actions" ? (
-                            <Stack
-                              direction="row"
-                              sx={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                              }}
-                            >
-                              <IconButton
-                                aria-label="edit"
-                                onClick={() => handleEdit(row.serviceId)}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                              <IconButton
-                                aria-label="delete"
-                                onClick={() => handleDelete(row.serviceId)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Stack>
-                          ) : column.id === "image" ? (
-                            <img
-                              alt={`${row.name}`}
-                              src={row.imagePath}
-                              width={100}
-                            />
-                          ) : column.format && typeof value === "number" ? (
-                            column.format(value)
-                          ) : (
-                            value
-                          )}
-                        </TableCell>
-                      );
-                    })}
+            {!loading
+              ? serviceData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.serviceId}
+                      >
+                        {columns.map((column) => {
+                          const value = row[column.id];
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {column.id === "actions" ? (
+                                <Stack
+                                  direction="row"
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                  }}
+                                >
+                                  <IconButton
+                                    aria-label="edit"
+                                    onClick={() => handleEdit(row.serviceId)}
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                  <IconButton
+                                    aria-label="delete"
+                                    onClick={() => handleDelete(row.serviceId)}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </Stack>
+                              ) : column.id === "image" ? (
+                                <img
+                                  alt={`${row.name}`}
+                                  src={row.imagePath}
+                                  width={100}
+                                />
+                              ) : column.format && typeof value === "number" ? (
+                                column.format(value)
+                              ) : (
+                                value
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })
+              : Array.from({ length: 4 }).map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell colSpan={4}>
+                      <Skeleton variant="rectangular" />
+                    </TableCell>
                   </TableRow>
-                );
-              })}
+                ))}
           </TableBody>
         </Table>
       </TableContainer>

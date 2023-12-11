@@ -41,18 +41,13 @@ export function Main({ title, description, labelImg, img, home }) {
         <Box
           component="img"
           sx={{
-            height: {
-              xs: "40vh",
-              md: "50vh",
-              lg: "70vh",
-              xl: "90vh",
-            },
+            height: "40vh",
             display: "block",
             maxWidth: "100%",
             overflow: "hidden",
             width: "100%",
             position: "relative",
-            filter: "brightness(35%)",
+            filter: "brightness(50%)",
             objectFit: "cover",
           }}
           src={img}
@@ -64,11 +59,11 @@ export function Main({ title, description, labelImg, img, home }) {
         <Box
           sx={{
             position: "absolute",
-            top: ["60%", "45%"],
-            left: "70%",
+            top: "60%",
+            left: "50%",
             transform: "translate(-50%, -50%)",
             color: "#fff",
-            textAlign: "right",
+            textAlign: "center",
             width: "50%",
           }}
         >
@@ -79,14 +74,11 @@ export function Main({ title, description, labelImg, img, home }) {
               mb: 2,
               fontSize: { xs: "2rem", sm: "2.5rem", md: "4rem" },
               fontWeight: "700",
-              letterSpacing: 3,
+              letterSpacing: 5,
               textTransform: "uppercase",
             }}
           >
             <span className="title-banner">{title}</span>
-          </Typography>
-          <Typography variant="body1" component="div">
-            {description}
           </Typography>
         </Box>
       )}

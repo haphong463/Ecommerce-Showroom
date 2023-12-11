@@ -28,6 +28,6 @@ namespace API.DTO
         public VehicleStatus Status { get; set; }
         public List<ImageDTO> Images { get; set; }
         public Vehicle_BrandDTO Brand { get; set; }
-/*        public List<include_OrderDTO>? Orders { get; set; }*/
+        public List<Vehicle_OrderDetail_DTO> OrderDetails { get; set; }
     }
 }

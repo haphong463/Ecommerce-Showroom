@@ -95,18 +95,22 @@ export const InvoicePrintable = forwardRef(
 
     useEffect(() => {
       getVehicles().then((data) => {
-        const uniqueOptions = data.map((item) => ({
-          label: item.name,
-          value: item.vehicleID,
-          price: item.purchasePrice,
-          isUsed: item.isUsed,
-          model: item.modelId,
-        }));
+        if (data) {
+          const uniqueOptions = data.map((item) => ({
+            label: item.name,
+            value: item.vehicleID,
+            price: item.purchasePrice,
+            isUsed: item.isUsed,
+            model: item.modelId,
+          }));
 
-        setOptions(uniqueOptions);
+          setOptions(uniqueOptions);
+        }
       });
       getCustomer().then((data) => {
-        setListAccount(data);
+        if (data) {
+          setListAccount(data);
+        }
       });
     }, []);
     return (

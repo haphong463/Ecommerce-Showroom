@@ -20,6 +20,11 @@ namespace API.Helper
                     Name = src.Brand.Name,
 
                 }))
+                .ForMember(dest => dest.OrderDetails, opt => opt.MapFrom(src => src.OrderDetails!.Select(x => new Vehicle_OrderDetail_DTO
+                {
+                    OrderId = x.OrderId,
+                    Quantity = x.Quantity
+                }).ToList()))
                 .ReverseMap();
             CreateMap<Brand, BrandDTO>().ReverseMap();
             CreateMap<Account, AccountDTO>().ReverseMap();
@@ -33,9 +38,9 @@ namespace API.Helper
             CreateMap<ServiceDTO, Service>().ReverseMap();
             CreateMap<Service, ServiceBriefDTO>().ReverseMap();
 
-            CreateMap<Vehicle, VehicleDTO>().ReverseMap();
-            CreateMap<VehicleDTO, Vehicle>().ReverseMap();
-            CreateMap<Vehicle, VehicleBriefDTO>().ReverseMap();
+            //CreateMap<Vehicle, VehicleDTO>().ReverseMap();
+            //CreateMap<VehicleDTO, Vehicle>().ReverseMap();
+            //CreateMap<Vehicle, VehicleBriefDTO>().ReverseMap();
         }
     }
 }

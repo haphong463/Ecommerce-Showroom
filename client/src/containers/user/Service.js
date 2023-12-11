@@ -22,6 +22,7 @@ import { deepOrange } from "@mui/material/colors";
 import { useContext, useEffect, useState } from "react";
 import { getService } from "../../components/Service/ServiceLibrary";
 import { ServiceContext } from "../../context/ServiceContext";
+import { DatePicker } from "@mui/x-date-pickers";
 export function Service() {
   const [loading, setLoading] = useState(false);
   const { setServiceData, serviceData } = useContext(ServiceContext);
@@ -182,12 +183,15 @@ export function Service() {
                       fullWidth
                     />
                   </Grid>
-                  <Grid item xs={12}>
+                  <Grid item xs={6}>
                     <TextField
                       label="Email"
                       placeholder="enter your email..."
                       fullWidth
                     />
+                  </Grid>
+                  <Grid item xs={6}>
+                    <DatePicker  />
                   </Grid>
                   <Grid item xs={12}>
                     <TextField

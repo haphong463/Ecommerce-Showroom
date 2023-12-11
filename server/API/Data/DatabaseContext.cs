@@ -51,11 +51,11 @@ namespace API.Data
                 .WithMany(o => o.OrderDetails)
                 .HasForeignKey(ot => ot.OrderId)
             .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<OrderDetails>()
-              .HasOne(ot => ot.Vehicles)
-              .WithMany(p => p.OrderDetails)
-              .HasForeignKey(ot => ot.VehicleId)
-              .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<OrderDetails>()
+            //  .HasOne(ot => ot.Vehicles)
+            //  .WithMany(p => p.OrderDetailsDTO)
+            //  .HasForeignKey(ot => ot.VehicleId)
+            //  .OnDelete(DeleteBehavior.Restrict);
         }
         public DbSet<Account> Accounts { get; set; }
         public DbSet<Brand> Brands { get; set; }

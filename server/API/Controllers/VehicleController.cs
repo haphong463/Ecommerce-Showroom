@@ -27,7 +27,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<Vehicle>>>> GetVehicles()
         {
-            var vehicles = await _dbContext.Vehicles.Include(x => x.Brand).Include(x => x.Images).ToListAsync();
+            var vehicles = await _dbContext.Vehicles.Include(x => x.Brand).Include(x => x.Images).Include(x => x.OrderDetails).ToListAsync();
             var vehicleDtos = _mapper.Map<List<VehicleDTO>>(vehicles);
             return Ok(new ApiResponse<IEnumerable<VehicleDTO>>(vehicleDtos, "Get all vehicles successfully"));
         }

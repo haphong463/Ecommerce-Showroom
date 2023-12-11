@@ -1,6 +1,5 @@
 import {
   Box,
-  CircularProgress,
   Fab,
   Paper,
   Stack,
@@ -13,12 +12,10 @@ import AddIcon from "@mui/icons-material/Add";
 import VehicleForm from "../../components/Vehicle/VehicleForm";
 import { VehicleList } from "../../components/Vehicle/VehicleList";
 import { VehicleContext } from "../../context/VehicleContext";
-import { DataContext } from "../../context/DataContext";
 
 export const Vehicles = () => {
   const [open, setOpen] = React.useState(false);
   const { setEntry } = useContext(VehicleContext);
-  const { loading } = useContext(DataContext);
   const handleClickOpen = () => {
     setOpen(true);
   };
@@ -41,15 +38,6 @@ export const Vehicles = () => {
           />
         </Box>
         <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
-          {loading && (
-            <CircularProgress
-              sx={{
-                position: "absolute",
-                left: "50%",
-                top: "50%",
-              }}
-            />
-          )}
           <Stack
             justifyContent="space-between"
             alignItems="center"

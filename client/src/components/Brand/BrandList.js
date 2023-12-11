@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { IconButton, Stack } from "@mui/material";
+import { IconButton, Skeleton, Stack } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { columns, deleteBrand, getBrandList } from "./BrandLibrary";
@@ -17,7 +17,7 @@ import { DataContext } from "../../context/DataContext";
 
 export const BrandList = () => {
   const { data, setData, setBrand, handleClickOpen } = useContext(BrandContext);
-  const { setLoading } = useContext(DataContext);
+  const { loading, setLoading } = useContext(DataContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const handleDelete = (id) => {
@@ -100,58 +100,70 @@ export const BrandList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={row.brandId}
-                  >
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.id === "actions" ? (
-                            <Stack
-                              direction="row"
-                              sx={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                              }}
-                            >
-                              <IconButton
-                                aria-label="edit"
-                                onClick={() => handleEdit(row.brandId)}
-                              >
-                                <EditIcon />
-                              </IconButton>
-                              <IconButton
-                                aria-label="delete"
-                                onClick={() => handleDelete(row.brandId)}
-                              >
-                                <DeleteIcon />
-                              </IconButton>
-                            </Stack>
-                          ) : column.id === "image" ? (
-                            <img
-                              alt={`${row.name}`}
-                              src={row.imagePath}
-                              width={100}
-                            />
-                          ) : column.format && typeof value === "number" ? (
-                            column.format(value)
-                          ) : (
-                            value
-                          )}
-                        </TableCell>
-                      );
-                    })}
+            {!loading
+              ? data
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.brandId}
+                      >
+                        {columns.map((column) => {
+                          const value = row[column.id];
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {column.id === "actions" ? (
+                                <Stack
+                                  direction="row"
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                  }}
+                                >
+                                  <IconButton
+                                    aria-label="edit"
+                                    onClick={() => handleEdit(row.brandId)}
+                                  >
+                                    <EditIcon />
+                                  </IconButton>
+                                  <IconButton
+                                    aria-label="delete"
+                                    onClick={() => handleDelete(row.brandId)}
+                                  >
+                                    <DeleteIcon />
+                                  </IconButton>
+                                </Stack>
+                              ) : column.id === "image" ? (
+                                <img
+                                  alt={`${row.name}`}
+                                  src={row.imagePath}
+                                  width={100}
+                                  height={50}
+                                  style={{
+                                    objectFit: "contain",
+                                  }}
+                                />
+                              ) : column.format && typeof value === "number" ? (
+                                column.format(value)
+                              ) : (
+                                value
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })
+              : Array.from({ length: 4 }).map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell colSpan={4}>
+                      <Skeleton variant="rectangular" height={50} />
+                    </TableCell>
                   </TableRow>
-                );
-              })}
+                ))}
           </TableBody>
         </Table>
       </TableContainer>

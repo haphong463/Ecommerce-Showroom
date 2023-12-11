@@ -145,13 +145,16 @@ namespace API.Controllers
                 {
                     Orders = order,
                     Services = service
+
                 };
                 await _dbContext.OrderServices.AddAsync(odService);
 
                 var odVehicle = new OrderDetails()
                 {
                     Orders = order,
-                    Vehicles = vehicle
+                    Vehicles = vehicle,
+
+
                 };
                 await _dbContext.OrderDetails.AddAsync(odVehicle);
 

@@ -119,12 +119,16 @@ export function Vehicles() {
     indexOfLastVehicle
   );
   return (
-    <LayoutUser>
+    <LayoutUser
+      img="https://images.wallpaperscraft.com/image/single/road_asphalt_marking_130996_1920x1080.jpg"
+      title={location.pathname === "/vehicles" ? "NEW CAR" : "USED CAR"}
+    >
       <Box
         component="section"
         sx={{
           height: searchData.length > 0 ? "100%" : "90vh",
-          my: 10,
+          mb: 10,
+          mt: 5,
           mx: {
             xs: 3,
           },

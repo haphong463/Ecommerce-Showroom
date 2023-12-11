@@ -6,7 +6,7 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
-import { Avatar, Badge } from "@mui/material";
+import { Avatar, Badge, Skeleton } from "@mui/material";
 import { DataContext } from "../../context/DataContext";
 import { columns, getCustomer } from "./CustomerLibrary";
 import dayjs from "dayjs";
@@ -42,7 +42,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 export const CustomerList = () => {
   const [data, setData] = useState([]);
-  const { setLoading } = useContext(DataContext);
+  const { loading, setLoading } = useContext(DataContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -83,42 +83,55 @@ export const CustomerList = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {data
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={row.accountId}
-                  >
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.id === "avatarUrl" ? (
-                            <StyledBadge
-                              overlap="circular"
-                              anchorOrigin={{
-                                vertical: "bottom",
-                                horizontal: "right",
-                              }}
-                              variant="dot"
-                            >
-                              <Avatar alt="Remy Sharp" src={row.avatarUrl} />
-                            </StyledBadge>
-                          ) : column.id === "dateOfBirth" ? (
-                            dayjs(row.dateOfBirth).format("MMMM DD, YYYY")
-                          ) : (
-                            value
-                          )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
+            {!loading
+              ? data
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.accountId}
+                      >
+                        {columns.map((column) => {
+                          const value = row[column.id];
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {column.id === "avatarUrl" ? (
+                                <StyledBadge
+                                  overlap="circular"
+                                  anchorOrigin={{
+                                    vertical: "bottom",
+                                    horizontal: "right",
+                                  }}
+                                  variant="dot"
+                                >
+                                  <Avatar
+                                    alt="Remy Sharp"
+                                    src={row.avatarUrl}
+                                  />
+                                </StyledBadge>
+                              ) : column.id === "dateOfBirth" ? (
+                                dayjs(row.dateOfBirth).format("MMMM DD, YYYY")
+                              ) : (
+                                value
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })
+              : Array.from({ length: 10 }).map((_, index) => {
+                  return (
+                    <TableRow key={index}>
+                      <TableCell colSpan={5}>
+                        <Skeleton height="40px" variant="rectangular" />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
           </TableBody>
         </Table>
       </TableContainer>

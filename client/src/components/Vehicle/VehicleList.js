@@ -8,13 +8,13 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import { VehicleContext } from "../../context/VehicleContext";
 import { columns, getVehicles } from "./VehicleLibrary";
-import { IconButton, Stack } from "@mui/material";
+import { IconButton, Skeleton, Stack } from "@mui/material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 import { useNavigate } from "react-router-dom";
 import { DataContext } from "../../context/DataContext";
 export function VehicleList() {
   const { setVehicleData, vehicleData } = useContext(VehicleContext);
-  const { setLoading } = useContext(DataContext);
+  const { loading, setLoading } = useContext(DataContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const navigate = useNavigate();
@@ -54,56 +54,68 @@ export function VehicleList() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {vehicleData
-              .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-              .map((row) => {
-                return (
-                  <TableRow
-                    hover
-                    role="checkbox"
-                    tabIndex={-1}
-                    key={row.vehicleID}
-                  >
-                    {columns.map((column) => {
-                      const value = row[column.id];
-                      return (
-                        <TableCell key={column.id} align={column.align}>
-                          {column.id === "actions" ? (
-                            <Stack
-                              direction="row"
-                              sx={{
-                                display: "flex",
-                                justifyContent: "flex-end",
-                              }}
-                            >
-                              <IconButton
-                                aria-label="edit"
-                                onClick={() =>
-                                  navigate(`../admin/vehicle/${row.vehicleID}`)
-                                }
-                              >
-                                <RemoveRedEyeIcon />
-                              </IconButton>
-                            </Stack>
-                          ) : column.id === "brand" ? (
-                            row.brand.name
-                          ) : column.id === "used" ? (
-                            row.isUsed ? (
-                              "New"
-                            ) : (
-                              "Used"
-                            )
-                          ) : column.format && typeof value === "number" ? (
-                            column.format(value)
-                          ) : (
-                            value
-                          )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
+            {!loading
+              ? vehicleData
+                  .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+                  .map((row) => {
+                    return (
+                      <TableRow
+                        hover
+                        role="checkbox"
+                        tabIndex={-1}
+                        key={row.vehicleID}
+                      >
+                        {columns.map((column) => {
+                          const value = row[column.id];
+                          return (
+                            <TableCell key={column.id} align={column.align}>
+                              {column.id === "actions" ? (
+                                <Stack
+                                  direction="row"
+                                  sx={{
+                                    display: "flex",
+                                    justifyContent: "flex-end",
+                                  }}
+                                >
+                                  <IconButton
+                                    aria-label="edit"
+                                    onClick={() =>
+                                      navigate(
+                                        `../admin/vehicle/${row.vehicleID}`
+                                      )
+                                    }
+                                  >
+                                    <RemoveRedEyeIcon />
+                                  </IconButton>
+                                </Stack>
+                              ) : column.id === "brand" ? (
+                                row.brand.name
+                              ) : column.id === "used" ? (
+                                row.isUsed ? (
+                                  "New"
+                                ) : (
+                                  "Used"
+                                )
+                              ) : column.format && typeof value === "number" ? (
+                                column.format(value)
+                              ) : (
+                                value
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                    );
+                  })
+              : Array.from({ length: 4 }).map((_, index) => {
+                  return (
+                    <TableRow key={index}>
+                      <TableCell colSpan={5}>
+                        <Skeleton variant="rectangular" />
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
           </TableBody>
         </Table>
       </TableContainer>
