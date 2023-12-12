@@ -34,18 +34,12 @@ export const Invoice = () => {
       }
       return componentRef.current;
     },
-    // onAfterPrint: () => {
-    //   postOrder(dataToPost).then((data) => {
-    //     console.log(data);
-    //   });
-    //   console.log("After print");
-
-    // },
-    onPrintError: () => {
-      console.log("Printing canceled");
-      return;
+    onAfterPrint: () => {
+      postOrder(dataToPost).then((data) => {
+        console.log(data);
+      });
+      console.log("After print");
     },
-    
   });
 
   const handleAddRow = () => {

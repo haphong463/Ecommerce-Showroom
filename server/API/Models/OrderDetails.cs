@@ -5,6 +5,8 @@ namespace API.Models
 {
     public class OrderDetails
     {
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        public int OrderDetailsId { get; set; }
         public int OrderId { get; set; }
         public int VehicleId { get; set; }
         public Vehicle? Vehicles { get; set; }

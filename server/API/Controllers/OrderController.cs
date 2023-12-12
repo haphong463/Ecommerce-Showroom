@@ -44,21 +44,29 @@ namespace API.Controllers
                 OrderStatus = o.OrderStatus,
                 OrderDate = o.OrderDate,
                 TotalPrice = o.TotalPrice,
-                Services = o.OrderServices.Select(s => new include_ServiceDTO
+                OrderDetails = o.OrderDetails.Select(odD => new OrderDetailDTO
                 {
-                    ServiceId = s.ServiceId,
-                    Name = s.Services.Name,
-                    Price = s.Services.Price,
-                    Description = s.Services.Description
+                    VehicleId = odD.VehicleId,
+                    Quantity = odD.Quantity,
+                    Price = odD.Price,
+                    Vehicles = new include_VehicleDTO
+                    {
+                        Name = odD.Vehicles.Name,
+                        Price = odD.Vehicles.Price,
+                        Quantity = odD.Vehicles.Quantity,
+                        BrandId = odD.Vehicles.BrandId,
+                        ModelId = odD.Vehicles.ModelId
+                    }
                 }).ToList(),
-                Vehicles = o.OrderDetails.Select(v => new include_VehicleDTO
+                OrderService = o.OrderServices.Select(odD => new OrderServiceDTO
                 {
-                    VehicleId = v.VehicleId,
-                    Name = v.Vehicles.Name,
-                    Price = v.Vehicles.Price,
-                    Quantity = v.Vehicles.Quantity,
-                    BrandId = v.Vehicles.BrandId,
-                    ModelId = v.Vehicles.ModelId
+                    ServiceId = odD.ServiceId,
+                    Services = new include_ServiceDTO
+                    {
+                        Name = odD.Services.Name,
+                        Price = odD.Services.Price,
+                        Description = odD.Services.Description
+                    }
                 }).ToList()
             });
             /*var orderResult = _mapper.Map<List<OrderDTO>>(orders);*/
@@ -71,7 +79,7 @@ namespace API.Controllers
             try
             {
                 var od = await _dbContext.Orders
-                    .Include(x => x.Account).Include(x => x.Employee)
+                    .Include(x => x.Account).Include(x => x.Employee).Include(o => o.OrderDetails)
                     .Include(o => o.OrderServices).ThenInclude(os => os.Services)
                     .Include(o => o.OrderDetails).ThenInclude(os => os.Vehicles)
                     .SingleOrDefaultAsync(x => x.OrderId == id);
@@ -97,21 +105,29 @@ namespace API.Controllers
                     OrderStatus = od.OrderStatus,
                     OrderDate = od.OrderDate,
                     TotalPrice = od.TotalPrice,
-                    Services = od.OrderServices.Select(s => new include_ServiceDTO
+                    OrderDetails = od.OrderDetails.Select(odD => new OrderDetailDTO
                     {
-                        ServiceId = s.ServiceId,
-                        Name = s.Services.Name,
-                        Price = s.Services.Price,
-                        Description = s.Services.Description
+                        VehicleId = odD.VehicleId,
+                        Quantity = odD.Quantity,
+                        Price = odD.Price,
+                        Vehicles = new include_VehicleDTO
+                        {
+                            Name = odD.Vehicles.Name,
+                            Price = odD.Vehicles.Price,
+                            Quantity = odD.Vehicles.Quantity,
+                            BrandId = odD.Vehicles.BrandId,
+                            ModelId = odD.Vehicles.ModelId
+                        }
                     }).ToList(),
-                    Vehicles = od.OrderDetails.Select(v => new include_VehicleDTO
+                    OrderService = od.OrderServices.Select(odD => new OrderServiceDTO
                     {
-                        VehicleId = v.VehicleId,
-                        Name = v.Vehicles.Name,
-                        Price = v.Vehicles.Price,
-                        Quantity = v.Vehicles.Quantity,
-                        BrandId = v.Vehicles.BrandId,
-                        ModelId = v.Vehicles.ModelId
+                        ServiceId = odD.ServiceId,
+                        Services = new include_ServiceDTO
+                        {
+                            Name = odD.Services.Name,
+                            Price = odD.Services.Price,
+                            Description = odD.Services.Description
+                        }
                     }).ToList()
                 };
 
@@ -128,41 +144,75 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<Order>>> PostOders([FromQuery] int serviceId, [FromQuery] int vehicleId, [FromForm] OrderDTO orderDTO)
+        public async Task<ActionResult<ApiResponse<Order>>> PostOrders([FromForm] Order order)
         {
             if (!ModelState.IsValid)
             {
                 return ApiResponse<Order>.BadRequest(ModelState);
             }
+
             try
             {
-                var service = await _dbContext.Services.SingleOrDefaultAsync(x => x.ServiceId == serviceId);
-                var vehicle = await _dbContext.Vehicles.SingleOrDefaultAsync(x => x.VehicleId == vehicleId);
+                // Trích xuất thông tin từ đối tượng JSON
+                var employeeId = order.EmployeeId;
+                var accountId = order.AccountId;
+                var orderServices = order.OrderServices; // List<OrderService>
+                var orderDetails = order.OrderDetails; // List<OrderDetails>
 
-                var order = _mapper.Map<Order>(orderDTO);
+                var totalPrice = order.TotalPrice;
 
-                var odService = new OrderService()
+                // Tạo đối tượng Order
+                var newOrder = new Order
                 {
-                    Orders = order,
-                    Services = service
+                    EmployeeId = employeeId,
+                    AccountId = accountId,
+                    TotalPrice = totalPrice
                 };
-                await _dbContext.OrderServices.AddAsync(odService);
 
-                var odVehicle = new OrderDetails()
-                {
-                    Orders = order,
-                    Vehicles = vehicle
-                };
-                await _dbContext.OrderDetails.AddAsync(odVehicle);
+                // Thêm Order vào cơ sở dữ liệu
 
-                await _dbContext.Orders.AddAsync(order);
+                await _dbContext.Orders.AddAsync(newOrder);
                 await _dbContext.SaveChangesAsync();
 
-                return CreatedAtAction(nameof(GetOdById), new { id = order.OrderId },
-                                       new ApiResponse<Order>(order, "Order created successfully", 201));
+                // Thêm OrderDetails vào cơ sở dữ liệu nếu có
+                if (orderDetails.Any())
+                {
+                    foreach (var item in orderDetails)
+                    {
+                        var newOrderDetails = new OrderDetails
+                        {
+                            OrderId = newOrder.OrderId, // Sử dụng ID của Order vừa thêm vào
+                            VehicleId = item.VehicleId,
+                            Quantity = item.Quantity,
+                            Price = item.Price
+                        };
+                        await _dbContext.OrderDetails.AddAsync(newOrderDetails);
+                    }
+                    await _dbContext.SaveChangesAsync();
+                }
+
+                // Thêm OrderServices vào cơ sở dữ liệu nếu có
+                if (orderServices.Any())
+                {
+                    foreach (var item in orderServices)
+                    {
+                        var newOrderService = new OrderService
+                        {
+                            OrderId = newOrder.OrderId, // Sử dụng ID của Order vừa thêm vào
+                            ServiceId = item.ServiceId
+                        };
+                        await _dbContext.OrderServices.AddAsync(newOrderService);
+                    }
+                    await _dbContext.SaveChangesAsync();
+                }
+
+                // Trả về thông tin đơn hàng đã tạo
+                var savedOrder = await _dbContext.Orders.FindAsync(newOrder.OrderId);
+                return Ok(savedOrder);
             }
             catch (Exception ex)
             {
+                // Xử lý ngoại lệ và trả về thông báo lỗi
                 return ApiResponse<Order>.Exception(ex);
             }
         }

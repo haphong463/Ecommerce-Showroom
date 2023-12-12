@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20231207172512_Initial12h19")]
-    partial class Initial12h19
+    [Migration("20231212095300_testsettttt")]
+    partial class testsettttt
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -160,6 +160,9 @@ namespace API.Migrations
                     b.Property<int>("OrderStatus")
                         .HasColumnType("int");
 
+                    b.Property<int>("TotalPrice")
+                        .HasColumnType("int");
+
                     b.HasKey("OrderId");
 
                     b.HasIndex("AccountId");
@@ -171,17 +174,17 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.OrderDetails", b =>
                 {
-                    b.Property<int>("OrderDetailId")
+                    b.Property<int>("OrderDetailsId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailId"), 1L, 1);
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailsId"), 1L, 1);
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
-                        .HasColumnType("decimal(18,2)");
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -189,11 +192,60 @@ namespace API.Migrations
                     b.Property<int>("VehicleId")
                         .HasColumnType("int");
 
-                    b.HasKey("OrderDetailId");
+                    b.HasKey("OrderDetailsId");
 
                     b.HasIndex("OrderId");
 
+                    b.HasIndex("VehicleId");
+
                     b.ToTable("OrderDetails");
+                });
+
+            modelBuilder.Entity("API.Models.OrderService", b =>
+                {
+                    b.Property<int>("OrderServiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderServiceId"), 1L, 1);
+
+                    b.Property<int>("OrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("ServiceId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderServiceId");
+
+                    b.HasIndex("OrderId");
+
+                    b.HasIndex("ServiceId");
+
+                    b.ToTable("OrderServices");
+                });
+
+            modelBuilder.Entity("API.Models.Service", b =>
+                {
+                    b.Property<int>("ServiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ServiceId"), 1L, 1);
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.HasKey("ServiceId");
+
+                    b.ToTable("Services");
                 });
 
             modelBuilder.Entity("Vehicle", b =>
@@ -246,14 +298,17 @@ namespace API.Migrations
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
 
-                    b.Property<int?>("OrderDetailsOrderDetailId")
-                        .HasColumnType("int");
+                    b.Property<decimal>("Price")
+                        .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime?>("PurchaseDate")
                         .HasColumnType("datetime2");
 
                     b.Property<decimal>("PurchasePrice")
                         .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
 
                     b.Property<string>("RegistrationNumber")
                         .IsRequired()
@@ -271,8 +326,6 @@ namespace API.Migrations
                     b.HasKey("VehicleId");
 
                     b.HasIndex("BrandId");
-
-                    b.HasIndex("OrderDetailsOrderDetailId");
 
                     b.ToTable("Vehicles");
                 });
@@ -320,13 +373,40 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.OrderDetails", b =>
                 {
-                    b.HasOne("API.Models.Order", "Order")
-                        .WithMany()
+                    b.HasOne("API.Models.Order", "Orders")
+                        .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.Navigation("Order");
+                    b.HasOne("Vehicle", "Vehicles")
+                        .WithMany("OrderDetails")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("Vehicles");
+                });
+
+            modelBuilder.Entity("API.Models.OrderService", b =>
+                {
+                    b.HasOne("API.Models.Order", "Orders")
+                        .WithMany("OrderServices")
+                        .HasForeignKey("OrderId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("API.Models.Service", "Services")
+                        .WithMany("OrderServices")
+                        .HasForeignKey("ServiceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Orders");
+
+                    b.Navigation("Services");
                 });
 
             modelBuilder.Entity("Vehicle", b =>
@@ -336,10 +416,6 @@ namespace API.Migrations
                         .HasForeignKey("BrandId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.HasOne("API.Models.OrderDetails", null)
-                        .WithMany("Vehicles")
-                        .HasForeignKey("OrderDetailsOrderDetailId");
 
                     b.Navigation("Brand");
                 });
@@ -359,14 +435,23 @@ namespace API.Migrations
                     b.Navigation("Order");
                 });
 
-            modelBuilder.Entity("API.Models.OrderDetails", b =>
+            modelBuilder.Entity("API.Models.Order", b =>
                 {
-                    b.Navigation("Vehicles");
+                    b.Navigation("OrderDetails");
+
+                    b.Navigation("OrderServices");
+                });
+
+            modelBuilder.Entity("API.Models.Service", b =>
+                {
+                    b.Navigation("OrderServices");
                 });
 
             modelBuilder.Entity("Vehicle", b =>
                 {
                     b.Navigation("Images");
+
+                    b.Navigation("OrderDetails");
                 });
 #pragma warning restore 612, 618
         }

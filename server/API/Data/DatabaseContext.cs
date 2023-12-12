@@ -31,26 +31,39 @@ namespace API.Data
                 .HasForeignKey(x => x.EmployeeId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<OrderService>()
-                .HasKey(ot => new { ot.OrderId, ot.ServiceId });
-            modelBuilder.Entity<OrderService>()
-                .HasOne(ot => ot.Orders)
-                .WithMany(o => o.OrderServices)
-                .HasForeignKey(ot => ot.OrderId)
-            .OnDelete(DeleteBehavior.Restrict);
-            modelBuilder.Entity<OrderService>()
-              .HasOne(ot => ot.Services)
-              .WithMany(p => p.OrderServices)
-              .HasForeignKey(ot => ot.ServiceId)
-              .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<OrderService>()
+            //    .HasKey(ot => new { ot.OrderId, ot.ServiceId });
+            //modelBuilder.Entity<OrderService>()
+            //    .HasOne(ot => ot.Orders)
+            //    .WithMany(o => o.OrderServices)
+            //    .HasForeignKey(ot => ot.OrderId)
+            //.OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<OrderService>()
+            //  .HasOne(ot => ot.Services)
+            //  .WithMany(p => p.OrderServices)
+            //  .HasForeignKey(ot => ot.ServiceId)
+            //  .OnDelete(DeleteBehavior.Restrict);
 
-            modelBuilder.Entity<OrderDetails>()
-                .HasKey(ot => new { ot.OrderId, ot.VehicleId });
-            modelBuilder.Entity<OrderDetails>()
-                .HasOne(ot => ot.Orders)
-                .WithMany(o => o.OrderDetails)
-                .HasForeignKey(ot => ot.OrderId)
-            .OnDelete(DeleteBehavior.Restrict);
+            //modelBuilder.Entity<OrderDetails>()
+            //    .HasKey(ot => new { ot.OrderId, ot.VehicleId });
+            //modelBuilder.Entity<OrderDetails>()
+            //    .HasOne(ot => ot.Orders)
+            //    .WithMany(o => o.OrderDetails)
+            //    .HasForeignKey(ot => ot.OrderId)
+            //.OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Order>()
+        .HasMany(o => o.OrderDetails)
+        .WithOne(od => od.Orders)
+        .OnDelete(DeleteBehavior.Cascade);
+
+            modelBuilder.Entity<Order>()
+                .HasMany(o => o.OrderServices)
+                .WithOne(os => os.Orders)
+                .OnDelete(DeleteBehavior.Cascade);
+
+
+
             //modelBuilder.Entity<OrderDetails>()
             //  .HasOne(ot => ot.Vehicles)
             //  .WithMany(p => p.OrderDetailsDTO)

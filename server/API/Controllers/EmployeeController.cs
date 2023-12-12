@@ -59,7 +59,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public ActionResult<Employee> GetEmployeeById(int id)
         {
-            var employee = _dbContext.Employees.FirstOrDefault(e => e.EmployeeId == id);
+            var employee = _dbContext.Employees.FirstOrDefault(e => e.AccountId == id);
             if (employee == null)
             {
                 return NotFound("Employee not found");

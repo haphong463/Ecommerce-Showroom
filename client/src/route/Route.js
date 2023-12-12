@@ -67,8 +67,12 @@ export const publicRoutes = [
 ];
 
 export const privateRoutes = [
-  { path: "/admin/", component: <Home />, roles: ["Admin"] },
-  { path: "/admin/settings", component: <Settings />, roles: ["Admin"] },
+  { path: "/admin/", component: <Home />, roles: ["Admin", "Employee"] },
+  {
+    path: "/admin/settings",
+    component: <Settings />,
+    roles: ["Admin", "Employee"],
+  },
   {
     path: "/admin/vehicles",
     component: (
@@ -76,7 +80,7 @@ export const privateRoutes = [
         <Vehicles />
       </VehicleProvider>
     ),
-    roles: ["Admin"],
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/brand",
@@ -85,12 +89,12 @@ export const privateRoutes = [
         <Brand />
       </BrandProvider>
     ),
-    roles: ["Admin"],
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/customer",
     component: <Customer />,
-    roles: ["Admin"],
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/vehicle/:id",
@@ -99,7 +103,7 @@ export const privateRoutes = [
         <VehicleDetailsAdmin />
       </VehicleProvider>
     ),
-    roles: ["Admin"],
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/service",
@@ -108,11 +112,11 @@ export const privateRoutes = [
         <Service />
       </ServiceProvider>
     ),
-    roles: ["Admin"],
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/invoice",
     component: <Invoice />,
-    roles: ["Admin"],
+    roles: ["Admin", "Employee"],
   },
 ];

@@ -1,4 +1,6 @@
 ﻿using API.Models;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace API.DTO
 {
@@ -10,5 +12,7 @@ namespace API.DTO
         public int OrderStatus { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.Now;
         public int TotalPrice { get; set; }
+        public int Quantity { get; set; }
+        public decimal Price { get; set; }
     }
 }

@@ -172,10 +172,13 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.OrderDetails", b =>
                 {
-                    b.Property<int>("OrderId")
+                    b.Property<int>("OrderDetailsId")
+                        .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    b.Property<int>("VehicleId")
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailsId"), 1L, 1);
+
+                    b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<decimal>("Price")
@@ -184,7 +187,12 @@ namespace API.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.HasKey("OrderId", "VehicleId");
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("OrderDetailsId");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("VehicleId");
 
@@ -193,13 +201,21 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.OrderService", b =>
                 {
+                    b.Property<int>("OrderServiceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderServiceId"), 1L, 1);
+
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
 
                     b.Property<int>("ServiceId")
                         .HasColumnType("int");
 
-                    b.HasKey("OrderId", "ServiceId");
+                    b.HasKey("OrderServiceId");
+
+                    b.HasIndex("OrderId");
 
                     b.HasIndex("ServiceId");
 
@@ -358,13 +374,13 @@ namespace API.Migrations
                     b.HasOne("API.Models.Order", "Orders")
                         .WithMany("OrderDetails")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("Vehicle", "Vehicles")
                         .WithMany("OrderDetails")
                         .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Orders");
@@ -377,13 +393,13 @@ namespace API.Migrations
                     b.HasOne("API.Models.Order", "Orders")
                         .WithMany("OrderServices")
                         .HasForeignKey("OrderId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.HasOne("API.Models.Service", "Services")
                         .WithMany("OrderServices")
                         .HasForeignKey("ServiceId")
-                        .OnDelete(DeleteBehavior.Restrict)
+                        .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Orders");

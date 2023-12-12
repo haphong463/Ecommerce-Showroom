@@ -30,6 +30,7 @@ import dayjs from "dayjs";
 import { getCustomer } from "../Customer/CustomerLibrary";
 import { getService } from "../Service/ServiceLibrary";
 import { InvoiceAddress } from "./InvoiceAddress";
+import { getEmployeeById } from "../employee/EmployeeLibrary";
 const TAX_RATE = 0.07;
 function ccyFormat(num) {
   return num?.toLocaleString("en-US", { style: "currency", currency: "USD" });
@@ -141,7 +142,11 @@ export const InvoicePrintable = forwardRef(
         if (data) {
           setListAccount(data);
           const employeeId = data.find((item) => item.email === token.Email);
-          setDataToPost({ ...dataToPost, employeeId: employeeId.accountId });
+          if (employeeId.role === "Employee") {
+            getEmployeeById(employeeId.accountId).then((data) => {
+              setDataToPost({ ...dataToPost, employeeId: data.employeeId });
+            });
+          }
         }
       });
       getService().then((data) => {
