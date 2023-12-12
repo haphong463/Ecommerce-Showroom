@@ -85,7 +85,7 @@ namespace API.Controllers
             }
         }
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<Service>>> PostService([FromBody] ServiceDTO serviceDTO)
+        public async Task<ActionResult<ApiResponse<Service>>> PostService([FromForm] ServiceDTO serviceDTO)
         {
             if (!ModelState.IsValid)
             {

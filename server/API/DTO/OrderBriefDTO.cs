@@ -10,7 +10,7 @@
         public int TotalPrice { get; set; }
         public AccountDTO Account { get; set; }
         public EmployeeDTO Employee { get; set; }
-        public List<include_ServiceDTO>? Services { get; set; }
-        public List<include_VehicleDTO>? Vehicles { get; set; }
+        public List<OrderServiceDTO>? OrderService { get; set; }
+        public List<OrderDetailDTO>? OrderDetails { get; set; }
     }
 }

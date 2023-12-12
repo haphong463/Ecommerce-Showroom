@@ -44,21 +44,29 @@ namespace API.Controllers
                 OrderStatus = o.OrderStatus,
                 OrderDate = o.OrderDate,
                 TotalPrice = o.TotalPrice,
-                Services = o.OrderServices.Select(s => new include_ServiceDTO
+                OrderDetails = o.OrderDetails.Select(odD => new OrderDetailDTO
                 {
-                    ServiceId = s.ServiceId,
-                    Name = s.Services.Name,
-                    Price = s.Services.Price,
-                    Description = s.Services.Description
+                    VehicleId = odD.VehicleId,
+                    Quantity = odD.Quantity,
+                    Price = odD.Price,
+                    Vehicles = new include_VehicleDTO
+                    {
+                        Name = odD.Vehicles.Name,
+                        Price = odD.Vehicles.Price,
+                        Quantity = odD.Vehicles.Quantity,
+                        BrandId = odD.Vehicles.BrandId,
+                        ModelId = odD.Vehicles.ModelId
+                    }
                 }).ToList(),
-                Vehicles = o.OrderDetails.Select(v => new include_VehicleDTO
+                OrderService = o.OrderServices.Select(odD => new OrderServiceDTO
                 {
-                    VehicleId = v.VehicleId,
-                    Name = v.Vehicles.Name,
-                    Price = v.Vehicles.Price,
-                    Quantity = v.Vehicles.Quantity,
-                    BrandId = v.Vehicles.BrandId,
-                    ModelId = v.Vehicles.ModelId
+                    ServiceId = odD.ServiceId,
+                    Services = new include_ServiceDTO
+                    {
+                        Name = odD.Services.Name,
+                        Price = odD.Services.Price,
+                        Description = odD.Services.Description
+                    }
                 }).ToList()
             });
             /*var orderResult = _mapper.Map<List<OrderDTO>>(orders);*/
@@ -71,7 +79,7 @@ namespace API.Controllers
             try
             {
                 var od = await _dbContext.Orders
-                    .Include(x => x.Account).Include(x => x.Employee)
+                    .Include(x => x.Account).Include(x => x.Employee).Include(o =>o.OrderDetails)
                     .Include(o => o.OrderServices).ThenInclude(os => os.Services)
                     .Include(o => o.OrderDetails).ThenInclude(os => os.Vehicles)
                     .SingleOrDefaultAsync(x => x.OrderId == id);
@@ -97,21 +105,29 @@ namespace API.Controllers
                     OrderStatus = od.OrderStatus,
                     OrderDate = od.OrderDate,
                     TotalPrice = od.TotalPrice,
-                    Services = od.OrderServices.Select(s => new include_ServiceDTO
-                    {
-                        ServiceId = s.ServiceId,
-                        Name = s.Services.Name,
-                        Price = s.Services.Price,
-                        Description = s.Services.Description
+                    OrderDetails = od.OrderDetails.Select( odD => new OrderDetailDTO 
+                    { 
+                        VehicleId = odD.VehicleId,
+                        Quantity = odD.Quantity,
+                        Price = odD.Price,
+                        Vehicles = new include_VehicleDTO
+                        {
+                            Name = odD.Vehicles.Name,
+                            Price = odD.Vehicles.Price,
+                            Quantity = odD.Vehicles.Quantity,
+                            BrandId = odD.Vehicles.BrandId,
+                            ModelId = odD.Vehicles.ModelId
+                        }
                     }).ToList(),
-                    Vehicles = od.OrderDetails.Select(v => new include_VehicleDTO
+                    OrderService = od.OrderServices.Select(odD => new OrderServiceDTO
                     {
-                        VehicleId = v.VehicleId,
-                        Name = v.Vehicles.Name,
-                        Price = v.Vehicles.Price,
-                        Quantity = v.Vehicles.Quantity,
-                        BrandId = v.Vehicles.BrandId,
-                        ModelId = v.Vehicles.ModelId
+                        ServiceId = odD.ServiceId,
+                        Services = new include_ServiceDTO
+                        {
+                            Name = odD.Services.Name,
+                            Price = odD.Services.Price,
+                            Description = odD.Services.Description
+                        }
                     }).ToList()
                 };
 
@@ -153,8 +169,8 @@ namespace API.Controllers
                 {
                     Orders = order,
                     Vehicles = vehicle,
-
-
+                    Quantity = orderDTO.Quantity,
+                    Price = orderDTO.Price
                 };
                 await _dbContext.OrderDetails.AddAsync(odVehicle);
 

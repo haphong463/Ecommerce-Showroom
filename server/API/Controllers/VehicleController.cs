@@ -32,7 +32,7 @@ namespace API.Controllers
             return Ok(new ApiResponse<IEnumerable<VehicleDTO>>(vehicleDtos, "Get all vehicles successfully"));
         }
 
-        [HttpGet("{id}")]
+        /*[HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<VehicleDTO>>> GetVehicleById(int id)
         {
             var vehicle = await _dbContext.Vehicles.Include(x => x.Brand).Include(x => x.Images).SingleOrDefaultAsync(x => x.VehicleId == id);
@@ -44,6 +44,59 @@ namespace API.Controllers
 
             var vehicleDto = _mapper.Map<VehicleDTO>(vehicle);
             return Ok(new ApiResponse<VehicleDTO>(vehicleDto, "Get vehicle successfully"));
+        }*/
+        [HttpGet("{id}")]
+        public async Task<ActionResult<ApiResponse<VehicleDTO>>> GetVehicleById(int id)
+        {
+            var s = await _dbContext.Vehicles
+                .Include(x => x.Brand).Include(x => x.Images)
+                .Include(v => v.OrderDetails).ThenInclude(odd => odd.Orders)
+                .SingleOrDefaultAsync(x => x.VehicleId == id);
+
+            if (s == null)
+            {
+                return NotFound(new ApiResponse<VehicleDTO>(null, "Vehicle not found"));
+            }
+
+            var vehicleDTO = new VehicleDTO
+            {
+                VehicleID = s.VehicleId,
+                Name = s.Name,
+                Price = s.Price,
+                Quantity = s.Quantity,
+                Description = s.Description,
+                BrandId = s.BrandId,
+                ModelId = s.ModelId,
+                ManufacturingYear = s.ManufacturingYear,
+                RegistrationNumber = s.RegistrationNumber,
+                Color = s.Color,
+                Mileage = s.Mileage,
+                EngineType = s.EngineType,
+                TransmissionType = s.TransmissionType,
+                FuelType = s.FuelType,
+                NumberOfSeats = s.NumberOfSeats,
+                PurchaseDate = s.PurchaseDate,
+                PurchasePrice = s.PurchasePrice,
+                Status = s.Status,
+                IsUsed = s.IsUsed,
+                Images = s.Images.Select(i => new ImageDTO
+                {
+                    ImageId = i.ImageId,
+                    ImagePath = i.ImagePath
+                }).ToList(),
+                Brand = new Vehicle_BrandDTO
+                {
+                    BrandId = s.Brand.BrandId,
+                    Name = s.Brand.Name
+                },
+                OrderDetails = s.OrderDetails.Select(o => new Vehicle_OrderDetail_DTO
+                {
+                    OrderId = o.OrderId,
+                    VehicleId = o.VehicleId,
+                    Quantity = o.Quantity
+                }).ToList()
+            };
+            return Ok(new ApiResponse<VehicleDTO>(vehicleDTO, "Get vehicle successfully"));
         }
 
         [HttpPost]
