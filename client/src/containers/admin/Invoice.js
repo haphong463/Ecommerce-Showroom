@@ -8,6 +8,7 @@ import { InvoicePrintable } from "../../components/admin/InvoicePrintable";
 import SaveIcon from "@mui/icons-material/Save";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import { dangerMessage } from "../../components/Message";
+import { postOrder } from "../../components/Order/OrderLibrary";
 
 export const Invoice = () => {
   const [isAddRowVisible, setIsAddRowVisible] = useState(false);
@@ -27,18 +28,31 @@ export const Invoice = () => {
         dangerMessage("Please save before printing.");
         return null;
       }
+      if (!dataToPost.accountId) {
+        dangerMessage("Select customer.");
+        return null;
+      }
       return componentRef.current;
     },
-    onAfterPrint: () => {
-      console.log("After print");
+    // onAfterPrint: () => {
+    //   postOrder(dataToPost).then((data) => {
+    //     console.log(data);
+    //   });
+    //   console.log("After print");
+
+    // },
+    onPrintError: () => {
+      console.log("Printing canceled");
+      return;
     },
+    
   });
 
   const handleAddRow = () => {
     setIsAddRowVisible(!isAddRowVisible);
     setIsEditMode(!isEditMode);
   };
-
+  console.log(dataToPost);
   return (
     <>
       <Navbar />

@@ -175,12 +175,12 @@ export const VehicleDetails = () => {
             <Box>
               <Grid container spacing={2}>
                 {vehicle.images.length > 0 && (
-                  <Grid item xs={12} md={6}>
+                  <Grid item xs={12} lg={6}>
                     <CustomSlider vehicleImages={vehicle.images} />
                   </Grid>
                 )}
 
-                <Grid item xs={12} md={6}>
+                <Grid item xs={12} lg={6}>
                   <VehicleInformation
                     infoArray={infoArray}
                     handleClickOpen={handleClickOpen}

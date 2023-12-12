@@ -12,5 +12,6 @@
         public EmployeeDTO Employee { get; set; }
         public List<include_ServiceDTO>? Services { get; set; }
         public List<include_VehicleDTO>? Vehicles { get; set; }
+        public List<Vehicle_OrderDetail_DTO>? VehicleOrders { get; set;}
     }
 }

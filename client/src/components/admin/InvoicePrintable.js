@@ -4,8 +4,13 @@ import {
   Autocomplete,
   Box,
   Button,
+  Checkbox,
   Divider,
+  FormControl,
+  InputLabel,
+  ListItemText,
   MenuItem,
+  OutlinedInput,
   Paper,
   Select,
   Stack,
@@ -18,17 +23,27 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import PhoneIcon from "@mui/icons-material/Phone";
-import HomeIcon from "@mui/icons-material/Home";
-import EmailIcon from "@mui/icons-material/Email";
+
 import { getVehicleById, getVehicles } from "../Vehicle/VehicleLibrary";
 import { dangerMessage } from "../Message";
 import dayjs from "dayjs";
 import { getCustomer } from "../Customer/CustomerLibrary";
+import { getService } from "../Service/ServiceLibrary";
+import { InvoiceAddress } from "./InvoiceAddress";
 const TAX_RATE = 0.07;
 function ccyFormat(num) {
   return num?.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 
 export const InvoicePrintable = forwardRef(
   (
@@ -36,20 +51,37 @@ export const InvoicePrintable = forwardRef(
     ref
   ) => {
     const { token } = useContext(DataContext);
-    const [autoCompleteValue, setAutoCompleteValue] = useState("");
     const [options, setOptions] = useState([]);
     const [listAccount, setListAccount] = useState([]);
+    const [listService, setListService] = useState([]);
+    const [service, setService] = useState([]);
     const [newRow, setNewRow] = useState({
       name: "",
       quantity: 0,
       unitPrice: 0,
     });
+    const handleChange = (event) => {
+      const {
+        target: { value },
+      } = event;
+      setService(
+        // On autofill we get a stringified value.
+        typeof value === "string" ? value.split(",") : value
+      );
+      setDataToPost((prev) => ({
+        ...prev,
+        orderServices: value.map((item) => ({
+          serviceId: item,
+        })),
+      }));
+    };
     const selectedAccount = useMemo(() => {
       const result = listAccount.find(
         (item) => item.accountId === dataToPost.accountId
       );
       return result;
     }, [dataToPost?.accountId]);
+
     const extractDataForPost = (list) => {
       return list.map((item) => ({
         vehicleId: item.vehicleID,
@@ -65,15 +97,13 @@ export const InvoicePrintable = forwardRef(
       if (listItem.some((item) => item.vehicleID === newRow.vehicleID)) {
         dangerMessage("Item already exists.");
         return;
-      } else {
-        setListItem((prev) => [...prev, newRow]);
-        setNewRow({ name: "", quantity: "", unitPrice: "" });
-        setAutoCompleteValue("");
       }
-      setDataToPost({
-        ...dataToPost,
-        listItems: extractDataForPost([...listItem, newRow]),
-      });
+      setListItem([...listItem, newRow]);
+      setDataToPost((prev) => ({
+        ...prev,
+        orderDetails: extractDataForPost([...listItem, newRow]),
+      }));
+      setNewRow({ name: "", quantity: "", unitPrice: "" });
     };
     const handleRemoveRow = (indexRow) => {
       setListItem((prev) => prev.filter((item, index) => index !== indexRow));
@@ -110,9 +140,22 @@ export const InvoicePrintable = forwardRef(
       getCustomer().then((data) => {
         if (data) {
           setListAccount(data);
+          const employeeId = data.find((item) => item.email === token.Email);
+          setDataToPost({ ...dataToPost, employeeId: employeeId.accountId });
+        }
+      });
+      getService().then((data) => {
+        if (data) {
+          setListService(data);
         }
       });
     }, []);
+    useEffect(() => {
+      setDataToPost((prev) => ({
+        ...prev,
+        totalPrice: parseInt(calculateTotal().total),
+      }));
+    }, [listItem]);
     return (
       <Box component="div" p={1} ref={ref}>
         <Stack direction="row" justifyContent="space-between">
@@ -127,23 +170,7 @@ export const InvoicePrintable = forwardRef(
             >
               <span className="title-text">AutoCar</span>
             </Typography>
-            <Stack>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <HomeIcon />
-                <Typography variant="body2" sx={{ width: "330px" }}>
-                  590 Cach Mang Thang Tam Str, District 3, Ho Chi Minh City,
-                  Vietnam
-                </Typography>
-              </Stack>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <PhoneIcon />
-                <Typography variant="body2">0347337941</Typography>
-              </Stack>
-              <Stack direction="row" alignItems="center" spacing={1}>
-                <EmailIcon />
-                <Typography variant="body2">autocar@gmail.com</Typography>
-              </Stack>
-            </Stack>
+            <InvoiceAddress />
           </Stack>
 
           <Stack justifyContent="flex-end">
@@ -169,21 +196,54 @@ export const InvoicePrintable = forwardRef(
                 </Typography>
               </Stack>
             ) : (
-              <Select
-                value={selectedAccount?.accountId ?? "Select customer"}
-                onChange={(e) => {
-                  setDataToPost({ ...dataToPost, accountId: e.target.value });
-                }}
-              >
-                <MenuItem disabled value="Select customer">
-                  Select customer
-                </MenuItem>
-                {listAccount.map((item) => (
-                  <MenuItem key={item.accountId} value={item.accountId}>
-                    {item.name}
+              <Stack direction="row" spacing={1}>
+                <Select
+                  value={selectedAccount?.accountId ?? "Select customer"}
+                  onChange={(e) => {
+                    setDataToPost({ ...dataToPost, accountId: e.target.value });
+                  }}
+                  MenuProps={MenuProps}
+                >
+                  <MenuItem disabled value="Select customer">
+                    Select customer
                   </MenuItem>
-                ))}
-              </Select>
+                  {listAccount.map((item) => (
+                    <MenuItem key={item.accountId} value={item.accountId}>
+                      {item.name}
+                    </MenuItem>
+                  ))}
+                </Select>
+                <FormControl sx={{ width: 300 }}>
+                  <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                  <Select
+                    labelId="demo-multiple-checkbox-label"
+                    id="demo-multiple-checkbox"
+                    multiple
+                    value={service}
+                    onChange={handleChange}
+                    input={<OutlinedInput label="Tag" />}
+                    renderValue={(selected) =>
+                      selected
+                        .map(
+                          (id) =>
+                            listService.find((item) => item.serviceId === id)
+                              .name
+                        )
+                        .join(", ")
+                    }
+                    MenuProps={MenuProps}
+                  >
+                    {listService.map((item, index) => (
+                      <MenuItem key={index} value={item.serviceId}>
+                        <Checkbox
+                          checked={service.indexOf(item.serviceId) > -1}
+                        />
+                        <ListItemText primary={item.name} />
+                      </MenuItem>
+                    ))}
+                  </Select>
+                </FormControl>
+              </Stack>
             )}
           </Stack>
           <Stack>
@@ -231,43 +291,47 @@ export const InvoicePrintable = forwardRef(
                 <>
                   <TableRow>
                     <TableCell>{listItem.length + 1}</TableCell>
-                    <TableCell>
-                      <Autocomplete
-                        disablePortal
-                        id="combo-box-demo"
-                        options={options}
-                        inputValue={autoCompleteValue}
-                        getOptionLabel={(option) => option.label}
-                        renderInput={(params) => (
-                          <TextField
-                            {...params}
-                            label="Vehicle"
-                            variant="outlined"
-                            placeholder="Search vehicle by name..."
-                          />
-                        )}
-                        onChange={(e, newValue) => {
-                          if (newValue) {
+                    <TableCell
+                      sx={{
+                        minWidth: 350,
+                      }}
+                    >
+                      <FormControl fullWidth variant="outlined">
+                        <InputLabel id="vehicle-label">Vehicle</InputLabel>
+                        <Select
+                          labelId="vehicle-label"
+                          id="vehicle-select"
+                          value={newRow.vehicleID ? newRow.vehicleID : "*"}
+                          onChange={(e) => {
+                            const selectedOption = options.find(
+                              (option) => option.value === e.target.value
+                            );
                             setNewRow({
                               ...newRow,
-                              name: newValue.label || "",
-                              vehicleID: newValue.value || "",
-                              unitPrice: newValue.price || 0,
-                              isUsed: newValue.isUsed,
-                              model: newValue.model,
+                              name: selectedOption ? selectedOption.label : "",
+                              vehicleID: e.target.value,
+                              unitPrice: selectedOption
+                                ? selectedOption.price
+                                : 0,
+                              isUsed: selectedOption
+                                ? selectedOption.isUsed
+                                : false,
+                              model: selectedOption ? selectedOption.model : "",
                             });
-                          }
-                        }}
-                        onInputChange={(e, newValue) => {
-                          setAutoCompleteValue(newValue);
-                          setNewRow({ ...newRow, name: newValue });
-                        }}
-                        isOptionEqualToValue={(option, value) =>
-                          option.value === value.value
-                        }
-                        disableClearable
-                        freeSolo
-                      />
+                          }}
+                          label="Vehicle"
+                          MenuProps={MenuProps}
+                        >
+                          <MenuItem value="*" disabled>
+                            Select vehicle
+                          </MenuItem>
+                          {options.map((option, index) => (
+                            <MenuItem key={option.value} value={option.value}>
+                              {index + 1 + ". " + option.label}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      </FormControl>
                     </TableCell>
                     <TableCell>
                       <TextField

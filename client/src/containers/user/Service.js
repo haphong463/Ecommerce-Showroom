@@ -191,7 +191,17 @@ export function Service() {
                     />
                   </Grid>
                   <Grid item xs={6}>
-                    <DatePicker  />
+                    <DatePicker
+                      sx={{
+                        width: "100%",
+                      }}
+                      disablePast
+                      slotProps={{
+                        actionBar: {
+                          actions: ["today"],
+                        },
+                      }}
+                    />
                   </Grid>
                   <Grid item xs={12}>
                     <TextField
