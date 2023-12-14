@@ -18,6 +18,8 @@ import { Service } from "../containers/admin/Service";
 import { Invoice } from "../containers/admin/Invoice";
 import { ServiceProvider } from "../context/ServiceContext";
 import { Profile } from "../containers/user/Profile";
+import { Order } from "../containers/admin/Order";
+import { OrderProvider } from "../context/OrderContext";
 
 export const publicRoutes = [
   {
@@ -111,6 +113,15 @@ export const privateRoutes = [
       <ServiceProvider>
         <Service />
       </ServiceProvider>
+    ),
+    roles: ["Admin", "Employee"],
+  },
+  {
+    path: "/admin/order",
+    component: (
+      <OrderProvider>
+        <Order />
+      </OrderProvider>
     ),
     roles: ["Admin", "Employee"],
   },

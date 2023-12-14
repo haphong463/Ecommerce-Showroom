@@ -13,14 +13,21 @@ namespace API.Services
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["Jwt:Key"]));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
-            var claims = new[]
-                {
-                    new Claim("Email", account.Email),
-                    new Claim(ClaimTypes.Role, account.Role),
-                    new Claim("Role", account.Role),
-                    new Claim("Name", account.Name),
-                    new Claim("Avatar", account.AvatarUrl)
-        };
+            var claims = new List<Claim>
+{
+    new Claim("Email", account.Email),
+    new Claim(ClaimTypes.Role, account.Role),
+    new Claim("Role", account.Role),
+    new Claim("Name", account.Name),
+};
+
+if (account.AvatarUrl != null)
+{
+    claims.Add(new Claim("Avatar", account.AvatarUrl));
+}
+
+var claimsArray = claims.ToArray();
+
 
             var token = new JwtSecurityToken(configuration["Jwt:Issuer"],
                 configuration["Jwt:Audience"],

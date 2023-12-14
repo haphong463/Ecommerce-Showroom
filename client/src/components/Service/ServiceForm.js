@@ -19,7 +19,7 @@ import { successToast } from "../Message";
 import { ServiceFormField } from "./ServiceFormField";
 
 const ServiceForm = () => {
-  const { onClose, setServiceData, openServiceForm, service } =
+  const { onClose, setServiceData, openServiceForm, service  } =
     useContext(ServiceContext);
   const initialValues = {
     name: service?.name ?? "",

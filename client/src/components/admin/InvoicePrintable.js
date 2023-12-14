@@ -140,7 +140,7 @@ export const InvoicePrintable = forwardRef(
       });
       getCustomer().then((data) => {
         if (data) {
-          setListAccount(data);
+          setListAccount(data.filter((item) => item.role === "User"));
           const employeeId = data.find((item) => item.email === token.Email);
           if (employeeId.role === "Employee") {
             getEmployeeById(employeeId.accountId).then((data) => {
@@ -158,7 +158,7 @@ export const InvoicePrintable = forwardRef(
     useEffect(() => {
       setDataToPost((prev) => ({
         ...prev,
-        totalPrice: parseInt(calculateTotal().total),
+        totalPrice: calculateTotal().total,
       }));
     }, [listItem]);
     return (
@@ -219,14 +219,16 @@ export const InvoicePrintable = forwardRef(
                   ))}
                 </Select>
                 <FormControl sx={{ width: 300 }}>
-                  <InputLabel id="demo-multiple-checkbox-label">Tag</InputLabel>
+                  <InputLabel id="demo-multiple-checkbox-label">
+                    Service
+                  </InputLabel>
                   <Select
                     labelId="demo-multiple-checkbox-label"
+                    label="Service"
                     id="demo-multiple-checkbox"
                     multiple
                     value={service}
                     onChange={handleChange}
-                    input={<OutlinedInput label="Tag" />}
                     renderValue={(selected) =>
                       selected
                         .map(
@@ -292,6 +294,7 @@ export const InvoicePrintable = forwardRef(
                   </TableRow>
                 );
               })}
+
               {isAddRowVisible && (
                 <>
                   <TableRow>
@@ -409,6 +412,20 @@ export const InvoicePrintable = forwardRef(
             </TableBody>
           </Table>
         </TableContainer>
+        <Stack direction="row" spacing={1}>
+          <Typography fontWeight="600">Accompanied service:</Typography>
+          <Stack direction="row">
+            {service
+              .map((itemService) => {
+                const serviceObject = listService.find(
+                  (item) => item.serviceId === itemService
+                );
+                return serviceObject ? serviceObject.name : null;
+              })
+              .filter(Boolean)
+              .join(", ")}
+          </Stack>
+        </Stack>
       </Box>
     );
   }

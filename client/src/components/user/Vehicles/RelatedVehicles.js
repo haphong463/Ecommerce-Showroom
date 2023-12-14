@@ -10,6 +10,7 @@ import {
   CardActions,
   Button,
   Avatar,
+  CardActionArea,
 } from "@mui/material";
 import {
   Settings as SettingsIcon,
@@ -90,22 +91,41 @@ const RelatedVehicles = ({ brandId }) => {
               elevation={3}
               sx={{
                 boxShadow: "none",
-                width: "100%", // Set the width to 100%
+                width: "400px", // Set the width to 100%
               }}
             >
-              <Avatar
-                src={item.images[0].imagePath}
-                variant="square"
+              <CardActionArea
                 sx={{
-                  height: "200px",
-                  width: "100%",
-                  "& > img": {
-                    objectFit: "cover",
-                  },
+                  width: "400px",
                 }}
-                className="img-thumbnail"
-              />
-              <CardContent>
+                onClick={() => {
+                  navigate("/vehicle/" + item.vehicleID);
+                  window.scrollTo({
+                    top: 0,
+                    left: 0,
+                    behavior: "smooth",
+                  });
+                }}
+              >
+                <Avatar
+                  src={item.images[0].imagePath}
+                  variant="square"
+                  sx={{
+                    height: "200px",
+                    width: "400px",
+                    "& > img": {
+                      objectFit: "cover",
+                    },
+                  }}
+                  className="img-thumbnail"
+                />
+              </CardActionArea>
+              <CardContent
+                sx={{
+                  boxShadow: "none",
+                  width: "400px", // Set the width to 100%
+                }}
+              >
                 <Stack>
                   <Typography variant="body2" color="error">
                     ${item.price}
@@ -127,20 +147,6 @@ const RelatedVehicles = ({ brandId }) => {
                   </Typography>
                 </Stack>
               </CardContent>
-              <CardActions>
-                <Button
-                  startIcon={<RemoveRedEyeIcon />}
-                  variant="contained"
-                  color="info"
-                  fullWidth
-                  onClick={() => {
-                    navigate(`/vehicle/${item.vehicleID}`);
-                    window.scrollTo(0, 0);
-                  }}
-                >
-                  View
-                </Button>
-              </CardActions>
             </Card>
           ))}
         </Slider>

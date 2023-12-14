@@ -52,7 +52,7 @@ public class Vehicle
     public decimal PurchasePrice { get; set; }
 
     [EnumDataType(typeof(VehicleStatus))]
-    public VehicleStatus Status { get; set; }
+    public VehicleStatus Status { get; set; } = (VehicleStatus) 1;
     public bool IsUsed { get; set; }
     public List<Images>? Images { get; set; }
     public Brand? Brand { get; set; }

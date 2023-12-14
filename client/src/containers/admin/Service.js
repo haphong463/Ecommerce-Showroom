@@ -16,8 +16,7 @@ import { DataContext } from "../../context/DataContext";
 import ServiceForm from "../../components/Service/ServiceForm";
 
 export const Service = () => {
-  const { handleClickOpen, openServiceForm, onClose } =
-    useContext(ServiceContext);
+  const { handleClickOpen } = useContext(ServiceContext);
   const { loading } = useContext(DataContext);
   return (
     <>
@@ -26,7 +25,7 @@ export const Service = () => {
       <Box sx={{ display: "flex" }}>
         <Sidebar />
         <Box component="main" sx={{ flexGrow: 1 }}>
-          <ServiceForm open={openServiceForm} handleClose={onClose} />
+          <ServiceForm />
         </Box>
         <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
           {loading && (

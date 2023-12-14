@@ -69,10 +69,30 @@ namespace API.Controllers
 
             }
         }
+        [HttpGet("profile/{email}")]
+        public async Task<ActionResult<ApiResponse<Account>>> GetAccountByEmail(string email)
+        {
+            try
+            {
+                var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Email == email);
+                if (account == null)
+                {
+                    return Ok(new ApiResponse<Account>(null, "Account not found"));
+                }
+                else
+                {
+                    return Ok(new ApiResponse<Account>(account, "Get account successfully"));
+                }
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<Account>.Exception(ex);
 
+            }
+        }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<Account>>> AddAccount([FromForm] Account account, IFormFile file)
+        public async Task<ActionResult<ApiResponse<Account>>> AddAccount([FromForm] Account account, IFormFile? file)
         {
             try
             {
@@ -82,18 +102,21 @@ namespace API.Controllers
                 {
                     account.Role = "User";
                 }
-                account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
+                if (file != null)
+                {
+                    account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
+                }
 
                 var resource = await _dbContext.Accounts.AddAsync(account);
                 await _dbContext.SaveChangesAsync();
 
-                if (account.Role == "Employee")
+                if (account.Role == "Employee" || account.Role == "Admin")
                 {
                     var newEmployee = new Employee
                     {
                         AccountId = account.AccountId // Sử dụng AccountID từ tài khoản mới tạo
-                        // Các trường khác của Employee có thể được cập nhật tùy thuộc vào yêu cầu của bạn
-                   };
+                                                      // Các trường khác của Employee có thể được cập nhật tùy thuộc vào yêu cầu của bạn
+                    };
 
                     _dbContext.Employees.Add(newEmployee);
                     await _dbContext.SaveChangesAsync();

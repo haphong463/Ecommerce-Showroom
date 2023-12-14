@@ -1,6 +1,7 @@
 import {
   Button,
   Card,
+  CardActionArea,
   CardActions,
   CardContent,
   CardMedia,
@@ -15,23 +16,26 @@ import {
 } from "@mui/icons-material";
 import RemoveRedEyeIcon from "@mui/icons-material/RemoveRedEye";
 
-export function VehicleItem({ vehicle, openImageDialog, navigate }) {
+export function VehicleItem({ vehicle, navigate }) {
   return (
     <Grid item xs={12} sm={6} lg={4} key={vehicle.vehicleID}>
       <Card elevation={3}>
-        {vehicle.images && vehicle.images.length > 0 && (
-          <CardMedia
-            component="img"
-            src={vehicle.images[0].imagePath}
-            alt={vehicle.name}
-            style={{
-              width: "100%",
-              height: "200px",
-              objectFit: "cover",
-            }}
-            onClick={() => openImageDialog(vehicle.images[0].imagePath)}
-          />
-        )}
+        <CardActionArea
+          onClick={() => navigate(`/vehicle/${vehicle.vehicleID}`)}
+        >
+          {vehicle.images && vehicle.images.length > 0 && (
+            <CardMedia
+              component="img"
+              src={vehicle.images[0].imagePath}
+              alt={vehicle.name}
+              style={{
+                width: "100%",
+                height: "200px",
+                objectFit: "cover",
+              }}
+            />
+          )}
+        </CardActionArea>
         <CardContent>
           <Stack>
             <Typography variant="body2" color="error">
@@ -54,17 +58,6 @@ export function VehicleItem({ vehicle, openImageDialog, navigate }) {
             </Typography>
           </Stack>
         </CardContent>
-        <CardActions>
-          <Button
-            startIcon={<RemoveRedEyeIcon />}
-            variant="contained"
-            color="info"
-            fullWidth
-            onClick={() => navigate(`/vehicle/${vehicle.vehicleID}`)}
-          >
-            View
-          </Button>
-        </CardActions>
       </Card>
     </Grid>
   );

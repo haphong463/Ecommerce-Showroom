@@ -63,7 +63,7 @@ const CustomSlider = ({ vehicleImages }) => {
     <Box component="div">
       <Carousel
         autoPlay={true}
-        interval={2000}
+        interval={3000}
         duration={1000}
         animation="fade"
         indicators={false}

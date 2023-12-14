@@ -92,9 +92,9 @@ export function VehicleList() {
                                 row.brand.name
                               ) : column.id === "used" ? (
                                 row.isUsed ? (
-                                  "New"
-                                ) : (
                                   "Used"
+                                ) : (
+                                  "New"
                                 )
                               ) : column.format && typeof value === "number" ? (
                                 column.format(value)

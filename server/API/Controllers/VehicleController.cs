@@ -123,7 +123,7 @@ namespace API.Controllers
                 var vehicleExisting = await _dbContext.Vehicles.Include(x => x.Brand).Include(x => x.Images).SingleOrDefaultAsync(x => x.VehicleId == id);
                 if (vehicleExisting != null)
                 {
-                    if (files != null)
+                    if (files.Any() && files.Count() > 0)
                     {
                         if (vehicleExisting.Images != null)
                         {

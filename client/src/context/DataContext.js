@@ -3,6 +3,7 @@ import React, { createContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { successToast } from "../components/Message";
 import Swal from "sweetalert2";
+import { getCustomerByEmail } from "../components/Customer/CustomerLibrary";
 export const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const [itemCart, setItemCart] = useState(
@@ -14,7 +15,7 @@ export const DataProvider = ({ children }) => {
   const tokenLocal = localStorage.getItem("token");
   const [loading, setLoading] = useState();
   const [token, setToken] = useState(tokenLocal ? jwtDecode(tokenLocal) : null);
-
+  const [user, setuser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const redirectPath = location.state?.path || -1;
@@ -54,9 +55,13 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       const refreshTokenTimeout = refreshAuthToken();
+      getCustomerByEmail(token.Email).then((data) => {
+        setuser(data);
+      });
       return () => clearTimeout(refreshTokenTimeout);
     }
   }, [token]);
+
   const values = {
     loading,
     setLoading,
@@ -68,6 +73,7 @@ export const DataProvider = ({ children }) => {
     setSearchData,
     itemCart,
     setItemCart,
+    user,
   };
   return <DataContext.Provider value={values}>{children}</DataContext.Provider>;
 };

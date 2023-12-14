@@ -114,7 +114,7 @@ export const VehicleDetails = () => {
     {
       icon: <PeopleAltIcon />,
       title: "Used/New",
-      value: vehicle.isUsed ? "New" : "Used",
+      value: vehicle.isUsed ? "Used" : "New",
     },
     {
       icon: <EventAvailableIcon />,
@@ -123,8 +123,8 @@ export const VehicleDetails = () => {
     },
     {
       icon: <MonetizationOnIcon />,
-      title: "Purchase Price",
-      value: `$${vehicle.purchasePrice}`,
+      title: "Price",
+      value: `$${vehicle.price}`,
     },
     {
       icon: <CheckCircleIcon />,

@@ -51,7 +51,7 @@ const settings = [
 
 const Header = ({ title, state, setState }) => {
   const isMobile = useMediaQuery("(max-width:900px)");
-  const { token, logout, itemCart } = useContext(DataContext);
+  const { token, user, logout, itemCart } = useContext(DataContext);
   const [anchorElUser, setAnchorElUser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
@@ -175,7 +175,11 @@ const Header = ({ title, state, setState }) => {
             >
               {token ? (
                 <Box component="div">
-                  <MenuItem>
+                  <MenuItem
+                    onClick={() => {
+                      navigate("/profile/" + user.accountId);
+                    }}
+                  >
                     <Typography textAlign="center">{token.Name}</Typography>
                   </MenuItem>
                   <MenuItem

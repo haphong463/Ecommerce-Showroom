@@ -111,11 +111,7 @@ export const formFields = [
     label: "Brand*",
     type: "select",
   },
-  {
-    name: "status",
-    label: "Status*",
-    type: "select",
-  },
+
   { name: "manufacturingYear", label: "Manufacturing Year*", type: "number" },
   { name: "registrationNumber", label: "Registration Number*", type: "text" },
   { name: "color", label: "Color*", type: "text" },

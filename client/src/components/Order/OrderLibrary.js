@@ -1,5 +1,6 @@
 import { errorToast } from "../Message";
 import axiosRequest from "../../configs/axiosConfig";
+import * as yup from "yup";
 const headers = { "Content-Type": "multipart/form-data" };
 
 const handleRequest = async (method, endpoint, data = null) => {
@@ -29,3 +30,13 @@ export const columns = [
   { id: "dateOfBirth", label: "Date of Birth", minWidth: 200, align: "left" },
   { id: "avatarUrl", label: "Avatar", minWidth: 200, align: "center" },
 ];
+
+export const generateValidationSchemaOrder = () =>
+  yup.object().shape({
+    modelName: yup.string().required("modelName is required."),
+    quantity: yup.number().required("Quantity is required."),
+    price: yup
+      .number()
+      .typeError("Price must be a number.")
+      .required("Price is required."),
+  });

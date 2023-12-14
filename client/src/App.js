@@ -26,6 +26,15 @@ const theme = createTheme({
       fontWeight: "600px",
     },
   },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: "0",
+        },
+      },
+    },
+  },
 });
 
 function App() {

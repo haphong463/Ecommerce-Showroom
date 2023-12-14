@@ -7,7 +7,7 @@
         public int EmployeeId { get; set; }
         public int OrderStatus { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.Now;
-        public int TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public AccountDTO Account { get; set; }
         public EmployeeDTO Employee { get; set; }
         public List<OrderServiceDTO>? OrderService { get; set; }

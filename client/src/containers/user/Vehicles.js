@@ -39,7 +39,6 @@ function VehicleContent(props) {
               <VehicleItem
                 key={index}
                 vehicle={vehicle}
-                openImageDialog={props.openImageDialog}
                 navigate={props.navigate}
               />
             ))}
@@ -100,14 +99,6 @@ export function Vehicles() {
     });
   }, [setVehicleData, setSearchData, location]);
 
-  const openImageDialog = (imagePath) => {
-    setSelectedImage(imagePath);
-  };
-
-  const closeImageDialog = () => {
-    setSelectedImage(null);
-  };
-
   const handlePageChange = (event, value) => {
     setCurrentPage(value);
   };
@@ -145,7 +136,6 @@ export function Vehicles() {
               currentPage={currentPage}
               loading={loading}
               vehiclesPerPage={vehiclesPerPage}
-              openImageDialog={openImageDialog}
               handlePageChange={handlePageChange}
               currentVehicles={currentVehicles}
             />
@@ -158,7 +148,6 @@ export function Vehicles() {
             currentPage={currentPage}
             loading={loading}
             vehiclesPerPage={vehiclesPerPage}
-            openImageDialog={openImageDialog}
             handlePageChange={handlePageChange}
             currentVehicles={currentVehicles}
           />
@@ -166,16 +155,6 @@ export function Vehicles() {
       </Box>
 
       {/* END VEHICLE CONTENT */}
-
-      <Dialog open={selectedImage !== null} onClose={closeImageDialog}>
-        <DialogContent sx={{ padding: 0 }}>
-          <img
-            src={selectedImage}
-            alt="Full Size"
-            style={{ width: "100%", height: "auto" }}
-          />
-        </DialogContent>
-      </Dialog>
     </LayoutUser>
   );
 }

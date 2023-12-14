@@ -11,7 +11,7 @@ namespace API.DTO
         public int EmployeeId { get; set; }
         public int OrderStatus { get; set; }
         public DateTime OrderDate { get; set; } = DateTime.Now;
-        public int TotalPrice { get; set; }
+        public decimal TotalPrice { get; set; }
         public int Quantity { get; set; }
         public decimal Price { get; set; }
     }

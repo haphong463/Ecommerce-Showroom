@@ -17,6 +17,7 @@ import {
   FormControlLabel,
   Typography,
   InputAdornment,
+  Tab,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
 import dayjs from "dayjs";
@@ -35,8 +36,14 @@ import { VehicleContext } from "../../context/VehicleContext";
 import { successToast } from "../Message";
 import { getBrandList } from "../Brand/BrandLibrary";
 import { VehicleFormFields } from "./VehicleFormFields";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
 
 const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
+  const [value, setValue] = React.useState("1");
+
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   const [isUsed, setIsUsed] = useState(false);
   const { entry, setVehicle, setVehicleData } = useContext(VehicleContext);
   const [brand, setBrand] = useState([]);
@@ -51,7 +58,6 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
     color: entry ? entry.color : "",
     mileage: entry ? entry.mileage : "",
     engineType: entry ? entry.engineType : "",
-    status: entry ? entry.status : "",
     transmissionType: entry ? entry.transmissionType : "",
     fuelType: entry ? entry.fuelType : "",
     numberOfSeats: entry ? entry.numberOfSeats : "",
@@ -86,85 +92,110 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
       </DialogTitle>
       <DialogContent>
         <Box height={10} />
-        <Formik
-          initialValues={initialValues}
-          validationSchema={validationSchema}
-          onSubmit={(values) => {
-            const newDay = dayjs(values.purchasedDate).format("YYYY-MM-DD");
-            const selectedBrand = brand.find(
-              (item) => item.value === values.brandId
-            );
-            const brandLabel = selectedBrand ? selectedBrand.label : "";
-            const modelID = generateModelID(brandLabel, values.name);
-            let formData = new FormData();
-            formFields.map((field) => {
-              if (field.name === "files") {
-                if (values.files !== null) {
-                  values[field.name].forEach((file) => {
-                    formData.append(field.name, file);
+        <TabContext value={value}>
+          <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+            <TabList
+              onChange={handleChange}
+              aria-label="lab API tabs example"
+              textColor="inherit"
+            >
+              <Tab label="Detail's vehicle" value="1" />
+              <Tab label="Item Two" value="2" />
+              <Tab label="Item Three" value="3" />
+            </TabList>
+          </Box>
+          <TabPanel value="1">
+            <Formik
+              initialValues={initialValues}
+              validationSchema={validationSchema}
+              onSubmit={(values) => {
+                const newDay = dayjs(values.purchaseDate).format("YYYY-MM-DD");
+                const selectedBrand = brand.find(
+                  (item) => item.value === values.brandId
+                );
+                const brandLabel = selectedBrand ? selectedBrand.label : "";
+                const modelID = generateModelID(brandLabel, values.name);
+                console.log(values);
+                let formData = new FormData();
+                formFields.map((field) => {
+                  if (field.name === "files") {
+                    if (values.files !== null) {
+                      values[field.name].forEach((file) => {
+                        formData.append(field.name, file);
+                      });
+                    }
+                  }
+                  if (field.name === "purchaseDate") {
+                    formData.append(field.name, newDay);
+                  }
+                  formData.append(field.name, values[field.name]);
+
+                  return formData;
+                });
+                if (!entry) {
+                  formData.append("modelId", modelID);
+                  postVehicle(formData).then((data) => {
+                    if (data) {
+                      setVehicleData((prev) => [...prev, data]);
+                      successToast("Created a new vehicle successfully");
+                      handleClose();
+                    }
+                  });
+                } else {
+                  if (values.files === null) {
+                    formData.append("files", null);
+                  }
+                  if (entry.brandId === values.brandId) {
+                    formData.append("modelId", entry.modelId);
+                  } else {
+                    formData.append("modelId", modelID);
+                  }
+                  formData.append("vehicleID", entry.vehicleID);
+                  putVehicle(formData, entry.vehicleID).then((data) => {
+                    if (data !== null) {
+                      setVehicle(data);
+                      successToast("Updated a vehicle successfully");
+                      handleClose();
+                      refreshVehicleData();
+                    }
                   });
                 }
-              }
-              if (field.name === "purchaseDate") {
-                formData.append(field.name, newDay);
-              }
-              formData.append(field.name, values[field.name]);
-
-              return formData;
-            });
-            if (!entry) {
-              formData.append("modelId", modelID);
-              postVehicle(formData).then((data) => {
-                if (data) {
-                  setVehicleData((prev) => [...prev, data]);
-                  successToast("Created a new vehicle successfully");
-                  handleClose();
-                }
-              });
-            } else {
-              if (entry.brandId === values.brandId) {
-                formData.append("modelId", entry.modelId);
-              } else {
-                formData.append("modelId", modelID);
-              }
-              formData.append("vehicleID", entry.vehicleID);
-              putVehicle(formData, entry.vehicleID).then((data) => {
-                if (data !== null) {
-                  setVehicle(data);
-                  successToast("Updated a vehicle successfully");
-                  handleClose();
-                  refreshVehicleData();
-                }
-              });
-            }
-          }}
-        >
-          {({ errors, touched, isSubmitting, dirty, ...props }) => (
-            <Form>
-              <VehicleFormFields
-                props={props}
-                isUsed={isUsed}
-                setIsUsed={setIsUsed}
-                touched={touched}
-                errors={errors}
-                brand={brand}
-              />
-              <DialogActions>
-                <Button
-                  type="submit"
-                  variant="contained"
-                  color="info"
-                  disabled={entry && (isSubmitting || !dirty)}
-                >
-                  Submit
-                </Button>
-                <Button variant="contained" color="error" onClick={handleClose}>
-                  Cancel
-                </Button>
-              </DialogActions>
-            </Form>
-          )}
-        </Formik>
+              }}
+            >
+              {({ errors, touched, isSubmitting, dirty, ...props }) => (
+                <Form>
+                  <VehicleFormFields
+                    props={props}
+                    isUsed={isUsed}
+                    setIsUsed={setIsUsed}
+                    touched={touched}
+                    errors={errors}
+                    brand={brand}
+                  />
+                  <DialogActions>
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="info"
+                      disabled={entry && (isSubmitting || !dirty)}
+                    >
+                      Submit
+                    </Button>
+                    <Button
+                      variant="contained"
+                      color="error"
+                      onClick={handleClose}
+                    >
+                      Cancel
+                    </Button>
+                  </DialogActions>
+                </Form>
+              )}
+            </Formik>
+          </TabPanel>
+          <TabPanel value="2">Item Two</TabPanel>
+          <TabPanel value="3">Item Three</TabPanel>
+        </TabContext>
       </DialogContent>
     </Dialog>
   );

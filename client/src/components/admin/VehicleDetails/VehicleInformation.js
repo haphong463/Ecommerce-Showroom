@@ -7,11 +7,10 @@ const VehicleInformation = ({
   handleClickOpen,
   handleDelete,
   vehicleID,
-  userLayout,
 }) => {
   return (
     <Box mt={2}>
-      <Typography variant="h4" align="left" mb={3}>
+      <Typography variant="h5" align="left" mb={3}>
         <span className="title-text">Vehicle Information</span>
       </Typography>
       <Grid
@@ -37,20 +36,18 @@ const VehicleInformation = ({
           </Grid>
         ))}
       </Grid>
-      {!userLayout && (
-        <Stack direction="row" sx={{ mt: 3 }} spacing={1}>
-          <Button variant="contained" color="info" onClick={handleClickOpen}>
-            Edit
-          </Button>
-          <Button
-            variant="contained"
-            color="error"
-            onClick={() => handleDelete(vehicleID)}
-          >
-            Delete
-          </Button>
-        </Stack>
-      )}
+      <Stack direction="row" sx={{ mt: 3 }} spacing={1}>
+        <Button variant="contained" color="info" onClick={handleClickOpen}>
+          Edit
+        </Button>
+        <Button
+          variant="contained"
+          color="error"
+          onClick={() => handleDelete(vehicleID)}
+        >
+          Delete
+        </Button>
+      </Stack>
     </Box>
   );
 };

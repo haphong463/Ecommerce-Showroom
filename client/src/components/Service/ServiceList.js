@@ -22,15 +22,41 @@ export const ServiceList = () => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const handleDelete = (id) => {
-    const service = serviceData.find((item) => item.ServiceId === id);
-    deleteService(id).then((data) => {
-      if (data !== null) {
-        setServiceData((prev) =>
-          prev.filter((item) => item.ServiceId !== data.ServiceId)
-        );
-        dangerMessage("Delete a service successfully!");
-      }
-    });
+    const service = serviceData.find((item) => item.serviceId === id);
+    console.log(service);
+    if (service && service.orders.length > 0) {
+      // Check if the specific brand has associated vehicles
+      Swal.fire({
+        title: "Cannot delete!",
+        text: "This service has associated orders. Please delete the orders first.",
+        icon: "error",
+      });
+    } else {
+      Swal.fire({
+        title: "Are you sure?",
+        text: "You will not be able to recover this service!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonText: "Yes, delete it!",
+        cancelButtonText: "No, cancel!",
+      }).then((result) => {
+        if (result.isConfirmed) {
+          // User clicked 'Yes, delete it!'
+          deleteService(id).then((data) => {
+            if (data !== null) {
+              console.log(data);
+              setServiceData((prev) =>
+                prev.filter((item) => item.serviceId !== data.serviceId)
+              );
+              dangerMessage("Delete a service successfully!");
+            }
+          });
+        } else if (result.dismiss === Swal.DismissReason.cancel) {
+          // User clicked 'No, cancel!'
+          Swal.fire("Cancelled", "Your service is safe :)", "info");
+        }
+      });
+    }
   };
 
   const handleEdit = (id) => {

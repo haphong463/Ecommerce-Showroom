@@ -64,12 +64,13 @@ export function SignUp() {
   const [avatarImage, setAvatarImage] = useState(null); // State to manage the avatar image
 
   const onSubmit = (data) => {
+    console.log(data);
     const newDate = dayjs(new Date(data.dateOfBirth)).format("YYYY-MM-DD");
     const formData = new FormData();
     formData.append("email", data.email);
     formData.append("password", data.password);
     formData.append("dateOfBirth", newDate);
-    formData.append("file", data.profileImage);
+    formData.append("file", null);
     formData.append("name", data.name);
     formData.append("gender", data.gender);
     formData.append("phone", data.phone);

@@ -12,12 +12,7 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import {
-  formFields,
-  fuelType,
-  status,
-  transmissionType,
-} from "./VehicleLibrary";
+import { formFields, fuelType, transmissionType } from "./VehicleLibrary";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 import { FastField } from "formik";
@@ -55,7 +50,7 @@ export function VehicleFormFields({
                     }}
                   />
                 }
-                label={props.values.isUsed ? "New" : "Used"}
+                label={props.values.isUsed ? "Used" : "New"}
               />
             ) : field.type === "select" ? (
               <FormControl fullWidth>
@@ -79,14 +74,6 @@ export function VehicleFormFields({
                     errors={errors}
                     props={props}
                     list={fuelType}
-                  />
-                ) : field.name === "status" ? (
-                  <VehicleFormFieldSelect
-                    field={field}
-                    touched={touched}
-                    errors={errors}
-                    props={props}
-                    list={status}
                   />
                 ) : (
                   <VehicleFormFieldSelect
