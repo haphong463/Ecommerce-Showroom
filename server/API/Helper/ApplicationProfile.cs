@@ -41,6 +41,9 @@ namespace API.Helper
             //CreateMap<Vehicle, VehicleDTO>().ReverseMap();
             //CreateMap<VehicleDTO, Vehicle>().ReverseMap();
             //CreateMap<Vehicle, VehicleBriefDTO>().ReverseMap();
+
+            CreateMap<RegistrationData, RegistrationDataDTO>().ReverseMap();
+            CreateMap<RegistrationDataDTO, RegistrationData>().ReverseMap();
         }
     }
 }
