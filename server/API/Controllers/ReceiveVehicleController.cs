@@ -131,7 +131,7 @@ namespace API.Controllers
             }
             catch (Exception ex)
             {
-                return ApiResponse<Account>.Exception(ex);
+                return ApiResponse<ReceivedVehicle>.Exception(ex);
 
             }
         }

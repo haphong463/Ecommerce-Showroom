@@ -181,5 +181,36 @@ namespace API.Controllers
             var vehicleDto = _mapper.Map<VehicleDTO>(vehicle);
             return Ok(new ApiResponse<VehicleDTO>(vehicleDto, "Delete vehicle successfully"));
         }
+        [HttpPut("updateVehicle/{id}")]
+        public async Task<ActionResult<ApiResponse<Vehicle>>> Update(int id, [FromBody] VehicleBriefDTO vehicleBriefDTO)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return ApiResponse<Vehicle>.BadRequest(ModelState);
+                }
+
+                var vehicleExisting = await _dbContext.Vehicles.SingleOrDefaultAsync(x => x.VehicleId == id);
+                if (vehicleExisting != null)
+                {
+                    var vehicleUpdate = _mapper.Map<Vehicle>(vehicleBriefDTO);
+
+                    vehicleExisting.Status = 0; 
+                    vehicleExisting.VIN = vehicleUpdate.VIN;
+
+                    await _dbContext.SaveChangesAsync();
+
+                    return Ok(new ApiResponse<Vehicle>(vehicleUpdate, "Order updated successfully"));
+                }
+
+                return NotFound(new ApiResponse<Vehicle>(null, "Order not found"));
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<Vehicle>.Exception(ex);
+            }
+        }
+
     }
 }
