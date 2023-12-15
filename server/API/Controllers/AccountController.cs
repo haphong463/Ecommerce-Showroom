@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using BCrypt.Net;
+using API.Services;
+using Microsoft.AspNetCore.Identity;
 
 namespace API.Controllers
 {
@@ -16,14 +18,20 @@ namespace API.Controllers
         private readonly IWebHostEnvironment _env;
         private readonly DatabaseContext _dbContext;
 
+
+
+        private readonly EmailService _emailService;
+
         public AccountController(DatabaseContext dbContext, IWebHostEnvironment env)
         {
             _dbContext = dbContext;
             _env = env;
+            IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
+            _emailService = new EmailService(configuration);
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,User, Employee")]
+        [Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Index()
         {
             try
@@ -69,30 +77,10 @@ namespace API.Controllers
 
             }
         }
-        [HttpGet("profile/{email}")]
-        public async Task<ActionResult<ApiResponse<Account>>> GetAccountByEmail(string email)
-        {
-            try
-            {
-                var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Email == email);
-                if (account == null)
-                {
-                    return Ok(new ApiResponse<Account>(null, "Account not found"));
-                }
-                else
-                {
-                    return Ok(new ApiResponse<Account>(account, "Get account successfully"));
-                }
-            }
-            catch (Exception ex)
-            {
-                return ApiResponse<Account>.Exception(ex);
 
-            }
-        }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<Account>>> AddAccount([FromForm] Account account, IFormFile? file)
+        public async Task<ActionResult<ApiResponse<Account>>> AddAccount([FromForm] Account account, IFormFile file)
         {
             try
             {
@@ -102,15 +90,18 @@ namespace API.Controllers
                 {
                     account.Role = "User";
                 }
-                if (file != null)
-                {
-                    account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
-                }
+                account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
 
+                // Lưu tài khoản mới vào cơ sở dữ liệu
                 var resource = await _dbContext.Accounts.AddAsync(account);
                 await _dbContext.SaveChangesAsync();
 
-                if (account.Role == "Employee" || account.Role == "Admin")
+                var verificationLink = GenerateVerificationLink(account.AccountId); // Thay accountId bằng thuộc tính tương ứng trong tài khoản của bạn
+                _emailService.SendVerificationEmail(account.Email, verificationLink);
+
+
+
+                if (account.Role == "Employee")
                 {
                     var newEmployee = new Employee
                     {
@@ -121,6 +112,9 @@ namespace API.Controllers
                     _dbContext.Employees.Add(newEmployee);
                     await _dbContext.SaveChangesAsync();
                 }
+
+
+
 
                 if (resource != null)
                 {
@@ -136,6 +130,46 @@ namespace API.Controllers
                 return ApiResponse<Account>.Exception(ex);
             }
         }
+
+
+
+
+        private string GenerateVerificationLink(int userId)
+        {
+            // Tạo một mã xác thực ngẫu nhiên, bạn có thể sử dụng các thư viện mã hóa hoặc mã ngẫu nhiên có sẵn
+            string verificationCode = GenerateRandomCode(); // Hàm tạo mã ngẫu nhiên, ví dụ: GenerateRandomCode()
+
+            // Tạo liên kết xác minh với userId và verificationCode
+            string verificationLink = $"http://localhost:3000/login{userId}/{verificationCode}";
+
+            return verificationLink;
+        }
+
+        private string GenerateRandomCode()
+        {
+            // Logic để tạo mã xác thực ngẫu nhiên, ví dụ sử dụng thư viện Guid
+            return Guid.NewGuid().ToString(); // Trả về một chuỗi GUID ngẫu nhiên
+        }
+
+
+        [HttpGet("verify-email")]
+        public IActionResult VerifyEmail(int userId)
+        {
+            var user = _dbContext.Accounts.FirstOrDefault(x => x.AccountId == userId);
+            if (user != null)
+            {
+                // Cập nhật trạng thái xác minh email
+                user.VerifiedAt = DateTime.UtcNow; // Đặt thời gian xác minh thành thời gian hiện tại
+                _dbContext.SaveChanges();
+                return Ok("Email verification successful.");
+            }
+            return NotFound("User not found.");
+        }
+
+
+
+
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteAccount(int id)
@@ -198,7 +232,7 @@ namespace API.Controllers
                     {
                         existingAccount.Email = account.Email;
                     }
-                    // Cập nhật các trường khác tương tự ...
+
 
                     await _dbContext.SaveChangesAsync();
                     return Ok(new ApiResponse<Account>(existingAccount, "Update account successfully"));

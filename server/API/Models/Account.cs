@@ -26,5 +26,7 @@ namespace API.Models
         public DateTime CreatedAt { get; set; } = DateTime.Now;
         public DateTime UpdatedAt { get; set; }
         public List<Order>? Order { get; set; }
+        public DateTime? VerifiedAt { get; set; }
+
     }
 }
