@@ -84,6 +84,13 @@ namespace API.Controllers
         {
             try
             {
+                var existingAccount = await _dbContext.Accounts.FirstOrDefaultAsync(a => a.Email == account.Email);
+
+                if (existingAccount != null)
+                {
+                    // Trả về thông báo lỗi hoặc thông báo rằng địa chỉ email đã tồn tại
+                    return Ok(new ApiResponse<Account>(null, "Email already exists"));
+                }
                 account.Password = AccountSecurity.HashPassword(account.Password);
 
                 if (account.Role == null)
@@ -206,6 +213,13 @@ namespace API.Controllers
         {
             try
             {
+                var existingEmail = await _dbContext.Accounts.FirstOrDefaultAsync(a => a.Email == account.Email);
+
+                if (existingEmail != null)
+                {
+                    // Trả về thông báo lỗi hoặc thông báo rằng địa chỉ email đã tồn tại
+                    return Ok(new ApiResponse<Account>(null, "Email already exists"));
+                }
                 var existingAccount = await _dbContext.Accounts.FindAsync(id);
 
                 if (existingAccount != null)
