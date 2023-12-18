@@ -43,26 +43,6 @@ namespace API.Controllers
 
 
 
-        [HttpGet("verify-email")]
-        public IActionResult VerifyEmail(int userId)
-        {
-            var user = _dbContext.Accounts.FirstOrDefault(x => x.AccountId == userId);
-            if (user != null)
-            {
-                // Cập nhật trạng thái xác minh email
-                user.VerifiedAt = DateTime.UtcNow; // Đặt thời gian xác minh thành thời gian hiện tại
-                _dbContext.SaveChanges();
-
-                return Ok("Email verification successful.");
-            }
-            return NotFound("User not found.");
-        }
-
-
-
-
-
-
         // To authenticate user
         private Account Authenticate(AccountCredentials userCredentials)
         {

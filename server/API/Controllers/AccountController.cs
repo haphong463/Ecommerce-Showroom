@@ -1,13 +1,12 @@
 ﻿using API.Data;
-using API.DTO;
 using API.Helper;
 using API.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using BCrypt.Net;
-using API.Services;
-using Microsoft.AspNetCore.Identity;
+using System.Security.Cryptography;
+using crypto;
+
 
 namespace API.Controllers
 {
@@ -19,15 +18,10 @@ namespace API.Controllers
         private readonly DatabaseContext _dbContext;
 
 
-
-        private readonly EmailService _emailService;
-
         public AccountController(DatabaseContext dbContext, IWebHostEnvironment env)
         {
             _dbContext = dbContext;
             _env = env;
-            IConfiguration configuration = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build();
-            _emailService = new EmailService(configuration);
         }
 
         [HttpGet]
@@ -84,9 +78,9 @@ namespace API.Controllers
         {
             try
             {
-                var existingAccount = await _dbContext.Accounts.FirstOrDefaultAsync(a => a.Email == account.Email);
+                var existingEmail = await _dbContext.Accounts.FirstOrDefaultAsync(a => a.Email == account.Email);
 
-                if (existingAccount != null)
+                if (existingEmail != null)
                 {
                     // Trả về thông báo lỗi hoặc thông báo rằng địa chỉ email đã tồn tại
                     return Ok(new ApiResponse<Account>(null, "Email already exists"));
@@ -103,12 +97,13 @@ namespace API.Controllers
 
                 }
 
+                account.VerifitcationToken = CreateRandomToken();
+
                 // Lưu tài khoản mới vào cơ sở dữ liệu
                 var resource = await _dbContext.Accounts.AddAsync(account);
                 await _dbContext.SaveChangesAsync();
 
-                var verificationLink = GenerateVerificationLink(account.AccountId); // Thay accountId bằng thuộc tính tương ứng trong tài khoản của bạn
-                _emailService.SendVerificationEmail(account.Email, verificationLink);
+
 
 
 
@@ -116,8 +111,8 @@ namespace API.Controllers
                 {
                     var newEmployee = new Employee
                     {
-                        AccountId = account.AccountId, // Sử dụng AccountID từ tài khoản mới tạo
-                        Name = account.Name            // Các trường khác của Employee có thể được cập nhật tùy thuộc vào yêu cầu của bạn
+                        AccountId = account.AccountId // Sử dụng AccountID từ tài khoản mới tạo
+                                                      // Các trường khác của Employee có thể được cập nhật tùy thuộc vào yêu cầu của bạn
                     };
 
                     _dbContext.Employees.Add(newEmployee);
@@ -144,39 +139,19 @@ namespace API.Controllers
 
 
 
-
-        private string GenerateVerificationLink(int userId)
+        [HttpPost("verify")]
+        public async Task<ActionResult<ApiResponse<Account>>> Verify(string token)
         {
-            // Tạo một mã xác thực ngẫu nhiên, bạn có thể sử dụng các thư viện mã hóa hoặc mã ngẫu nhiên có sẵn
-            string verificationCode = GenerateRandomCode(); // Hàm tạo mã ngẫu nhiên, ví dụ: GenerateRandomCode()
-
-            // Tạo liên kết xác minh với userId và verificationCode
-            string verificationLink = $"http://localhost:3000/login{userId}/{verificationCode}";
-
-            return verificationLink;
-        }
-
-        private string GenerateRandomCode()
-        {
-            // Logic để tạo mã xác thực ngẫu nhiên, ví dụ sử dụng thư viện Guid
-            return Guid.NewGuid().ToString(); // Trả về một chuỗi GUID ngẫu nhiên
-        }
-
-
-        [HttpGet("verify-email")]
-        public IActionResult VerifyEmail(int userId)
-        {
-            var user = _dbContext.Accounts.FirstOrDefault(x => x.AccountId == userId);
-            if (user != null)
+            var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.VerifitcationToken == token);
+            if (account == null)
             {
-                // Cập nhật trạng thái xác minh email
-                user.VerifiedAt = DateTime.UtcNow; // Đặt thời gian xác minh thành thời gian hiện tại
-                _dbContext.SaveChanges();
-                return Ok("Email verification successful.");
+                return BadRequest("Invalid token");
             }
-            return NotFound("User not found.");
-        }
 
+            account.VerifiedAt = DateTime.Now;
+            await _dbContext.SaveChangesAsync();
+            return Ok(new ApiResponse<Account>(account, "Account verified"));
+        }
 
 
 
@@ -217,13 +192,7 @@ namespace API.Controllers
         {
             try
             {
-                var existingEmail = await _dbContext.Accounts.FirstOrDefaultAsync(a => a.Email == account.Email);
 
-                if (existingEmail != null)
-                {
-                    // Trả về thông báo lỗi hoặc thông báo rằng địa chỉ email đã tồn tại
-                    return Ok(new ApiResponse<Account>(null, "Email already exists"));
-                }
                 var existingAccount = await _dbContext.Accounts.FindAsync(id);
 
                 if (existingAccount != null)
@@ -265,6 +234,51 @@ namespace API.Controllers
                 return ApiResponse<Account>.Exception(ex);
             }
         }
+
+
+
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromForm] string email)
+        {
+            var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.Email == email);
+            if (account == null)
+            {
+                return Ok(new ApiResponse<Account>(account, "Account not found"));
+
+            }
+
+            account.PasswordResetToken = CreateRandomToken();
+            account.ResetTokenExpires = DateTime.Now.AddDays(1);
+            await _dbContext.SaveChangesAsync();
+            return Ok(new ApiResponse<Account>(account, "You may now reset your password"));
+
+        }
+
+
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromForm] ResetPass request)
+        {
+            var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.PasswordResetToken == request.Token);
+            if (account == null || account.ResetTokenExpires < DateTime.Now)
+            {
+                return Ok(new ApiResponse<Account>(account, "Invalid token"));
+
+            }
+            account.Password = AccountSecurity.HashPassword(request.Password);
+            account.PasswordResetToken = null;
+            account.ResetTokenExpires = null;
+            await _dbContext.SaveChangesAsync();
+            return Ok(new ApiResponse<Account>(account, "Password successfully reset"));
+        }
+
+
+
+        private string CreateRandomToken()
+        {
+            return Convert.ToHexString(RandomNumberGenerator.GetBytes(64));
+        }
+
+
 
     }
 }
