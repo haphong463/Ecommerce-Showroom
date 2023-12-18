@@ -26,7 +26,7 @@ namespace API.Controllers
             try
             {
                 var list = await _dbContext.Frames
-                    .Include(f =>f.Vehicle).Include(f=> f.OrderCompany)
+                    .Include(f => f.Vehicle).Include(f => f.ReceivingOrder)
                     .ToListAsync();
 
                 if (list != null && list.Any())
@@ -35,19 +35,18 @@ namespace API.Controllers
                     {
                         Id = o.Id,
                         FrameNumber = o.FrameNumber,
-                        Description = o.Description,
                         VehicleId = o.VehicleId,
                         Vehicle = new include_VehicleDTO
                         {
                             VehicleId = o.Vehicle.VehicleId,
                             Name = o.Vehicle.Name
                         },
-                        OrderCompanyId = o.OrderCompanyId,
-                        OrderCompany = new include_OrderCompany
+                        ReceivingOrderId = o.ReceivingOrderId,
+                        Receiving_order = new include_ReceivingOdDTO
                         {
-                            orderCompanyId = o.OrderCompany.orderCompanyId,
-                            Name = o.OrderCompany.Name,
-
+                            Id = o.ReceivingOrder.Id,
+                            FrameNumber = o.ReceivingOrder.FrameNumber,
+                            PurchaseOrderId = o.ReceivingOrder.PurchaseOrderId
                         }
                     });
                     return Ok(new ApiResponse<IEnumerable<FrameDTO>>(Result, "Get all Frames successfully"));
@@ -70,7 +69,7 @@ namespace API.Controllers
             try
             {
                 var list = await _dbContext.Frames
-                    .Include(o => o.Vehicle).Include(o => o.OrderCompany)
+                    .Include(o => o.Vehicle).Include(o => o.ReceivingOrder)
                     .SingleOrDefaultAsync(o => o.Id == id);
 
                 if (list != null)
@@ -79,19 +78,18 @@ namespace API.Controllers
                     {
                         Id = list.Id,
                         FrameNumber = list.FrameNumber,
-                        Description = list.Description,
                         VehicleId = list.VehicleId,
                         Vehicle = new include_VehicleDTO
                         {
                             VehicleId = list.Vehicle.VehicleId,
                             Name = list.Vehicle.Name
                         },
-                        OrderCompanyId = list.OrderCompanyId,
-                        OrderCompany = new include_OrderCompany
+                        ReceivingOrderId = list.ReceivingOrderId,
+                        Receiving_order = new include_ReceivingOdDTO
                         {
-                            orderCompanyId = list.OrderCompany.orderCompanyId,
-                            Name = list.OrderCompany.Name,
-
+                            Id = list.ReceivingOrder.Id,
+                            FrameNumber = list.ReceivingOrder.FrameNumber,
+                            PurchaseOrderId = list.ReceivingOrder.PurchaseOrderId
                         }
                     };
                     return Ok(new ApiResponse<FrameDTO>(Result, "Get Frame successfully"));

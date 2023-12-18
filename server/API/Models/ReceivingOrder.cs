@@ -7,12 +7,9 @@ namespace API.Models
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
-        [Required]
-        public string UniqueIdentifier { get; set; }
-        public string? ExternalNumber { get; set; }
-        [Required]
-        public string Name { get; set; }
-        [Required]
-        public string Brand { get; set; }
+        public int FrameNumber { get; set; }
+        public int PurchaseOrderId { get; set; }
+        public List<Frame>? Frame { get; set; }
+        public OrderCompany? OrderCompany { get; set; }
     }
 }
