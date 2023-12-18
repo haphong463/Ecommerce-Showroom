@@ -1,7 +1,9 @@
 ﻿using API.Data;
+using API.DTO;
 using API.Helper;
 using API.Models;
 using AutoMapper;
+using MailKit.Search;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -20,53 +22,97 @@ namespace API.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<OrderCompany>>>> GetOrders()
+        public async Task<ActionResult<ApiResponse<IEnumerable<OrderCompanyDTO>>>> GetOrders()
         {
             try
             {
-                var list = await _dbContext.OrderCompanies.ToListAsync();
+                var list = await _dbContext.OrderCompanies
+                    .Include(o=>o.Vehicle).Include(o =>o.Employee)
+                    .ToListAsync();
 
                 if (list != null && list.Any())
                 {
-                    return Ok(new ApiResponse<IEnumerable<OrderCompany>>(list, "Get all successfully"));
+                    var Result = list.Select(o => new OrderCompanyDTO
+                    {
+                        orderCompanyId = o.orderCompanyId,
+                        Name = o.Name,
+                        Brand = o.Brand,
+                        Quantity = o.Quantity,
+                        SuggestPrice = o.SuggestPrice,
+                        EmployeeId = o.EmployeeId,
+                        Employee = new EmployeeDTO
+                        {
+                            EmployeeId = o.EmployeeId,
+                            AccountId = o.Employee.AccountId
+                        },
+                        VehicleId = o.VehicleId,
+                        Vehicle = new include_VehicleDTO
+                        {
+                            VehicleId = o.Vehicle.VehicleId,
+                            Name = o.Vehicle.Name
+                        }
+                    });
+                    return Ok(new ApiResponse<IEnumerable<OrderCompanyDTO>>(Result, "Get all Orders successfully"));
                 }
                 else
                 {
-                    return Ok(new ApiResponse<OrderCompany>(null, "Not found"));
+                    return Ok(new ApiResponse<OrderCompanyDTO>(null, "Not found"));
                 }
             }
             catch (Exception ex)
             {
-                return ApiResponse<OrderCompany>.Exception(ex);
+                return ApiResponse<OrderCompanyDTO>.Exception(ex);
             }
 
         }
 
         [HttpGet("id")]
-        public async Task<ActionResult<ApiResponse<IEnumerable<OrderCompany>>>> GetOrderById(int id)
+        public async Task<ActionResult<ApiResponse<OrderCompanyDTO>>> GetOrderById(int id)
         {
             try
             {
-                var list = await _dbContext.OrderCompanies.FindAsync(id);
+                var o = await _dbContext.OrderCompanies
+                    .Include(o =>o.Vehicle).Include(o=> o.Employee)
+                    .SingleOrDefaultAsync(o=> o.orderCompanyId == id);
 
-                if (list != null)
+                if (o != null)
                 {
-                    return Ok(new ApiResponse<OrderCompany>(list, "Get Receiving the Vehicle successfully"));
+                    var Result =  new OrderCompanyDTO
+                    {
+                        orderCompanyId = o.orderCompanyId,
+                        Name = o.Name,
+                        Brand = o.Brand,
+                        Quantity = o.Quantity,
+                        SuggestPrice = o.SuggestPrice,
+                        EmployeeId = o.EmployeeId,
+                        Employee = new EmployeeDTO
+                        {
+                            EmployeeId = o.EmployeeId,
+                            AccountId = o.Employee.AccountId
+                        },
+                        VehicleId = o.VehicleId,
+                        Vehicle = new include_VehicleDTO
+                        {
+                            VehicleId = o.Vehicle.VehicleId,
+                            Name = o.Vehicle.Name
+                        }
+                    };
+                    return Ok(new ApiResponse<OrderCompanyDTO>(Result, "Get Order successfully"));
                 }
                 else
                 {
-                    return Ok(new ApiResponse<OrderCompany>(null, "Not found"));
+                    return Ok(new ApiResponse<OrderCompanyDTO>(null, "Not found"));
                 }
             }
             catch (Exception ex)
             {
-                return ApiResponse<OrderCompany>.Exception(ex);
+                return ApiResponse<OrderCompanyDTO>.Exception(ex);
             }
 
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<OrderCompany>>> PostOrder([FromForm] OrderCompany odCompany)
+        public async Task<ActionResult<ApiResponse<OrderCompany>>> PostOrder([FromForm] OrderCompanyBrief OCbrief)
         {
             if (!ModelState.IsValid)
             {
@@ -75,10 +121,12 @@ namespace API.Controllers
 
             try
             {
+                var odCompany = _mapper.Map<OrderCompany>(OCbrief);
+
                 await _dbContext.OrderCompanies.AddAsync(odCompany);
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(new ApiResponse<OrderCompany>(odCompany, "ReceivedVehicle created successfully"));
+                return Ok(new ApiResponse<OrderCompany>(odCompany, "OrderCompany created successfully"));
             }
             catch (Exception ex)
             {
@@ -87,7 +135,7 @@ namespace API.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<ActionResult<ApiResponse<OrderCompany>>> UpdateOrder(int id, [FromForm] OrderCompany odUpdate)
+        public async Task<ActionResult<ApiResponse<OrderCompany>>> UpdateOrder(int id, [FromForm] OrderCompanyBrief OCbrief)
         {
             try
             {
@@ -100,6 +148,8 @@ namespace API.Controllers
                     .SingleOrDefaultAsync(x => x.orderCompanyId == id);
                 if (odExisting != null)
                 {
+                    var odUpdate = _mapper.Map<OrderCompany>(OCbrief);
+
                     _dbContext.Entry(odExisting).CurrentValues.SetValues(odUpdate);
                     await _dbContext.SaveChangesAsync();
 

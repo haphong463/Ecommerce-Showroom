@@ -81,5 +81,6 @@ namespace API.Data
         public DbSet<RegistrationData> RegistrationDatas { get; set; }
         public DbSet<ReceivedVehicle> ReceivedVehicles { get; set;}
         public DbSet<OrderCompany> OrderCompanies { get; set; }
+        public DbSet<Frame> Frames { get; set; }
     }
 }

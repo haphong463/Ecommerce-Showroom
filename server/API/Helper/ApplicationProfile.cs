@@ -44,6 +44,10 @@ namespace API.Helper
 
             CreateMap<RegistrationData, RegistrationDataDTO>().ReverseMap();
             CreateMap<RegistrationDataDTO, RegistrationData>().ReverseMap();
+
+            CreateMap<OrderCompanyBrief, OrderCompany>().ReverseMap();
+            CreateMap<FrameBrief, Frame>().ReverseMap();
+
         }
     }
 }

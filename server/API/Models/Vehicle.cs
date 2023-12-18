@@ -58,6 +58,7 @@ public class Vehicle
     public List<Images>? Images { get; set; }
     public Brand? Brand { get; set; }
     public List<OrderDetails>? OrderDetails { get; set; }
+    public List<Frame>? Frames { get; set; }
 }
 
 public enum VehicleStatus
