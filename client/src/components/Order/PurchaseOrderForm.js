@@ -23,51 +23,61 @@ import {
 import { OrderContext } from "../../context/OrderContext";
 import {
   generateValidationSchemaOrder,
-  postOrder,
-  putOrder,
+  postPurchaseOrder,
 } from "./PurchaseOrderLibrary";
 import { successToast } from "../Message";
 import { OrderFormField } from "./PurchaseOrderFormField";
 import { getVehicles } from "../Vehicle/VehicleLibrary";
-
+import { getCustomer } from "../Customer/CustomerLibrary";
+import { DataContext } from "../../context/DataContext";
+import { getEmployeeById } from "../Employee/EmployeeLibrary";
 const OrderForm = ({ orderList, setOrderList }) => {
   const { onClose, setOrderData, openOrderForm, order } =
     useContext(OrderContext);
+  const { token } = useContext(DataContext);
+  const [employeeId, setEmployeeId] = useState();
   const initialValues = {
+    vehicleId: order?.vehicleID ?? "",
     modelName: order?.modelName ?? "",
     brandId: order?.brandId ?? "",
-    price: order?.price ?? "",
+    suggestPrice: order?.suggestPrice ?? "",
     quantity: order?.quantity ?? "",
   };
+
   const [vehicleList, setVehicleList] = useState([]);
   const handleChangeInfo = (e, formikBag) => {
     const vehicleInfo = vehicleList.find(
       (item) => item.vehicleID === e.target.value
     );
+
+    formikBag.setFieldValue("vehicleId", vehicleInfo.vehicleID);
     formikBag.setFieldValue("brandId", vehicleInfo.brand.name);
     formikBag.setFieldValue("modelName", vehicleInfo.modelId);
-    formikBag.setFieldValue("price", vehicleInfo.price);
   };
   useEffect(() => {
     getVehicles().then((data) => {
       setVehicleList(data);
     });
   }, []);
-  const addRow = (values, formikProps) => {
-    setOrderList((prev) => [...prev, values]);
-  };
 
   const validationSchema = generateValidationSchemaOrder();
-  const submitAPI = (values, formikProps) => {
+  const submitAPI = async (values, formikProps) => {
     if (!order) {
-      addRow(values, formikProps);
-      //   postOrder(values).then((data) => {
-      //     if (data !== null) {
-      //       setOrderData((prev) => [...prev, data]);
-      //       onClose();
-      //       successToast("Create a new Order successfully!");
-      //     }
-      //   });
+      const dataToPost = {
+        vehicleId: values.vehicleId,
+        suggestPrice: values.suggestPrice,
+        quantity: values.quantity,
+        employeeId: employeeId,
+        brand: values.brandId,
+      };
+      console.log(dataToPost);
+      postPurchaseOrder(dataToPost).then((data) => {
+        if (data !== null) {
+          setOrderData((prev) => [...prev, data]);
+          onClose();
+          successToast("Create a new purchase order successfully!");
+        }
+      });
       // } else {
       //   putOrder(values, order.orderId).then((data) => {
       //     console.log(data);
@@ -81,6 +91,18 @@ const OrderForm = ({ orderList, setOrderList }) => {
       //   });
     }
   };
+  useEffect(() => {
+    getCustomer().then((data) => {
+      if (data) {
+        const employeeId = data.find((item) => item.email === token.Email);
+        if (employeeId.role === "Employee") {
+          getEmployeeById(employeeId.accountId).then((data) => {
+            setEmployeeId(data.employeeId);
+          });
+        }
+      }
+    });
+  }, []);
   return (
     <Dialog open={openOrderForm} onClose={onClose} maxWidth="100%">
       <DialogTitle
@@ -130,13 +152,13 @@ const OrderForm = ({ orderList, setOrderList }) => {
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                  <FastField
+                  <TextField
                     name="brandId"
                     id="brandId"
-                    as={TextField}
                     fullWidth
                     label="Brand*"
                     disabled
+                    value={formikProps.values.brandId}
                     helperText={
                       formikProps.touched.brandId && formikProps.errors.brandId
                     }
@@ -148,28 +170,33 @@ const OrderForm = ({ orderList, setOrderList }) => {
                 </Grid>
 
                 <Grid item xs={12} md={6}>
-                  <FastField
-                    name="price"
-                    id="price"
-                    as={TextField}
+                  <TextField
+                    name="suggestPrice"
+                    id="suggestPrice"
                     fullWidth
-                    disabled
-                    label="Price*"
+                    label="Suggest Price*"
+                    onChange={(e) => {
+                      formikProps.setFieldValue("suggestPrice", e.target.value);
+                    }}
                     helperText={
-                      formikProps.touched.price && formikProps.errors.price
+                      formikProps.touched.suggestPrice &&
+                      formikProps.errors.suggestPrice
                     }
                     error={
-                      formikProps.touched.price && !!formikProps.errors.price
+                      formikProps.touched.suggestPrice &&
+                      !!formikProps.errors.suggestPrice
                     }
                   />
                 </Grid>
                 <Grid item xs={12} md={6}>
-                  <FastField
+                  <TextField
                     name="quantity"
                     id="quantity"
-                    as={TextField}
                     fullWidth
                     label="Quantity*"
+                    onChange={(e) => {
+                      formikProps.setFieldValue("quantity", e.target.value);
+                    }}
                     helperText={
                       formikProps.touched.quantity &&
                       formikProps.errors.quantity

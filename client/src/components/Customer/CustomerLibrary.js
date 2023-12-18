@@ -24,9 +24,6 @@ export const postCustomer = async (data) =>
 export const getCustomerById = async (id) =>
   await handleRequest("get", `/${id}`);
 
-export const getCustomerByEmail = async (email) =>
-  await handleRequest("get", `/profile/${email}`);
-
 export const putCustomer = async (vehicle, id) =>
   await handleRequest("put", `/${id}`, vehicle);
 

@@ -67,6 +67,12 @@ namespace API.Data
     .WithMany(v => v.Frames)
     .OnDelete(DeleteBehavior.Restrict);
 
+            modelBuilder.Entity<ReceivingOrder>()
+                .HasMany(ro => ro.Frame)
+                .WithOne(f => f.ReceivingOrder)
+                .HasForeignKey(f => f.FrameNumber)
+                .OnDelete(DeleteBehavior.Restrict);
+
             //modelBuilder.Entity<OrderDetails>()
             //  .HasOne(ot => ot.Vehicles)
             //  .WithMany(p => p.OrderDetailsDTO)

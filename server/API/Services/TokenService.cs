@@ -16,6 +16,7 @@ namespace API.Services
             var claims = new List<Claim>
 {
     new Claim("Email", account.Email),
+    new Claim("Id", account.AccountId.ToString()),
     new Claim(ClaimTypes.Role, account.Role),
     new Claim("Role", account.Role),
     new Claim("Name", account.Name),

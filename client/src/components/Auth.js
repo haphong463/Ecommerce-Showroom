@@ -3,7 +3,11 @@ import { errorToast } from "./Message";
 
 export const loginAuth = async (data) => {
   try {
-    const res = await axios.post("http://localhost:5251/api/Auth/login", data);
+    const res = await axios.post("http://localhost:5251/api/Auth/login", data, {
+      headers: {
+        "Content-Type": "multipart/form-data",
+      },
+    });
     console.log(res);
     if (res.status === 200) {
       return res.data.token;

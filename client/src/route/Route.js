@@ -71,10 +71,14 @@ export const publicRoutes = [
   { path: "/login", component: <Signin /> },
   { path: "/profile/:id", component: <Profile /> },
   { path: "cart", component: <Cart /> },
-  { path: "/admin/", component: <Home /> },
+];
+
+export const privateRoutes = [
+  { path: "/admin/", component: <Home />, roles: ["Admin", "Employee"] },
   {
     path: "/admin/settings",
     component: <Settings />,
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/vehicles",
@@ -83,6 +87,7 @@ export const publicRoutes = [
         <Vehicles />
       </VehicleProvider>
     ),
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/brand",
@@ -91,10 +96,12 @@ export const publicRoutes = [
         <Brand />
       </BrandProvider>
     ),
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/customer",
     component: <Customer />,
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/vehicle/:id",
@@ -103,6 +110,7 @@ export const publicRoutes = [
         <VehicleDetailsAdmin />
       </VehicleProvider>
     ),
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/service",
@@ -111,6 +119,7 @@ export const publicRoutes = [
         <Service />
       </ServiceProvider>
     ),
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/purchaseOrder",
@@ -119,6 +128,7 @@ export const publicRoutes = [
         <Order />
       </OrderProvider>
     ),
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/salesOrder",
@@ -127,10 +137,12 @@ export const publicRoutes = [
         <SaleOrder />
       </SaleOrderProvider>
     ),
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/invoice",
     component: <Invoice />,
+    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/employee",
@@ -139,7 +151,6 @@ export const publicRoutes = [
         <Employee />
       </AccountProvider>
     ),
+    roles: ["Admin", "Employee"],
   },
 ];
-
-export const privateRoutes = [];

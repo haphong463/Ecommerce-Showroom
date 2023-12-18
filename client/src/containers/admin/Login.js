@@ -37,14 +37,13 @@ export function Login() {
   const { login, token } = React.useContext(DataContext);
   const [generalError, setGeneralError] = React.useState("");
 
-  const onSubmit = async (data) => {
-    loginAuth(data).then((data) => {
-      if (data !== null) {
-        login(data);
+  const onSubmit = (data) => {
+    loginAuth(data).then((res) => {
+      console.log(res);
+      if (res.data !== null) {
+        login(res);
       } else {
-        setGeneralError(
-          "An error occurred during login. Please try again later."
-        );
+        setGeneralError(res.message);
       }
     });
   };

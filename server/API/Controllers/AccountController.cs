@@ -111,7 +111,8 @@ namespace API.Controllers
                 {
                     var newEmployee = new Employee
                     {
-                        AccountId = account.AccountId // Sử dụng AccountID từ tài khoản mới tạo
+                        AccountId = account.AccountId,
+                        Name = account.Name// Sử dụng AccountID từ tài khoản mới tạo
                                                       // Các trường khác của Employee có thể được cập nhật tùy thuộc vào yêu cầu của bạn
                     };
 

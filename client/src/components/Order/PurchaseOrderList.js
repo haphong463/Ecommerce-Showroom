@@ -21,7 +21,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import { OrderContext } from "../../context/OrderContext";
 import { dangerMessage } from "../Message";
 import Swal from "sweetalert2";
-import { columns, deleteOrder, getOrder } from "./PurchaseOrderLibrary";
+import {
+  columns,
+  deleteOrder,
+  getOrder,
+  getPurchaseOrder,
+} from "./PurchaseOrderLibrary";
 
 export const OrderList = ({ orderList }) => {
   const { orderData, setOrderData, setOrder, handleClickOpen } =
@@ -102,15 +107,16 @@ export const OrderList = ({ orderList }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
-  //   useEffect(() => {
-  //     setLoading(true);
-  //     getOrder().then((data) => {
-  //       if (data !== null) {
-  //         setOrderData(data);
-  //         setLoading(false);
-  //       }
-  //     });
-  //   }, []);
+  useEffect(() => {
+    setLoading(true);
+    getPurchaseOrder().then((data) => {
+      console.log(data);
+      if (data !== null) {
+        setOrderData(data);
+        setLoading(false);
+      }
+    });
+  }, []);
   console.log(orderData);
   return (
     <>
@@ -133,50 +139,29 @@ export const OrderList = ({ orderList }) => {
           </TableHead>
           <TableBody>
             {!loading
-              ? orderList
+              ? orderData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    console.log(row);
                     return (
                       <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                        {columns.map((column) => {
-                          const value = row[column.id];
-                          return (
-                            <TableCell key={column.id} align={column.align}>
-                              {column.id === "actions" ? (
-                                <Stack
-                                  direction="row"
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                  }}
-                                >
-                                  <IconButton aria-label="edit">
-                                    <EditIcon />
-                                  </IconButton>
-                                  <IconButton aria-label="delete">
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </Stack>
-                              ) : column.id === "action" ? (
-                                <Button
-                                  variant="contained"
-                                  color="info"
-                                  onClick={() =>
-                                    handleConfirmClick(
-                                      orderList[index].modelName,
-                                      orderList[index].quantity
-                                    )
-                                  }
-                                >
-                                  Xác nhận
-                                </Button>
-                              ) : (
-                                value
-                              )}
-                            </TableCell>
-                          );
-                        })}
+                        <TableCell>{row.vehicle.modelId}</TableCell>
+                        <TableCell>{row.suggestPrice}</TableCell>
+                        <TableCell>{row.quantity}</TableCell>
+                        <TableCell align="center">{row.brand}</TableCell>
+                        <TableCell align="center">
+                          <Button
+                            variant="contained"
+                            color="info"
+                            onClick={() =>
+                              handleConfirmClick(
+                                orderData[index].vehicleID,
+                                orderData[index].quantity
+                              )
+                            }
+                          >
+                            Xác nhận
+                          </Button>
+                        </TableCell>
                       </TableRow>
                     );
                   })

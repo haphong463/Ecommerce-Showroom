@@ -21,7 +21,7 @@ import { DataContext } from "../../context/DataContext";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
 import { postOrder } from "../../components/Order/PurchaseOrderLibrary";
-import { getCustomerByEmail } from "../../components/Customer/CustomerLibrary";
+// import { getCustomerByEmail } from "../../components/Customer/CustomerLibrary";
 
 const TAX_RATE = 0.07;
 
@@ -107,12 +107,12 @@ export default function Cart() {
     console.log("update quantity");
   };
   const handleCheckout = async () => {
-    const data = await getCustomerByEmail(token.Email);
-    idCustomer = data.accountId;
-    console.log({
-      orderDetails: JSON.parse(localStorage.getItem("cart")),
-      totalPrice: calculateTotal().total,
-    });
+    // const data = await getCustomerByEmail(token.Email);
+    // idCustomer = data.accountId;
+    // console.log({
+    //   orderDetails: JSON.parse(localStorage.getItem("cart")),
+    //   totalPrice: calculateTotal().total,
+    // });
   };
   console.log(idCustomer);
   useEffect(() => {

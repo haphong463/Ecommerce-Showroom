@@ -27,7 +27,7 @@ namespace API.Controllers
             try
             {
                 var list = await _dbContext.OrderCompanies
-                    .Include(o=>o.Vehicle).Include(o =>o.Employee)
+                    .Include(o => o.Vehicle).Include(o => o.Employee)
                     .ToListAsync();
 
                 if (list != null && list.Any())
@@ -35,7 +35,6 @@ namespace API.Controllers
                     var Result = list.Select(o => new OrderCompanyDTO
                     {
                         orderCompanyId = o.orderCompanyId,
-                        Name = o.Name,
                         Brand = o.Brand,
                         Quantity = o.Quantity,
                         SuggestPrice = o.SuggestPrice,
@@ -49,7 +48,8 @@ namespace API.Controllers
                         Vehicle = new include_VehicleDTO
                         {
                             VehicleId = o.Vehicle.VehicleId,
-                            Name = o.Vehicle.Name
+                            Name = o.Vehicle.Name,
+                            ModelId = o.Vehicle.ModelId,
                         }
                     });
                     return Ok(new ApiResponse<IEnumerable<OrderCompanyDTO>>(Result, "Get all Orders successfully"));
@@ -72,16 +72,15 @@ namespace API.Controllers
             try
             {
                 var o = await _dbContext.OrderCompanies
-                    .Include(o =>o.Vehicle).Include(o=> o.Employee)
-                    .SingleOrDefaultAsync(o=> o.orderCompanyId == id);
+                    .Include(o => o.Vehicle).Include(o => o.Employee)
+                    .SingleOrDefaultAsync(o => o.orderCompanyId == id);
 
                 if (o != null)
                 {
-                    var Result =  new OrderCompanyDTO
+                    var Result = new OrderCompanyDTO
                     {
                         orderCompanyId = o.orderCompanyId,
-                        Name = o.Name,
-                        Brand = o.Brand,
+
                         Quantity = o.Quantity,
                         SuggestPrice = o.SuggestPrice,
                         EmployeeId = o.EmployeeId,

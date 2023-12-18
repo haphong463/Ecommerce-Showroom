@@ -15,7 +15,6 @@ export const DataProvider = ({ children }) => {
   const tokenLocal = localStorage.getItem("token");
   const [loading, setLoading] = useState();
   const [token, setToken] = useState(tokenLocal ? jwtDecode(tokenLocal) : null);
-  const [user, setuser] = useState(null);
   const navigate = useNavigate();
   const location = useLocation();
   const redirectPath = location.state?.path || -1;
@@ -55,9 +54,6 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       const refreshTokenTimeout = refreshAuthToken();
-      getCustomerByEmail(token.Email).then((data) => {
-        setuser(data);
-      });
       return () => clearTimeout(refreshTokenTimeout);
     }
   }, [token]);
@@ -73,7 +69,6 @@ export const DataProvider = ({ children }) => {
     setSearchData,
     itemCart,
     setItemCart,
-    user,
   };
   return <DataContext.Provider value={values}>{children}</DataContext.Provider>;
 };

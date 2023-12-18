@@ -8,7 +8,6 @@ const handleRequest = async (method, endpoint, data = null) => {
     const res = await axiosRequest[method]("/Employee" + endpoint, data, {
       headers,
     });
-    console.log(res);
     return res;
   } catch (error) {
     errorToast(error);
