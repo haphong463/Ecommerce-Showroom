@@ -30,6 +30,11 @@ namespace API.Helper
             CreateMap<Account, AccountDTO>().ReverseMap();
             CreateMap<Employee, EmployeeDTO>().ReverseMap();
 
+            /*CreateMap<Order, OrderBriefDTO>();
+            CreateMap<OrderDetails, OrderDetailDTO>();
+            CreateMap<OrderService, OrderServiceDTO>();
+            CreateMap<Vehicle, include_VehicleDTO>();*/
+
             CreateMap<Order, OrderBriefDTO>().ReverseMap();
             CreateMap<Order, OrderDTO>().ReverseMap();
             CreateMap<OrderDTO, Order>().ReverseMap();
