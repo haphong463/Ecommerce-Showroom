@@ -62,7 +62,10 @@ namespace API.Data
                 .WithOne(os => os.Orders)
                 .OnDelete(DeleteBehavior.Cascade);
 
-
+            modelBuilder.Entity<Frame>()
+    .HasOne(f => f.Vehicle)
+    .WithMany(v => v.Frames)
+    .OnDelete(DeleteBehavior.Restrict);
 
             //modelBuilder.Entity<OrderDetails>()
             //  .HasOne(ot => ot.Vehicles)
@@ -79,7 +82,7 @@ namespace API.Data
         public DbSet<OrderService> OrderServices { get; set; }
         public DbSet<OrderDetails> OrderDetails { get; set; }
         public DbSet<RegistrationData> RegistrationDatas { get; set; }
-        public DbSet<ReceivedVehicle> ReceivedVehicles { get; set;}
+        public DbSet<ReceivingOrder> ReceivingOrders { get; set; }
         public DbSet<OrderCompany> OrderCompanies { get; set; }
         public DbSet<Frame> Frames { get; set; }
     }

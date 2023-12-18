@@ -34,7 +34,8 @@ namespace API.Controllers
                 Employee = new EmployeeDTO
                 {
                     EmployeeId = o.EmployeeId,
-                    AccountId = o.Employee.AccountId
+                    AccountId = o.Employee.AccountId,
+                    Name = o.Employee.Name
                 },
                 Account = new AccountDTO
                 {
@@ -69,7 +70,7 @@ namespace API.Controllers
                     }
                 }).ToList()
             });
-            /*var orderResult = _mapper.Map<List<OrderDTO>>(orders);*/
+            /*var orderResult = _mapper.Map<List<OrderBriefDTO>>(orders);*/
 
             return Ok(new ApiResponse<IEnumerable<OrderBriefDTO>>(orderResult, "Get all Orders successfully"));
         }
@@ -142,8 +143,46 @@ namespace API.Controllers
             }
 
         }
-
         [HttpPost]
+        public async Task<ActionResult<ApiResponse<Order>>> PostOders([FromQuery] int serviceId, [FromQuery] int vehicleId, [FromForm] OrderDTO orderDTO)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiResponse<Order>.BadRequest(ModelState);
+            }
+            try
+            {
+                var service = await _dbContext.Services.SingleOrDefaultAsync(x => x.ServiceId == serviceId);
+                var vehicle = await _dbContext.Vehicles.SingleOrDefaultAsync(x => x.VehicleId == vehicleId);
+
+                var order = _mapper.Map<Order>(orderDTO);
+
+                var odService = new OrderService()
+                {
+                    Orders = order,
+                    Services = service
+                };
+                await _dbContext.OrderServices.AddAsync(odService);
+
+                var odVehicle = new OrderDetails()
+                {
+                    Orders = order,
+                    Vehicles = vehicle
+                };
+                await _dbContext.OrderDetails.AddAsync(odVehicle);
+
+                await _dbContext.Orders.AddAsync(order);
+                await _dbContext.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetOdById), new { id = order.OrderId },
+                                       new ApiResponse<Order>(order, "Order created successfully", 201));
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<Order>.Exception(ex);
+            }
+        }
+        /*[HttpPost]
         public async Task<ActionResult<ApiResponse<Order>>> PostOrders([FromForm] Order order)
         {
             if (!ModelState.IsValid)
@@ -215,7 +254,7 @@ namespace API.Controllers
                 // Xử lý ngoại lệ và trả về thông báo lỗi
                 return ApiResponse<Order>.Exception(ex);
             }
-        }
+        }*/
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<Order>>> UpdateOder(int id, [FromForm] OrderDTO orderUpdate)
         {
