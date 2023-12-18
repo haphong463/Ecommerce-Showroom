@@ -21,12 +21,12 @@ namespace API.Services
     new Claim("Name", account.Name),
 };
 
-if (account.AvatarUrl != null)
-{
-    claims.Add(new Claim("Avatar", account.AvatarUrl));
-}
+            if (account.AvatarUrl != null)
+            {
+                claims.Add(new Claim("Avatar", account.AvatarUrl));
+            }
 
-var claimsArray = claims.ToArray();
+            var claimsArray = claims.ToArray();
 
 
             var token = new JwtSecurityToken(configuration["Jwt:Issuer"],

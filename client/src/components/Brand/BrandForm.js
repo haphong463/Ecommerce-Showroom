@@ -17,21 +17,36 @@ import {
 } from "./BrandLibrary";
 import { BrandFormFields } from "./BrandFormField";
 import { successToast } from "../Message";
+import Swal from "sweetalert2";
 
 const BrandForm = () => {
-  const { onClose, setData, openBrandForm, brand } = useContext(BrandContext);
+  const { onClose, data, setData, openBrandForm, brand } =
+    useContext(BrandContext);
   const initialValues = {
     name: brand?.name ?? "",
     description: brand?.description ?? "",
     image: null,
   };
   const validationSchema = generateValidationSchemaBrand(brand);
-  const submitAPI = (brand, values) => {
+  const [preview, setPreview] = useState();
+  const [selectedFile, setSelectedFile] = useState();
+  const submitAPI = (brand, values, formikBag) => {
     const formData = new FormData();
     formData.append("name", values.name);
     formData.append("description", values.description);
     formData.append("file", values.image);
     if (!brand) {
+      const brandNameExist = data.some(
+        (item) => item.name.toLowerCase() === values.name.toLowerCase()
+      );
+      if (brandNameExist) {
+        formikBag.setFieldError(
+          "name",
+          "This name already exists in the brand list."
+        );
+        formikBag.setSubmitting(false);
+        return URL.revokeObjectURL(preview);
+      }
       postBrand(formData).then((data) => {
         if (data !== null) {
           setData((prev) => [...prev, data]);
@@ -54,15 +69,14 @@ const BrandForm = () => {
     }
   };
   // preview
-  const [preview, setPreview] = useState();
-  const [selectedFile, setSelectedFile] = useState();
+
   useEffect(() => {
     const file = selectedFile;
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setPreview(objectUrl);
-      return () => URL.revokeObjectURL(objectUrl);
     }
+    return () => URL.revokeObjectURL(preview);
   }, [selectedFile]);
   // end preview
   return (
@@ -80,7 +94,7 @@ const BrandForm = () => {
           initialValues={initialValues}
           validationSchema={validationSchema}
           onSubmit={(values, formikBag) => {
-            submitAPI(brand, values);
+            submitAPI(brand, values, formikBag);
           }}
         >
           {(formikProps) => (

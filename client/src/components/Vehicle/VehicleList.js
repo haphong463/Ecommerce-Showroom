@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import { DataContext } from "../../context/DataContext";
 export function VehicleList() {
   const { setVehicleData, vehicleData } = useContext(VehicleContext);
-  const { loading, setLoading } = useContext(DataContext);
+  const [loading, setLoading] = useState();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const navigate = useNavigate();

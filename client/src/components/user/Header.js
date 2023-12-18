@@ -135,19 +135,19 @@ const Header = ({ title, state, setState }) => {
           </Box>
 
           <div sx={{ display: "flex" }}>
-            {/* <IconButton onClick={() => navigate("/cart")}>
+            <IconButton onClick={() => navigate("/cart")}>
               <Badge badgeContent={itemCart} color="error">
                 <ShoppingBagIcon color="action" />
               </Badge>
-            </IconButton> */}
+            </IconButton>
             <IconButton
               onClick={handleOpenUserMenu}
               sx={{ p: 0, display: { xs: "none", md: "inline-block" } }}
             >
               <Avatar
                 sx={{
-                  width: "2em",
-                  height: "2em",
+                  width: "1.5em",
+                  height: "1.5em",
                   "& img": {
                     objectFit: "contain",
                   },

@@ -8,7 +8,7 @@ import { InvoicePrintable } from "../../components/admin/InvoicePrintable";
 import SaveIcon from "@mui/icons-material/Save";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import { dangerMessage } from "../../components/Message";
-import { postOrder } from "../../components/Order/OrderLibrary";
+import { postOrder } from "../../components/Order/PurchaseOrderLibrary";
 
 export const Invoice = () => {
   const [isAddRowVisible, setIsAddRowVisible] = useState(false);

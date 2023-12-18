@@ -25,10 +25,11 @@ export const putOrder = async (vehicle, id) =>
   await handleRequest("put", `/${id}`, vehicle);
 
 export const columns = [
-  { id: "accountId", label: "ID", minWidth: 30 },
-  { id: "name", label: "Name", minWidth: 100 },
-  { id: "dateOfBirth", label: "Date of Birth", minWidth: 200, align: "left" },
-  { id: "avatarUrl", label: "Avatar", minWidth: 200, align: "center" },
+  { id: "orderId", label: "#", minWidth: 30 },
+  { id: "account", label: "Customer", minWidth: 100 },
+  { id: "employee", label: "Employee", minWidth: 200, align: "left" },
+  { id: "total", label: "Total", minWidth: 200, align: "center" },
+  { id: "action", label: "Action", minWidth: 200, align: "center" },
 ];
 
 export const generateValidationSchemaOrder = () =>

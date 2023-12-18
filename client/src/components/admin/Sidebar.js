@@ -97,8 +97,20 @@ const routes = [
     position: "top",
   },
   {
-    route: "/admin/order",
-    primary: "Orders",
+    route: "/admin/purchaseOrder",
+    primary: "Purchase Orders",
+    icon: <MiscellaneousServicesIcon />,
+    position: "top",
+  },
+  {
+    route: "/admin/employee",
+    primary: "Employees",
+    icon: <MiscellaneousServicesIcon />,
+    position: "top",
+  },
+  {
+    route: "/admin/salesOrder",
+    primary: "Sale Orders",
     icon: <MiscellaneousServicesIcon />,
     position: "top",
   },

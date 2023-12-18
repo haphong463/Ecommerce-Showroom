@@ -42,7 +42,7 @@ const StyledBadge = styled(Badge)(({ theme }) => ({
 
 export const CustomerList = () => {
   const [data, setData] = useState([]);
-  const { loading, setLoading } = useContext(DataContext);
+  const [loading, setLoading] = useState();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
 
@@ -62,7 +62,7 @@ export const CustomerList = () => {
         setLoading(false);
       }
     });
-  }, [setLoading]);
+  }, []);
   return (
     <>
       <TableContainer sx={{ height: "75vh" }}>
@@ -99,19 +99,7 @@ export const CustomerList = () => {
                           return (
                             <TableCell key={column.id} align={column.align}>
                               {column.id === "avatarUrl" ? (
-                                <StyledBadge
-                                  overlap="circular"
-                                  anchorOrigin={{
-                                    vertical: "bottom",
-                                    horizontal: "right",
-                                  }}
-                                  variant="dot"
-                                >
-                                  <Avatar
-                                    alt="Remy Sharp"
-                                    src={row.avatarUrl}
-                                  />
-                                </StyledBadge>
+                                <Avatar alt="Remy Sharp" src={row.avatarUrl} />
                               ) : column.id === "dateOfBirth" ? (
                                 dayjs(row.dateOfBirth).format("MMMM DD, YYYY")
                               ) : (

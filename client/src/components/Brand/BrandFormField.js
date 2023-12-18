@@ -74,7 +74,14 @@ export const BrandFormFields = ({ formikProps, preview, setSelectedFile }) => {
           </Typography>
         )}
       </Grid>
-      <Grid item xs={12}>
+      <Grid
+        item
+        xs={12}
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+        }}
+      >
         {preview && (
           <Avatar
             alt="Image Preview"

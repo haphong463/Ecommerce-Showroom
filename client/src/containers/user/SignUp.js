@@ -70,7 +70,7 @@ export function SignUp() {
     formData.append("email", data.email);
     formData.append("password", data.password);
     formData.append("dateOfBirth", newDate);
-    formData.append("file", null);
+    formData.append("file", data.profileImage ? data.profileImage : null);
     formData.append("name", data.name);
     formData.append("gender", data.gender);
     formData.append("phone", data.phone);
@@ -79,7 +79,10 @@ export function SignUp() {
     postCustomer(formData).then((result) => {
       console.log(result);
       if (result) {
-        successToast("Sign up account successfully.");
+        successToast(
+          "Sign up successful. Please check your email and verify your email address."
+        );
+
         navigate("/");
       }
     });

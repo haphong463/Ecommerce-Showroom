@@ -31,7 +31,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        [Authorize(Roles = "Admin,User")]
+        //[Authorize(Roles = "Admin,User")]
         public async Task<IActionResult> Index()
         {
             try
@@ -80,7 +80,7 @@ namespace API.Controllers
 
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<Account>>> AddAccount([FromForm] Account account, IFormFile file)
+        public async Task<ActionResult<ApiResponse<Account>>> AddAccount([FromForm] Account account, IFormFile? file)
         {
             try
             {
@@ -97,7 +97,11 @@ namespace API.Controllers
                 {
                     account.Role = "User";
                 }
-                account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
+                if (file != null)
+                {
+                    account.AvatarUrl = FileUpload.SaveImage("AccountImage", file);
+
+                }
 
                 // Lưu tài khoản mới vào cơ sở dữ liệu
                 var resource = await _dbContext.Accounts.AddAsync(account);

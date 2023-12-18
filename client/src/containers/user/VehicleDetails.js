@@ -37,7 +37,7 @@ import RelatedVehicles from "../../components/user/Vehicles/RelatedVehicles";
 import { VehicleSpec } from "../../components/user/Vehicles/VehicleSpec";
 import { DataContext } from "../../context/DataContext";
 import CustomSlider from "../../components/admin/VehicleDetails/ImageList";
-const PREPAY_RATE = 0.35;
+import { dangerMessage } from "../../components/Message";
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { vehicle, setVehicle } = useContext(VehicleContext);
@@ -133,11 +133,10 @@ export const VehicleDetails = () => {
       localStorage.setItem("cart", JSON.stringify(updatedCart));
 
       // Optionally, you can provide feedback to the user
-      alert("Vehicle added to cart!");
       setItemCart(existingCart.length + 1);
     } else {
       // Optionally, you can provide feedback that the vehicle is already in the cart
-      alert("Vehicle is already in the cart!");
+      dangerMessage("Vehicle is already in the cart!");
     }
   };
 
@@ -156,7 +155,7 @@ export const VehicleDetails = () => {
   }, [id]);
   return (
     loading && (
-      <LayoutUser colorHeader>
+      <LayoutUser img=''>
         <Box
           component="section"
           sx={{
@@ -206,47 +205,18 @@ export const VehicleDetails = () => {
                         })}
                       </span>
                     </Typography>
-                    <Stack direction="row" spacing={1}>
-                      <Typography
-                        variant="body1"
-                        fontWeight={600}
-                        color="text.secondary"
-                      >
-                        Prepay:
-                      </Typography>
-                      <Typography>
-                        {(vehicle.purchasePrice * PREPAY_RATE).toLocaleString(
-                          "en-US",
-                          {
-                            style: "currency",
-                            currency: "USD",
-                          }
-                        )}
-                      </Typography>
-                    </Stack>
                   </Stack>
 
                   {/* Stack ở dưới cùng */}
                   <Stack mt={2}>
-                    {token ? (
-                      <Button
-                        variant="contained"
-                        color="info"
-                        fullWidth
-                        onClick={handleAddToCart}
-                      >
-                        Contact us
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="contained"
-                        color="info"
-                        fullWidth
-                        onClick={() => navigate("/login")}
-                      >
-                        Contact us
-                      </Button>
-                    )}
+                    <Button
+                      variant="contained"
+                      color="info"
+                      fullWidth
+                      onClick={handleAddToCart}
+                    >
+                      Add to cart
+                    </Button>
                   </Stack>
                 </Stack>
               </Grid>

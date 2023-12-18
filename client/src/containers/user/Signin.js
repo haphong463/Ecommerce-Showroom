@@ -34,15 +34,17 @@ export const Signin = () => {
   });
 
   const onSubmit = (data) => {
-    loginAuth(data).then((data) => {
-      if (data !== null) {
-        login(data);
-      } else {
-        setGeneralError(
-          "An error occurred during login. Please try again later."
-        );
-      }
-    });
+    loginAuth(data)
+      .then((res) => {
+        if (res.data !== null) {
+          login(data);
+        } else {
+          setGeneralError(res.message);
+        }
+      })
+      .catch((err) => {
+        console.log("Error n");
+      });
   };
   const [capsLockEnabled, setCapsLockEnabled] = React.useState(false);
 

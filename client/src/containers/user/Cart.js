@@ -16,16 +16,19 @@ import {
   Typography,
 } from "@mui/material";
 import RemoveIcon from "@mui/icons-material/Remove";
-import { getVehicleById } from "../../components/Vehicle/VehicleLibrary";
+import { getVehicles } from "../../components/Vehicle/VehicleLibrary";
 import { DataContext } from "../../context/DataContext";
 import { useNavigate } from "react-router-dom";
 import { useContext, useEffect, useState } from "react";
+import { postOrder } from "../../components/Order/PurchaseOrderLibrary";
+import { getCustomerByEmail } from "../../components/Customer/CustomerLibrary";
 
 const TAX_RATE = 0.07;
 
 function ccyFormat(num) {
   return num?.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
+let idCustomer;
 
 export default function Cart() {
   const { token, itemCart, setItemCart } = useContext(DataContext);
@@ -42,25 +45,28 @@ export default function Cart() {
     setPage(0);
   };
 
-  // functional
-  // 1. hàm updatedCartData ban đàu lấy data từ local storage
-  // 2. updatedCart sử dụng promise.all cho trường hợp phải sử dụng map lấy lại giá tiền cho từng item
-  // 3. set state updatedCart cho cartItems.
-  // 4. tạo biến khởi tạo quantity là 1 object rỗng.
-  // 5, sử dụng foreach để duyệt qua từng phần tử trong mảng storedCart
   const updateCartData = async () => {
     const storedCart = JSON.parse(localStorage.getItem("cart")) || [];
-    const updatedCart = await Promise.all(
-      storedCart.map(async (item) => {
-        const vehicleData = await getVehicleById(item.vehicleId);
-        return { ...item, unitPrice: vehicleData?.purchasePrice };
-      })
-    );
+
+    // Step 1: Lấy tất cả vehicles cùng một lúc
+    const allVehicles = await getVehicles();
+
+    // Step 2: Map lại storedCart và cập nhật unitPrice từ allVehicles
+    const updatedCart = storedCart.map((item) => {
+      const vehicle = allVehicles.find((v) => v.vehicleID === item.vehicleId);
+      return { ...item, unitPrice: vehicle?.price };
+    });
+
+    // Cập nhật state
     setCartItems(updatedCart);
+
+    // Tính toán initialQuantities
     const initialQuantities = {};
     storedCart.forEach((item) => {
       initialQuantities[item.vehicleId] = item.qty;
     });
+
+    // Cập nhật state cho initialQuantities
     setItemQuantities(initialQuantities);
   };
 
@@ -91,14 +97,24 @@ export default function Cart() {
       ...prevQuantities,
       [vehicleId]: newQuantity,
     }));
+
     const updatedCart = cartItems.map((item) =>
       item.vehicleId === vehicleId ? { ...item, qty: newQuantity } : item
     );
+
     localStorage.setItem("cart", JSON.stringify(updatedCart));
-    updateCartData();
-    console.log(" update quantity");
+    setCartItems(updatedCart); // Update the local state without making an API call
+    console.log("update quantity");
   };
-  const handleCheckout = () => {};
+  const handleCheckout = async () => {
+    const data = await getCustomerByEmail(token.Email);
+    idCustomer = data.accountId;
+    console.log({
+      orderDetails: JSON.parse(localStorage.getItem("cart")),
+      totalPrice: calculateTotal().total,
+    });
+  };
+  console.log(idCustomer);
   useEffect(() => {
     updateCartData();
     console.log("useEffect render");
@@ -110,7 +126,7 @@ export default function Cart() {
         component="section"
         sx={{
           my: 10,
-          height: "90vh",
+          height: rowsPerPage !== 9 ? "90vh" : "",
         }}
       >
         <Container maxWidth="xl">

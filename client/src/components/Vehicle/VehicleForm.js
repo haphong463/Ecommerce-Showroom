@@ -45,7 +45,8 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
     setValue(newValue);
   };
   const [isUsed, setIsUsed] = useState(false);
-  const { entry, setVehicle, setVehicleData } = useContext(VehicleContext);
+  const { entry, setVehicle, setVehicleData, vehicleData } =
+    useContext(VehicleContext);
   const [brand, setBrand] = useState([]);
   const validationSchema = generateValidationSchema(entry);
   const initialValues = {
@@ -108,7 +109,7 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
             <Formik
               initialValues={initialValues}
               validationSchema={validationSchema}
-              onSubmit={(values) => {
+              onSubmit={(values, formikBag) => {
                 const newDay = dayjs(values.purchaseDate).format("YYYY-MM-DD");
                 const selectedBrand = brand.find(
                   (item) => item.value === values.brandId
@@ -133,6 +134,18 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
                   return formData;
                 });
                 if (!entry) {
+                  const vehicleNameExists = vehicleData.some(
+                    (item) =>
+                      item.name.toLowerCase() === values.name.toLowerCase()
+                  );
+                  if (vehicleNameExists) {
+                    formikBag.setFieldError(
+                      "name",
+                      "This name already exists in the vehicle list."
+                    );
+                    formikBag.setSubmitting(false);
+                    return;
+                  }
                   formData.append("modelId", modelID);
                   postVehicle(formData).then((data) => {
                     if (data) {

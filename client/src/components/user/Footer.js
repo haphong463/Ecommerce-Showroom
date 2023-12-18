@@ -51,14 +51,12 @@ export const Footer = () => {
     <Box
       component="footer"
       sx={{
-        position: "relative", // Thay đổi từ "absolute" thành "relative"
         width: "100%",
         backgroundColor: "#003580",
         color: "#fff",
         mt: "auto",
-        pt: 10,
+        pt: 5,
         pb: 2,
-        bottom: "auto", // Thay đổi từ "0" thành "auto"
       }}
     >
       <Container>

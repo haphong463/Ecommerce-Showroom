@@ -20,6 +20,10 @@ import { ServiceProvider } from "../context/ServiceContext";
 import { Profile } from "../containers/user/Profile";
 import { Order } from "../containers/admin/Order";
 import { OrderProvider } from "../context/OrderContext";
+import { SaleOrder } from "../containers/admin/SaleOrder";
+import { SaleOrderProvider } from "../context/SaleOrderContext";
+import { Employee } from "../containers/admin/Employee";
+import { AccountProvider } from "../context/AccountContext";
 
 export const publicRoutes = [
   {
@@ -66,14 +70,11 @@ export const publicRoutes = [
   { path: "/admin/login", component: <Login /> },
   { path: "/login", component: <Signin /> },
   { path: "/profile/:id", component: <Profile /> },
-];
-
-export const privateRoutes = [
-  { path: "/admin/", component: <Home />, roles: ["Admin", "Employee"] },
+  { path: "cart", component: <Cart /> },
+  { path: "/admin/", component: <Home /> },
   {
     path: "/admin/settings",
     component: <Settings />,
-    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/vehicles",
@@ -82,7 +83,6 @@ export const privateRoutes = [
         <Vehicles />
       </VehicleProvider>
     ),
-    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/brand",
@@ -91,12 +91,10 @@ export const privateRoutes = [
         <Brand />
       </BrandProvider>
     ),
-    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/customer",
     component: <Customer />,
-    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/vehicle/:id",
@@ -105,7 +103,6 @@ export const privateRoutes = [
         <VehicleDetailsAdmin />
       </VehicleProvider>
     ),
-    roles: ["Admin", "Employee"],
   },
   {
     path: "/admin/service",
@@ -114,20 +111,35 @@ export const privateRoutes = [
         <Service />
       </ServiceProvider>
     ),
-    roles: ["Admin", "Employee"],
   },
   {
-    path: "/admin/order",
+    path: "/admin/purchaseOrder",
     component: (
       <OrderProvider>
         <Order />
       </OrderProvider>
     ),
-    roles: ["Admin", "Employee"],
+  },
+  {
+    path: "/admin/salesOrder",
+    component: (
+      <SaleOrderProvider>
+        <SaleOrder />
+      </SaleOrderProvider>
+    ),
   },
   {
     path: "/admin/invoice",
     component: <Invoice />,
-    roles: ["Admin", "Employee"],
+  },
+  {
+    path: "/admin/employee",
+    component: (
+      <AccountProvider>
+        <Employee />
+      </AccountProvider>
+    ),
   },
 ];
+
+export const privateRoutes = [];

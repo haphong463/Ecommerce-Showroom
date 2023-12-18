@@ -39,7 +39,7 @@ namespace API.Controllers
                 {
                     OrderId = o.OrderId,
                     AccountId = o.Orders.AccountId,
-                    EmployeeId = o.Orders.EmployeeId,
+                    EmployeeId = (int)o.Orders.EmployeeId,
                     TotalPrice = o.Orders.TotalPrice
                 }).ToList()
             });
@@ -70,7 +70,7 @@ namespace API.Controllers
                     {
                         OrderId = o.OrderId,
                         AccountId = o.Orders.AccountId,
-                        EmployeeId = o.Orders.EmployeeId,
+                        EmployeeId = (int)o.Orders.EmployeeId,
                         TotalPrice = o.Orders.TotalPrice
                     }).ToList()
                 };

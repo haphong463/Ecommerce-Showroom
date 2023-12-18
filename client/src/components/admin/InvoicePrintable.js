@@ -30,7 +30,7 @@ import dayjs from "dayjs";
 import { getCustomer } from "../Customer/CustomerLibrary";
 import { getService } from "../Service/ServiceLibrary";
 import { InvoiceAddress } from "./InvoiceAddress";
-import { getEmployeeById } from "../employee/EmployeeLibrary";
+import { getEmployeeById } from "../Employee/EmployeeLibrary";
 const TAX_RATE = 0.07;
 function ccyFormat(num) {
   return num?.toLocaleString("en-US", { style: "currency", currency: "USD" });

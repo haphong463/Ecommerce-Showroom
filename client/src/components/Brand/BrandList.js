@@ -17,7 +17,7 @@ import { DataContext } from "../../context/DataContext";
 
 export const BrandList = () => {
   const { data, setData, setBrand, handleClickOpen } = useContext(BrandContext);
-  const { loading, setLoading } = useContext(DataContext);
+  const [loading, setLoading] = useState();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const handleDelete = (id) => {

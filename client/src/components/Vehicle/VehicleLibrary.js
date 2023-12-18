@@ -79,10 +79,6 @@ export const generateValidationSchema = (isEditing) =>
       .number()
       .required("Price is required")
       .typeError("Price must be a number"),
-    quantity: yup
-      .number()
-      .required("Quantity is required")
-      .typeError("Quantity must be a number"),
     brandId: yup.string().required("Brand is required"),
     manufacturingYear: yup.number().required("Manufacturing Year is required"),
     registrationNumber: yup
@@ -105,7 +101,6 @@ export const generateValidationSchema = (isEditing) =>
 export const formFields = [
   { name: "name", label: "Name*", type: "text" },
   { name: "price", label: "Price*", type: "number" },
-  { name: "quantity", label: "Quantity*", type: "number" },
   {
     name: "brandId",
     label: "Brand*",

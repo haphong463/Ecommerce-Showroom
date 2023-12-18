@@ -33,7 +33,7 @@ namespace API.Controllers
                 OrderId = o.OrderId,
                 Employee = new EmployeeDTO
                 {
-                    EmployeeId = o.EmployeeId,
+                    EmployeeId = (int)o.EmployeeId,
                     AccountId = o.Employee.AccountId
                 },
                 Account = new AccountDTO
@@ -94,7 +94,7 @@ namespace API.Controllers
                     OrderId = od.OrderId,
                     Employee = new EmployeeDTO
                     {
-                        EmployeeId = od.EmployeeId,
+                        EmployeeId = (int)od.EmployeeId,
                         AccountId = od.Employee.AccountId
                     },
                     Account = new AccountDTO

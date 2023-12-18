@@ -15,6 +15,8 @@ import InfoIcon from "@mui/icons-material/Info";
 import AppRegistrationIcon from "@mui/icons-material/AppRegistration";
 import DirectionsCarIcon from "@mui/icons-material/DirectionsCar";
 import PersonIcon from "@mui/icons-material/Person";
+import ShoppingCartIcon from '@mui/icons-material/ShoppingCart';
+
 import {
   Avatar,
   Badge,
@@ -28,6 +30,7 @@ import {
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { DataContext } from "../../context/DataContext";
+import styled from "@emotion/styled";
 
 const routes = [
   {
@@ -73,7 +76,14 @@ const routes = [
     position: "bot",
   },
 ];
-
+const StyledBadge = styled(Badge)(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -3,
+    top: 13,
+    border: `2px solid ${theme.palette.background.paper}`,
+    padding: '0 4px',
+  },
+}));
 export function SideBar({ onSetState, state }) {
   const navigate = useNavigate();
   const { token, logout } = React.useContext(DataContext);
@@ -94,6 +104,7 @@ export function SideBar({ onSetState, state }) {
 
   return (
     <React.Fragment>
+
       <IconButton onClick={toggleDrawer("right", true)}>
         <MenuIcon />
       </IconButton>
