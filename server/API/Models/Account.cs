@@ -17,6 +17,7 @@ namespace API.Models
         [Required, StringLength(11, MinimumLength = 10)]
         [RegularExpression(@"^[0-9]{10,11}$")]
         public string Phone { get; set; }
+        public string Address { get; set; }
         [Column(TypeName = "nvarchar(20)")]
         public string? Role { get; set; }
         public string? AvatarUrl { get; set; }

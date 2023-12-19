@@ -3,7 +3,10 @@ import React, { createContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { successToast } from "../components/Message";
 import Swal from "sweetalert2";
-import { getCustomerByEmail } from "../components/Customer/CustomerLibrary";
+import {
+  getCustomerByEmail,
+  getCustomerById,
+} from "../components/Customer/CustomerLibrary";
 export const DataContext = createContext();
 export const DataProvider = ({ children }) => {
   const [itemCart, setItemCart] = useState(
@@ -12,6 +15,7 @@ export const DataProvider = ({ children }) => {
       : 0
   );
   const [searchData, setSearchData] = useState([]);
+  const [user, setUser] = useState();
   const tokenLocal = localStorage.getItem("token");
   const [loading, setLoading] = useState();
   const [token, setToken] = useState(tokenLocal ? jwtDecode(tokenLocal) : null);
@@ -54,6 +58,9 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     if (token) {
       const refreshTokenTimeout = refreshAuthToken();
+      getCustomerById(token.Id).then((data) => {
+        setUser(data);
+      });
       return () => clearTimeout(refreshTokenTimeout);
     }
   }, [token]);
@@ -69,6 +76,7 @@ export const DataProvider = ({ children }) => {
     setSearchData,
     itemCart,
     setItemCart,
+    user,
   };
   return <DataContext.Provider value={values}>{children}</DataContext.Provider>;
 };

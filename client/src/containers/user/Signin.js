@@ -10,6 +10,7 @@ import {
   Typography,
   Box,
   Alert,
+  CircularProgress,
 } from "@mui/material";
 import Icon from "@mui/material/Icon";
 import { DataContext } from "../../context/DataContext";
@@ -23,6 +24,7 @@ const schema = yup.object().shape({
 });
 
 export const Signin = () => {
+  const [loadingSubmit, setLoadingSubmit] = useState(false);
   const { login } = useContext(DataContext);
   const [generalError, setGeneralError] = useState("");
   const {
@@ -34,17 +36,14 @@ export const Signin = () => {
   });
 
   const onSubmit = (data) => {
-    loginAuth(data)
-      .then((res) => {
-        if (res.data !== null) {
-          login(data);
-        } else {
-          setGeneralError(res.message);
-        }
-      })
-      .catch((err) => {
-        console.log("Error n");
-      });
+    setLoadingSubmit(true);
+    loginAuth(data).then((res) => {
+      if (res.data !== null) {
+        login(res);
+      } else {
+        setGeneralError(res.message);
+      }
+    });
   };
   const [capsLockEnabled, setCapsLockEnabled] = React.useState(false);
 
@@ -148,6 +147,11 @@ export const Signin = () => {
                 color="primary"
                 fullWidth
                 style={{ marginTop: "16px" }}
+                endIcon={
+                  loadingSubmit && (
+                    <CircularProgress size="1rem" color="inherit" />
+                  )
+                }
               >
                 Sign in
               </Button>

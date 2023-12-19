@@ -11,8 +11,7 @@ import {
   Typography,
 } from "@mui/material";
 import { DataContext } from "../../context/DataContext";
-import { useParams } from "react-router-dom";
-import { getCustomerById } from "../../components/Customer/CustomerLibrary";
+import { Navigate, useParams } from "react-router-dom";
 import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { ProfileInformation } from "../../components/Profile/ProfileInformation";
 
@@ -23,8 +22,9 @@ export const Profile = () => {
   };
   const { id } = useParams();
   const { token } = useContext(DataContext);
-
-
+  if (!token) {
+    return <Navigate to="/login"/>;
+  }
   return (
     <LayoutUser>
       <Box

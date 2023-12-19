@@ -6,7 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System.Security.Cryptography;
 using crypto;
-
+using System.Net;
+using System.Net.Mail;
 
 namespace API.Controllers
 {
@@ -18,10 +19,14 @@ namespace API.Controllers
         private readonly DatabaseContext _dbContext;
 
 
+
+
+
         public AccountController(DatabaseContext dbContext, IWebHostEnvironment env)
         {
             _dbContext = dbContext;
             _env = env;
+
         }
 
         [HttpGet]
@@ -104,7 +109,11 @@ namespace API.Controllers
                 await _dbContext.SaveChangesAsync();
 
 
+                // Tạo URL xác minh
+                var verificationUrl = Url.Action("VerifyEmail", "Account", new { token = account.VerifitcationToken }, Request.Scheme);
 
+                // Gửi email xác minh
+                await SendVerificationEmail(account.Email, verificationUrl);
 
 
                 if (account.Role == "Employee")
@@ -140,19 +149,30 @@ namespace API.Controllers
 
 
 
-        [HttpPost("verify")]
-        public async Task<ActionResult<ApiResponse<Account>>> Verify(string token)
+        [HttpGet("verify-email")]
+        public async Task<IActionResult> VerifyEmail(string token)
         {
-            var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.VerifitcationToken == token);
-            if (account == null)
+            try
             {
-                return BadRequest("Invalid token");
-            }
+                var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.VerifitcationToken == token);
+                if (account == null)
+                {
+                    return BadRequest("Invalid token");
+                }
 
-            account.VerifiedAt = DateTime.Now;
-            await _dbContext.SaveChangesAsync();
-            return Ok(new ApiResponse<Account>(account, "Account verified"));
+                // Xác minh email thành công: thực hiện các hành động cần thiết
+                // Đánh dấu email đã được xác minh, lưu thông tin xác minh thời gian, v.v.
+                account.VerifiedAt = DateTime.Now;
+                await _dbContext.SaveChangesAsync();
+                return Redirect("http://localhost:3000");
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<Account>.Exception(ex);
+            }
         }
+
+
 
 
 
@@ -271,6 +291,48 @@ namespace API.Controllers
             await _dbContext.SaveChangesAsync();
             return Ok(new ApiResponse<Account>(account, "Password successfully reset"));
         }
+
+
+
+
+        private async Task SendVerificationEmail(string email, string verificationUrl)
+        {
+            try
+            {
+                var fromAddress = new MailAddress("vuongyennhi0912@gmail.com", "Showroom");
+                var toAddress = new MailAddress(email, "Showroom");
+                const string fromPassword = "nexc uhaq eurs ntcw"; // Thay bằng mật khẩu email của bạn
+                const string subject = "Verify Your Email";
+
+                // Tạo nội dung email chứa URL xác minh
+                var body = $"Please click the following link to verify your email: <a href='{verificationUrl}'>Verify Email</a>";
+
+                var smtp = new SmtpClient
+                {
+                    Host = "smtp.gmail.com", // Thay bằng địa chỉ SMTP của bạn
+                    Port = 587, // Thay đổi cổng nếu cần
+                    EnableSsl = true, // Sử dụng SSL/TLS, thay đổi nếu không cần
+                    DeliveryMethod = SmtpDeliveryMethod.Network,
+                    UseDefaultCredentials = false,
+                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
+                };
+
+                using var message = new MailMessage(fromAddress, toAddress)
+                {
+                    Subject = subject,
+                    Body = body,
+                    IsBodyHtml = true
+                };
+
+                await smtp.SendMailAsync(message);
+            }
+            catch (Exception ex)
+            {
+                // Xử lý lỗi khi gửi email
+                Console.WriteLine("Error sending email: " + ex.Message);
+            }
+        }
+
 
 
 

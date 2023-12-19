@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { TabPanel } from "@mui/lab";
-import { Button, TextField, Typography } from "@mui/material";
+import { Button, Stack, TextField, Typography } from "@mui/material";
 import { Formik, Field, Form } from "formik";
 import * as yup from "yup";
 import { getCustomerById } from "../Customer/CustomerLibrary";
@@ -25,12 +25,15 @@ export function ProfileInformation({ id }) {
   }, []);
   return (
     <TabPanel value="1">
-      <Typography variant="h5">Profile Information</Typography>
+      <Typography variant="h5" mb={1}>
+        Profile Information
+      </Typography>
       {!loading && (
         <Formik
           initialValues={{
             email: information.email || "",
             phone: information.phone || "",
+            address: information.address || "",
           }}
           validationSchema={schema}
           onSubmit={(values) => {
@@ -39,30 +42,44 @@ export function ProfileInformation({ id }) {
           }}
         >
           <Form>
-            <Field name="email">
-              {({ field, meta }) => (
-                <TextField
-                  {...field}
-                  label="Email"
-                  fullWidth
-                  variant="outlined"
-                  error={meta.touched && !!meta.error}
-                  helperText={meta.touched && meta.error}
-                />
-              )}
-            </Field>
-            <Field name="phone">
-              {({ field, meta }) => (
-                <TextField
-                  {...field}
-                  label="Phone"
-                  fullWidth
-                  variant="outlined"
-                  error={meta.touched && !!meta.error}
-                  helperText={meta.touched && meta.error}
-                />
-              )}
-            </Field>
+            <Stack spacing={2}>
+              <Field name="email">
+                {({ field, meta }) => (
+                  <TextField
+                    {...field}
+                    label="Email"
+                    fullWidth
+                    variant="outlined"
+                    error={meta.touched && !!meta.error}
+                    helperText={meta.touched && meta.error}
+                  />
+                )}
+              </Field>
+              <Field name="phone">
+                {({ field, meta }) => (
+                  <TextField
+                    {...field}
+                    label="Phone"
+                    fullWidth
+                    variant="outlined"
+                    error={meta.touched && !!meta.error}
+                    helperText={meta.touched && meta.error}
+                  />
+                )}
+              </Field>
+              <Field name="address">
+                {({ field, meta }) => (
+                  <TextField
+                    {...field}
+                    label="Address"
+                    fullWidth
+                    variant="outlined"
+                    error={meta.touched && !!meta.error}
+                    helperText={meta.touched && meta.error}
+                  />
+                )}
+              </Field>
+            </Stack>
             <Button type="submit" variant="contained" color="primary">
               Save
             </Button>
