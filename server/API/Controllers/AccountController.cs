@@ -8,6 +8,9 @@ using System.Security.Cryptography;
 using crypto;
 using System.Net;
 using System.Net.Mail;
+using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.ComponentModel.DataAnnotations;
 
 namespace API.Controllers
 {
@@ -54,26 +57,63 @@ namespace API.Controllers
 
 
 
+        public class AccountResponse
+        {
+            public int AccountId { get; set; }
+            [Required, StringLength(50, MinimumLength = 10), Column(TypeName = "nvarchar(50)")]
+            public string Name { get; set; }
+            [EmailAddress, Column(TypeName = "nvarchar(320)"), StringLength(320)]
+            public string Email { get; set; }
+            [Required, StringLength(11, MinimumLength = 10)]
+            [RegularExpression(@"^[0-9]{10,11}$")]
+            public string Phone { get; set; }
+            public string? AvatarUrl { get; set; }
+            [Required, Column(TypeName = "nvarchar(20)")]
+            public string Gender { get; set; }
+            public DateTime DateOfBirth { get; set; }
+            public DateTime CreatedAt { get; set; } = DateTime.Now;
+            public DateTime UpdatedAt { get; set; }
+            public string? VerifitcationToken { get; set; }
+            public DateTime? VerifiedAt { get; set; }
+            public string? PasswordResetToken { get; set; }
+            public DateTime? ResetTokenExpires { get; set; }
+        }
+
+
 
         [HttpGet("{id}")]
-        public async Task<ActionResult<ApiResponse<Account>>> GetAccount(int id)
+        public async Task<ActionResult<ApiResponse<AccountResponse>>> GetAccount(int id)
         {
             try
             {
                 var account = await _dbContext.Accounts.FindAsync(id);
                 if (account == null)
                 {
-                    return Ok(new ApiResponse<Account>(null, "Account not found"));
+                    return Ok(new ApiResponse<AccountResponse>(null, "Account not found"));
                 }
                 else
                 {
-                    return Ok(new ApiResponse<Account>(account, "Get account successfully"));
+                    var accountResponse = new AccountResponse
+                    {
+                        AccountId = account.AccountId,
+                        Name = account.Name,
+                        Email = account.Email,
+                        Phone = account.Phone,
+                        AvatarUrl = account.AvatarUrl,
+                        Gender = account.Gender,
+                        DateOfBirth = account.DateOfBirth,
+                        CreatedAt = account.CreatedAt,
+                        UpdatedAt = account.UpdatedAt
+                        // Bổ sung các trường khác từ Account mà bạn muốn bao gồm trong AccountResponse ở đây
+                        // Bỏ qua các trường không cần thiết như Password, Token, ...
+                    };
+
+                    return Ok(new ApiResponse<AccountResponse>(accountResponse, "Get account successfully"));
                 }
             }
             catch (Exception ex)
             {
-                return ApiResponse<Account>.Exception(ex);
-
+                return ApiResponse<AccountResponse>.Exception(ex);
             }
         }
 
