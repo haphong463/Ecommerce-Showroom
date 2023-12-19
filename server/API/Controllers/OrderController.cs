@@ -143,7 +143,7 @@ namespace API.Controllers
             }
 
         }
-        [HttpPost]
+        /*[HttpPost]
         public async Task<ActionResult<ApiResponse<Order>>> PostOders([FromQuery] int serviceId, [FromQuery] int vehicleId, [FromForm] OrderDTO orderDTO)
         {
             if (!ModelState.IsValid)
@@ -182,7 +182,8 @@ namespace API.Controllers
                 return ApiResponse<Order>.Exception(ex);
             }
         }
-        /*[HttpPost]
+        */
+        [HttpPost]
         public async Task<ActionResult<ApiResponse<Order>>> PostOrders([FromForm] Order order)
         {
             if (!ModelState.IsValid)
@@ -254,7 +255,7 @@ namespace API.Controllers
                 // Xử lý ngoại lệ và trả về thông báo lỗi
                 return ApiResponse<Order>.Exception(ex);
             }
-        }*/
+        }
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<Order>>> UpdateOder(int id, [FromForm] OrderDTO orderUpdate)
         {

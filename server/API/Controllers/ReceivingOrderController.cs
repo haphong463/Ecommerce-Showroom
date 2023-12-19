@@ -73,7 +73,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<ReceivingOrder>>> PostReceivingOrder([FromForm] include_ReceivingOdDTO ReceivingOd)
+        public async Task<ActionResult<ApiResponse<ReceivingOrder>>> PostReceivingOrder([FromForm] ReceivingOrderDTO ReceivingOd)
         {
             if (!ModelState.IsValid)
             {
@@ -85,6 +85,14 @@ namespace API.Controllers
                 var result = _mapper.Map<ReceivingOrder>(ReceivingOd);
 
                 await _dbContext.ReceivingOrders.AddAsync(result);
+                await _dbContext.SaveChangesAsync();
+
+                foreach (var frameDto in ReceivingOd.Frame)
+                {
+                    var frame = _mapper.Map<Frame>(frameDto);
+                    result.Frame.Add(frame);
+                }
+
                 await _dbContext.SaveChangesAsync();
 
                 return Ok(new ApiResponse<ReceivingOrder>(result, "OrderCompany created successfully"));
