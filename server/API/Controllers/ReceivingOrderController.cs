@@ -73,7 +73,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<ReceivingOrder>>> PostReceivingOrder([FromForm] ReceivingOrderDTO ReceivingOd)
+        public async Task<ActionResult<ApiResponse<ReceivingOrder>>> PostReceivingOrder([FromForm] ReceivingOrder ReceivingOd)
         {
             if (!ModelState.IsValid)
             {
@@ -82,20 +82,41 @@ namespace API.Controllers
 
             try
             {
-                var result = _mapper.Map<ReceivingOrder>(ReceivingOd);
+                var ReceivingId = ReceivingOd.Id;
+                var FrameNumber = ReceivingOd.FrameNumber;
+                var PurchaseOrderId = ReceivingOd.PurchaseOrderId;
+                var Frame = ReceivingOd.Frame;  //list<Frame>
 
-                await _dbContext.ReceivingOrders.AddAsync(result);
+                var newReceive = new ReceivingOrder
+                {
+                    Id = ReceivingId,
+                    FrameNumber = FrameNumber,
+                    PurchaseOrderId = PurchaseOrderId
+                };
+
+                await _dbContext.ReceivingOrders.AddAsync(newReceive);
                 await _dbContext.SaveChangesAsync();
 
-                foreach (var frameDto in ReceivingOd.Frame)
+
+                if (Frame.Any())
                 {
-                    var frame = _mapper.Map<Frame>(frameDto);
-                    result.Frame.Add(frame);
+                    foreach (var item in Frame)
+                    {
+                        var newFrames = new Frame
+                        {
+                            FrameNumber = newReceive.FrameNumber,
+                            Id = item.Id,
+                            ReceivingOrderId = item.ReceivingOrderId,
+                            VehicleId = item.VehicleId
+                        };
+                        await _dbContext.Frames.AddAsync(newFrames);
+                    }
+                    await _dbContext.SaveChangesAsync();
                 }
 
-                await _dbContext.SaveChangesAsync();
+                var result = await _dbContext.ReceivingOrders.FindAsync(newReceive.Id);
 
-                return Ok(new ApiResponse<ReceivingOrder>(result, "OrderCompany created successfully"));
+                return Ok(new ApiResponse<ReceivingOrder>(result, "ReceivingOrder created successfully"));
             }
             catch (Exception ex)
             {
