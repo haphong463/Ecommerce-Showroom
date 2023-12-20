@@ -73,7 +73,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<ReceivingOrder>>> PostReceivingOrder([FromForm] ReceivingOrder ReceivingOd)
+        public async Task<ActionResult<ApiResponse<string>>> PostReceivingOrder([FromForm] List<string> frames, [FromForm] int vehicleId, [FromForm] int purchaseOrderId)
         {
             if (!ModelState.IsValid)
             {
@@ -82,41 +82,38 @@ namespace API.Controllers
 
             try
             {
-                var ReceivingId = ReceivingOd.Id;
-                var FrameNumber = ReceivingOd.FrameNumber;
-                var PurchaseOrderId = ReceivingOd.PurchaseOrderId;
-                var Frame = ReceivingOd.Frame;  //list<Frame>
+                //var ReceivingId = ReceivingOd.Id;
+                //var FrameNumber = ReceivingOd.FrameNumber;
+                //var PurchaseOrderId = ReceivingOd.PurchaseOrderId;
+                //var Frame = ReceivingOd.Frame;  //list<Frame>
 
                 var newReceive = new ReceivingOrder
                 {
-                    Id = ReceivingId,
-                    FrameNumber = FrameNumber,
-                    PurchaseOrderId = PurchaseOrderId
+                    PurchaseOrderId = purchaseOrderId
                 };
 
                 await _dbContext.ReceivingOrders.AddAsync(newReceive);
                 await _dbContext.SaveChangesAsync();
+                var result = await _dbContext.ReceivingOrders.FindAsync(newReceive.Id);
 
 
-                if (Frame.Any())
+                if (frames.Any())
                 {
-                    foreach (var item in Frame)
+                    foreach (var item in frames)
                     {
                         var newFrames = new Frame
                         {
-                            FrameNumber = newReceive.FrameNumber,
-                            Id = item.Id,
-                            ReceivingOrderId = item.ReceivingOrderId,
-                            VehicleId = item.VehicleId
+                            FrameNumber = item,
+                            ReceivingOrderId = result.Id,
+                            VehicleId = vehicleId
                         };
                         await _dbContext.Frames.AddAsync(newFrames);
                     }
                     await _dbContext.SaveChangesAsync();
                 }
 
-                var result = await _dbContext.ReceivingOrders.FindAsync(newReceive.Id);
 
-                return Ok(new ApiResponse<ReceivingOrder>(result, "ReceivingOrder created successfully"));
+                return Ok(result);
             }
             catch (Exception ex)
             {

@@ -44,8 +44,9 @@ export const Profile = () => {
       <Box
         component="section"
         sx={{
-          mb: 15,
+          mb: 27,
           mt: 10,
+          height: "50vh",
         }}
       >
         <Container maxWidth="xl">

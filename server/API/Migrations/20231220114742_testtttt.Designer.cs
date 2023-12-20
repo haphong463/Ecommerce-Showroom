@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    [Migration("20231212100103_testsettttt1")]
-    partial class testsettttt1
+    [Migration("20231220114742_testtttt")]
+    partial class testtttt
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,10 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("AccountId"), 1L, 1);
+
+                    b.Property<string>("Address")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("AvatarUrl")
                         .HasColumnType("nvarchar(max)");
@@ -60,16 +64,28 @@ namespace API.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
+                    b.Property<string>("PasswordResetToken")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Phone")
                         .IsRequired()
                         .HasMaxLength(11)
                         .HasColumnType("nvarchar(11)");
+
+                    b.Property<DateTime?>("ResetTokenExpires")
+                        .HasColumnType("datetime2");
 
                     b.Property<string>("Role")
                         .HasColumnType("nvarchar(20)");
 
                     b.Property<DateTime>("UpdatedAt")
                         .HasColumnType("datetime2");
+
+                    b.Property<DateTime?>("VerifiedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("VerifitcationToken")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("AccountId");
 
@@ -112,11 +128,38 @@ namespace API.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("EmployeeId");
 
                     b.HasIndex("AccountId");
 
                     b.ToTable("Employees");
+                });
+
+            modelBuilder.Entity("API.Models.Frame", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    b.Property<string>("FrameNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("ReceivingOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("Frames");
                 });
 
             modelBuilder.Entity("API.Models.Images", b =>
@@ -151,7 +194,7 @@ namespace API.Migrations
                     b.Property<int>("AccountId")
                         .HasColumnType("int");
 
-                    b.Property<int>("EmployeeId")
+                    b.Property<int?>("EmployeeId")
                         .HasColumnType("int");
 
                     b.Property<DateTime>("OrderDate")
@@ -170,6 +213,47 @@ namespace API.Migrations
                     b.HasIndex("EmployeeId");
 
                     b.ToTable("Orders");
+                });
+
+            modelBuilder.Entity("API.Models.OrderCompany", b =>
+                {
+                    b.Property<int>("orderCompanyId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("orderCompanyId"), 1L, 1);
+
+                    b.Property<string>("Brand")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("EmployeeId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("ModelId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("Quantity")
+                        .HasColumnType("int");
+
+                    b.Property<decimal>("SuggestPrice")
+                        .HasColumnType("decimal(10,2)");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("orderCompanyId");
+
+                    b.HasIndex("EmployeeId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("OrderCompanies");
                 });
 
             modelBuilder.Entity("API.Models.OrderDetails", b =>
@@ -222,6 +306,64 @@ namespace API.Migrations
                     b.HasIndex("ServiceId");
 
                     b.ToTable("OrderServices");
+                });
+
+            modelBuilder.Entity("API.Models.ReceivingOrder", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<string>("FrameNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PurchaseOrderId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("orderCompanyId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("orderCompanyId");
+
+                    b.ToTable("ReceivingOrders");
+                });
+
+            modelBuilder.Entity("API.Models.RegistrationData", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
+                    b.Property<int>("AccountId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("ExpiryDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("RegistrationAuthority")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("RegistrationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("VehicleId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AccountId");
+
+                    b.HasIndex("VehicleId");
+
+                    b.ToTable("RegistrationDatas");
                 });
 
             modelBuilder.Entity("API.Models.Service", b =>
@@ -323,6 +465,9 @@ namespace API.Migrations
                         .HasMaxLength(50)
                         .HasColumnType("nvarchar(50)");
 
+                    b.Property<string>("VIN")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("VehicleId");
 
                     b.HasIndex("BrandId");
@@ -339,6 +484,25 @@ namespace API.Migrations
                         .IsRequired();
 
                     b.Navigation("Account");
+                });
+
+            modelBuilder.Entity("API.Models.Frame", b =>
+                {
+                    b.HasOne("API.Models.ReceivingOrder", "ReceivingOrder")
+                        .WithMany("Frame")
+                        .HasForeignKey("Id")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.HasOne("Vehicle", "Vehicle")
+                        .WithMany("Frames")
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ReceivingOrder");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("API.Models.Images", b =>
@@ -363,12 +527,30 @@ namespace API.Migrations
                     b.HasOne("API.Models.Employee", "Employee")
                         .WithMany("Order")
                         .HasForeignKey("EmployeeId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Account");
 
                     b.Navigation("Employee");
+                });
+
+            modelBuilder.Entity("API.Models.OrderCompany", b =>
+                {
+                    b.HasOne("API.Models.Employee", "Employee")
+                        .WithMany()
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Employee");
+
+                    b.Navigation("Vehicle");
                 });
 
             modelBuilder.Entity("API.Models.OrderDetails", b =>
@@ -409,6 +591,34 @@ namespace API.Migrations
                     b.Navigation("Services");
                 });
 
+            modelBuilder.Entity("API.Models.ReceivingOrder", b =>
+                {
+                    b.HasOne("API.Models.OrderCompany", "OrderCompany")
+                        .WithMany()
+                        .HasForeignKey("orderCompanyId");
+
+                    b.Navigation("OrderCompany");
+                });
+
+            modelBuilder.Entity("API.Models.RegistrationData", b =>
+                {
+                    b.HasOne("API.Models.Account", "Account")
+                        .WithMany()
+                        .HasForeignKey("AccountId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Vehicle", "Vehicle")
+                        .WithMany()
+                        .HasForeignKey("VehicleId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Account");
+
+                    b.Navigation("Vehicle");
+                });
+
             modelBuilder.Entity("Vehicle", b =>
                 {
                     b.HasOne("API.Models.Brand", "Brand")
@@ -442,6 +652,11 @@ namespace API.Migrations
                     b.Navigation("OrderServices");
                 });
 
+            modelBuilder.Entity("API.Models.ReceivingOrder", b =>
+                {
+                    b.Navigation("Frame");
+                });
+
             modelBuilder.Entity("API.Models.Service", b =>
                 {
                     b.Navigation("OrderServices");
@@ -449,6 +664,8 @@ namespace API.Migrations
 
             modelBuilder.Entity("Vehicle", b =>
                 {
+                    b.Navigation("Frames");
+
                     b.Navigation("Images");
 
                     b.Navigation("OrderDetails");

@@ -39,8 +39,6 @@ export const OrderList = ({ orderList }) => {
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [dataToPost, setDataToPost] = useState();
-  const [vehicleId, setVehicleId] = useState();
-  const [purchaseOrderId, setPurchaseOrderId] = useState();
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogFields, setDialogFields] = useState([]);
   const handleConfirmClick = (vehicleId, quantity, purchaseOrderId) => {
@@ -50,22 +48,16 @@ export const OrderList = ({ orderList }) => {
     }
     setDialogFields(fields);
     setOpenDialog(true);
-    setPurchaseOrderId(purchaseOrderId);
-    setVehicleId(vehicleId);
-    // Perform additional actions based on orderId if needed
-    console.log(`Clicked Confirm for Order ID ${purchaseOrderId}`);
+    setDataToPost((prev) => ({ ...prev, vehicleId, purchaseOrderId }));
   };
 
   const handleReceivingOrder = () => {
-    const frames = dialogFields.map((frameNumber, index) => ({
-      frameNumber,
-      vehicleId,
-    }));
-    const dataToPost = {
-      frame: frames,
+    const dataPost = {
+      frames: [...dialogFields],
+      vehicleId: dataToPost.vehicleId,
+      purchaseOrderId: dataToPost.purchaseOrderId,
     };
-    postReceivingOrder(dataToPost);
-    console.log(dataToPost);
+    postReceivingOrder(dataPost);
   };
   const handleDialogClose = () => {
     setOpenDialog(false);
@@ -82,8 +74,8 @@ export const OrderList = ({ orderList }) => {
     getPurchaseOrder().then((data) => {
       if (data !== null) {
         setOrderData(data);
-        setLoading(false);
       }
+      setLoading(false);
     });
   }, []);
 
@@ -111,12 +103,17 @@ export const OrderList = ({ orderList }) => {
               ? orderData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
+                    console.log(row);
                     return (
                       <TableRow hover role="checkbox" tabIndex={-1} key={index}>
-                        <TableCell>{row.vehicle.modelId}</TableCell>
+                        <TableCell>{row.modelId}</TableCell>
                         <TableCell>{row.suggestPrice}</TableCell>
                         <TableCell>{row.quantity}</TableCell>
                         <TableCell align="center">{row.brand}</TableCell>
+                        <TableCell align="center">
+                          {row.employee.name}
+                        </TableCell>
+
                         <TableCell align="center">
                           <Button
                             variant="contained"

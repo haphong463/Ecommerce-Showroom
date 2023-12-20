@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace API.Migrations
 {
-    public partial class testsettttt : Migration
+    public partial class testttt123 : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -19,12 +19,17 @@ namespace API.Migrations
                     Email = table.Column<string>(type: "nvarchar(320)", maxLength: 320, nullable: false),
                     Password = table.Column<string>(type: "nvarchar(100)", maxLength: 100, nullable: false),
                     Phone = table.Column<string>(type: "nvarchar(11)", maxLength: 11, nullable: false),
+                    Address = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Role = table.Column<string>(type: "nvarchar(20)", nullable: true),
                     AvatarUrl = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Gender = table.Column<string>(type: "nvarchar(20)", nullable: false),
                     DateOfBirth = table.Column<DateTime>(type: "datetime2", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
+                    UpdatedAt = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    VerifitcationToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    VerifiedAt = table.Column<DateTime>(type: "datetime2", nullable: true),
+                    PasswordResetToken = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    ResetTokenExpires = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -67,6 +72,7 @@ namespace API.Migrations
                 {
                     EmployeeId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     AccountId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
@@ -92,6 +98,7 @@ namespace API.Migrations
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     BrandId = table.Column<int>(type: "int", nullable: false),
                     ModelId = table.Column<string>(type: "nvarchar(50)", nullable: true),
+                    VIN = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ManufacturingYear = table.Column<int>(type: "int", nullable: false),
                     RegistrationNumber = table.Column<string>(type: "nvarchar(20)", maxLength: 20, nullable: false),
                     Color = table.Column<string>(type: "nvarchar(30)", maxLength: 30, nullable: false),
@@ -123,10 +130,10 @@ namespace API.Migrations
                     OrderId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     AccountId = table.Column<int>(type: "int", nullable: false),
-                    EmployeeId = table.Column<int>(type: "int", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: true),
                     OrderStatus = table.Column<int>(type: "int", nullable: false),
                     OrderDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    TotalPrice = table.Column<int>(type: "int", nullable: false)
+                    TotalPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -159,6 +166,64 @@ namespace API.Migrations
                     table.PrimaryKey("PK_Images", x => x.ImageId);
                     table.ForeignKey(
                         name: "FK_Images_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
+                        principalColumn: "VehicleId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "OrderCompanies",
+                columns: table => new
+                {
+                    orderCompanyId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Brand = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    Quantity = table.Column<int>(type: "int", nullable: false),
+                    SuggestPrice = table.Column<decimal>(type: "decimal(10,2)", nullable: false),
+                    VehicleId = table.Column<int>(type: "int", nullable: false),
+                    EmployeeId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OrderCompanies", x => x.orderCompanyId);
+                    table.ForeignKey(
+                        name: "FK_OrderCompanies_Employees_EmployeeId",
+                        column: x => x.EmployeeId,
+                        principalTable: "Employees",
+                        principalColumn: "EmployeeId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_OrderCompanies_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
+                        principalColumn: "VehicleId",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "RegistrationDatas",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    VehicleId = table.Column<int>(type: "int", nullable: false),
+                    AccountId = table.Column<int>(type: "int", nullable: false),
+                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    ExpiryDate = table.Column<DateTime>(type: "datetime2", nullable: false),
+                    RegistrationAuthority = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_RegistrationDatas", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_RegistrationDatas_Accounts_AccountId",
+                        column: x => x.AccountId,
+                        principalTable: "Accounts",
+                        principalColumn: "AccountId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_RegistrationDatas_Vehicles_VehicleId",
                         column: x => x.VehicleId,
                         principalTable: "Vehicles",
                         principalColumn: "VehicleId",
@@ -219,14 +284,75 @@ namespace API.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "ReceivingOrders",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    FrameNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    PurchaseOrderId = table.Column<int>(type: "int", nullable: false),
+                    orderCompanyId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ReceivingOrders", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ReceivingOrders_OrderCompanies_orderCompanyId",
+                        column: x => x.orderCompanyId,
+                        principalTable: "OrderCompanies",
+                        principalColumn: "orderCompanyId");
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Frames",
+                columns: table => new
+                {
+                    Id = table.Column<int>(type: "int", nullable: false),
+                    FrameNumber = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    VehicleId = table.Column<int>(type: "int", nullable: false),
+                    ReceivingOrderId = table.Column<int>(type: "int", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Frames", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Frames_ReceivingOrders_Id",
+                        column: x => x.Id,
+                        principalTable: "ReceivingOrders",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Frames_Vehicles_VehicleId",
+                        column: x => x.VehicleId,
+                        principalTable: "Vehicles",
+                        principalColumn: "VehicleId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Employees_AccountId",
                 table: "Employees",
                 column: "AccountId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Frames_VehicleId",
+                table: "Frames",
+                column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Images_VehicleId",
                 table: "Images",
+                column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderCompanies_EmployeeId",
+                table: "OrderCompanies",
+                column: "EmployeeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OrderCompanies_VehicleId",
+                table: "OrderCompanies",
                 column: "VehicleId");
 
             migrationBuilder.CreateIndex(
@@ -260,6 +386,21 @@ namespace API.Migrations
                 column: "ServiceId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_ReceivingOrders_orderCompanyId",
+                table: "ReceivingOrders",
+                column: "orderCompanyId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RegistrationDatas_AccountId",
+                table: "RegistrationDatas",
+                column: "AccountId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_RegistrationDatas_VehicleId",
+                table: "RegistrationDatas",
+                column: "VehicleId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Vehicles_BrandId",
                 table: "Vehicles",
                 column: "BrandId");
@@ -267,6 +408,9 @@ namespace API.Migrations
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropTable(
+                name: "Frames");
+
             migrationBuilder.DropTable(
                 name: "Images");
 
@@ -277,7 +421,10 @@ namespace API.Migrations
                 name: "OrderServices");
 
             migrationBuilder.DropTable(
-                name: "Vehicles");
+                name: "RegistrationDatas");
+
+            migrationBuilder.DropTable(
+                name: "ReceivingOrders");
 
             migrationBuilder.DropTable(
                 name: "Orders");
@@ -286,13 +433,19 @@ namespace API.Migrations
                 name: "Services");
 
             migrationBuilder.DropTable(
-                name: "Brands");
+                name: "OrderCompanies");
 
             migrationBuilder.DropTable(
                 name: "Employees");
 
             migrationBuilder.DropTable(
+                name: "Vehicles");
+
+            migrationBuilder.DropTable(
                 name: "Accounts");
+
+            migrationBuilder.DropTable(
+                name: "Brands");
         }
     }
 }

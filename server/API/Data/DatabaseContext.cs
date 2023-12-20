@@ -70,7 +70,7 @@ namespace API.Data
             modelBuilder.Entity<ReceivingOrder>()
                 .HasMany(ro => ro.Frame)
                 .WithOne(f => f.ReceivingOrder)
-                .HasForeignKey(f => f.FrameNumber)
+                .HasForeignKey(f => f.Id)
                 .OnDelete(DeleteBehavior.Restrict);
 
             //modelBuilder.Entity<OrderDetails>()

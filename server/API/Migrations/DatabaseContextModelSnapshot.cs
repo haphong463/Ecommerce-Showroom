@@ -143,10 +143,9 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("FrameNumber")
-                        .HasColumnType("int");
+                    b.Property<string>("FrameNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("ReceivingOrderId")
                         .HasColumnType("int");
@@ -155,8 +154,6 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("FrameNumber");
 
                     b.HasIndex("VehicleId");
 
@@ -230,6 +227,14 @@ namespace API.Migrations
 
                     b.Property<int>("EmployeeId")
                         .HasColumnType("int");
+
+                    b.Property<string>("ModelId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -308,9 +313,6 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("FrameNumber")
-                        .HasColumnType("int");
 
                     b.Property<int>("PurchaseOrderId")
                         .HasColumnType("int");
@@ -482,7 +484,7 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Models.ReceivingOrder", "ReceivingOrder")
                         .WithMany("Frame")
-                        .HasForeignKey("FrameNumber")
+                        .HasForeignKey("Id")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

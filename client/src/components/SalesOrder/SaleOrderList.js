@@ -104,7 +104,6 @@ export const SaleOrderList = () => {
               ? data
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
-                    console.log(row);
                     return (
                       <TableRow
                         hover

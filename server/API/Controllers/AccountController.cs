@@ -60,23 +60,12 @@ namespace API.Controllers
         public class AccountResponse
         {
             public int AccountId { get; set; }
-            [Required, StringLength(50, MinimumLength = 10), Column(TypeName = "nvarchar(50)")]
             public string Name { get; set; }
-            [EmailAddress, Column(TypeName = "nvarchar(320)"), StringLength(320)]
             public string Email { get; set; }
-            [Required, StringLength(11, MinimumLength = 10)]
-            [RegularExpression(@"^[0-9]{10,11}$")]
             public string Phone { get; set; }
             public string? AvatarUrl { get; set; }
-            [Required, Column(TypeName = "nvarchar(20)")]
             public string Gender { get; set; }
             public DateTime DateOfBirth { get; set; }
-            public DateTime CreatedAt { get; set; } = DateTime.Now;
-            public DateTime UpdatedAt { get; set; }
-            public string? VerifitcationToken { get; set; }
-            public DateTime? VerifiedAt { get; set; }
-            public string? PasswordResetToken { get; set; }
-            public DateTime? ResetTokenExpires { get; set; }
         }
 
 
@@ -102,8 +91,7 @@ namespace API.Controllers
                         AvatarUrl = account.AvatarUrl,
                         Gender = account.Gender,
                         DateOfBirth = account.DateOfBirth,
-                        CreatedAt = account.CreatedAt,
-                        UpdatedAt = account.UpdatedAt
+
                         // Bổ sung các trường khác từ Account mà bạn muốn bao gồm trong AccountResponse ở đây
                         // Bỏ qua các trường không cần thiết như Password, Token, ...
                     };
@@ -156,7 +144,7 @@ namespace API.Controllers
                 await SendVerificationEmail(account.Email, verificationUrl);
 
 
-                if (account.Role == "Employee")
+                if (account.Role == "Employee" || account.Role == "Admin")
                 {
                     var newEmployee = new Employee
                     {
@@ -204,7 +192,7 @@ namespace API.Controllers
                 // Đánh dấu email đã được xác minh, lưu thông tin xác minh thời gian, v.v.
                 account.VerifiedAt = DateTime.Now;
                 await _dbContext.SaveChangesAsync();
-                return Redirect("http://localhost:3000");
+                return Redirect("http://localhost:3000/login?verify=1");
             }
             catch (Exception ex)
             {

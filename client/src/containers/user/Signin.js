@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { useForm, Controller } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
@@ -14,7 +14,7 @@ import {
 } from "@mui/material";
 import Icon from "@mui/material/Icon";
 import { DataContext } from "../../context/DataContext";
-import { Link } from "react-router-dom";
+import { Link, Navigate, useLocation } from "react-router-dom";
 import { loginAuth } from "../../components/Auth";
 
 // Define validation schema using yup
@@ -22,11 +22,18 @@ const schema = yup.object().shape({
   email: yup.string().email("Invalid email.").required("Email is required."),
   password: yup.string().required("Password is required."),
 });
+function useQuery() {
+  const { search } = useLocation();
 
+  return React.useMemo(() => new URLSearchParams(search), [search]);
+}
 export const Signin = () => {
+  const query = useQuery();
   const [loadingSubmit, setLoadingSubmit] = useState(false);
-  const { login } = useContext(DataContext);
+  const { login, token } = useContext(DataContext);
   const [generalError, setGeneralError] = useState("");
+  const [verificationMessage, setVerificationMessage] = useState("");
+
   const {
     control,
     handleSubmit,
@@ -52,6 +59,24 @@ export const Signin = () => {
     const isCapsLockOn = e.getModifierState("CapsLock");
     setCapsLockEnabled(isCapsLockOn);
   };
+  const clearQueryParams = () => {
+    const { protocol, host, pathname } = window.location;
+    const newUrl = `${protocol}//${host}${pathname}`;
+    window.history.replaceState({}, document.title, newUrl);
+  };
+  useEffect(() => {
+    const verifyParam = query.get("verify");
+    if (verifyParam === "1") {
+      setVerificationMessage(
+        "Email verification successful. You can now log in."
+      );
+      clearQueryParams();
+    }
+  }, []);
+
+  if (token) {
+    return <Navigate to="/" />;
+  }
   return (
     <LayoutUser>
       <Box
@@ -99,6 +124,16 @@ export const Signin = () => {
                   }}
                 >
                   {generalError}
+                </Alert>
+              )}
+              {verificationMessage && (
+                <Alert
+                  severity="success"
+                  sx={{
+                    my: 2,
+                  }}
+                >
+                  {verificationMessage}
                 </Alert>
               )}
 

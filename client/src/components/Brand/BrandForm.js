@@ -45,7 +45,7 @@ const BrandForm = () => {
           "This name already exists in the brand list."
         );
         formikBag.setSubmitting(false);
-        return URL.revokeObjectURL(preview);
+        return;
       }
       postBrand(formData).then((data) => {
         if (data !== null) {
@@ -72,6 +72,7 @@ const BrandForm = () => {
 
   useEffect(() => {
     const file = selectedFile;
+    console.log("goi lai useEffect");
     if (file) {
       const objectUrl = URL.createObjectURL(file);
       setPreview(objectUrl);
@@ -80,7 +81,15 @@ const BrandForm = () => {
   }, [selectedFile]);
   // end preview
   return (
-    <Dialog open={openBrandForm} onClose={onClose} maxWidth="100%">
+    <Dialog
+      open={openBrandForm}
+      onClose={() => {
+        preview && URL.revokeObjectURL(preview);
+        setPreview();
+        onClose();
+      }}
+      maxWidth="100%"
+    >
       <DialogTitle
         variant="h3"
         color="text.secondary"
@@ -118,7 +127,15 @@ const BrandForm = () => {
                 >
                   {brand ? "Save" : "Create"}
                 </Button>
-                <Button variant="contained" color="error" onClick={onClose}>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={() => {
+                    onClose();
+                    preview && URL.revokeObjectURL(preview);
+                    setPreview();
+                  }}
+                >
                   Cancel
                 </Button>
               </DialogActions>

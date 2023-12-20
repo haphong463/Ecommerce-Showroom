@@ -23,6 +23,7 @@ import {
 import { OrderContext } from "../../context/OrderContext";
 import {
   generateValidationSchemaOrder,
+  getPurchaseOrder,
   postPurchaseOrder,
 } from "./PurchaseOrderLibrary";
 import { successToast } from "../Message";
@@ -31,7 +32,7 @@ import { getVehicles } from "../Vehicle/VehicleLibrary";
 import { getCustomer } from "../Customer/CustomerLibrary";
 import { DataContext } from "../../context/DataContext";
 import { getEmployeeById } from "../Employee/EmployeeLibrary";
-const OrderForm = ({ orderList, setOrderList }) => {
+const OrderForm = () => {
   const { onClose, setOrderData, openOrderForm, order } =
     useContext(OrderContext);
   const { token } = useContext(DataContext);
@@ -51,14 +52,11 @@ const OrderForm = ({ orderList, setOrderList }) => {
     );
 
     formikBag.setFieldValue("vehicleId", vehicleInfo.vehicleID);
+    formikBag.setFieldValue("name", vehicleInfo.name);
+    formikBag.setFieldValue("modelId", vehicleInfo.modelId);
     formikBag.setFieldValue("brandId", vehicleInfo.brand.name);
     formikBag.setFieldValue("modelName", vehicleInfo.modelId);
   };
-  useEffect(() => {
-    getVehicles().then((data) => {
-      setVehicleList(data);
-    });
-  }, []);
 
   const validationSchema = generateValidationSchemaOrder();
   const submitAPI = async (values, formikProps) => {
@@ -69,10 +67,13 @@ const OrderForm = ({ orderList, setOrderList }) => {
         quantity: values.quantity,
         employeeId: employeeId,
         brand: values.brandId,
+        modelId: values.modelId,
+        name: values.name,
       };
       console.log(dataToPost);
       postPurchaseOrder(dataToPost).then((data) => {
         if (data !== null) {
+          console.log(data);
           setOrderData((prev) => [...prev, data]);
           onClose();
           successToast("Create a new purchase order successfully!");
@@ -91,13 +92,20 @@ const OrderForm = ({ orderList, setOrderList }) => {
       //   });
     }
   };
+
   useEffect(() => {
+    getVehicles().then((data) => {
+      if (data) {
+        setVehicleList(data);
+      }
+    });
     getCustomer().then((data) => {
       if (data) {
         const employee = data.find(
           (item) => item.accountId === Number(token.Id)
         );
-        if (employee.role === "Employee") {
+        console.log(employee);
+        if (employee.role === "Employee" || employee.role === "Admin") {
           getEmployeeById(token.Id).then((data) => {
             setEmployeeId(data.employeeId);
           });

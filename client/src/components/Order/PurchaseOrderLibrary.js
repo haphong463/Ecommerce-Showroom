@@ -27,14 +27,17 @@ export const putPurchaseOrder = async (vehicle, id) =>
   await handleRequest("put", `/${id}`, vehicle);
 
 export const columns = [
-  { id: "modelName", label: "Model Number", minWidth: 30 },
+  { id: "modelId", label: "Model Number", minWidth: 30 },
   { id: "price", label: "Price", minWidth: 100 },
   { id: "quantity", label: "Quantity", minWidth: 200, align: "left" },
   { id: "brandId", label: "Brands", minWidth: 200, align: "center" },
+  { id: "employee", label: "Employee", minWidth: 200, align: "center" },
   { id: "action", label: "Action", minWidth: 200, align: "center" },
 ];
 
 export const generateValidationSchemaOrder = () =>
   yup.object().shape({
     modelName: yup.string().required("Model number is required."),
+    quantity: yup.number().required("Quantity is required"),
+    suggestPrice: yup.number().required("Suggest price is required"),
   });

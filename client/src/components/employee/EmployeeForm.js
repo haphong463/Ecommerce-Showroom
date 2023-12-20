@@ -38,6 +38,7 @@ const schema = yup.object().shape({
       /^(?=.*[A-Z])(?=.*[\W_]).+$/,
       "Password must contain at least one uppercase letter and one special character or underscore."
     ),
+  address: yup.string().required("Address is required"),
   phone: yup
     .string()
     .required("Phone number is required")
@@ -51,6 +52,7 @@ const formFields = [
   { label: "Phone", name: "phone" },
   { label: "Gender", name: "gender" },
   { label: "Date of Birth", name: "dateOfBirth" },
+  { label: "Address", name: "address" },
   { label: "Profile Image", name: "profileImage" },
 ];
 const EmployeeForm = () => {
@@ -150,7 +152,7 @@ const EmployeeForm = () => {
                 <Grid
                   item
                   xs={12}
-                  sm={name === "profileImage" ? 12 : 6}
+                  sm={name === "profileImage" || name === "address" ? 12 : 6}
                   key={index}
                 >
                   {name === "profileImage" ? (
@@ -223,12 +225,6 @@ const EmployeeForm = () => {
                       autoComplete={name}
                       error={!!errors[name]}
                       helperText={errors[name]?.message}
-                      {...(index === 6
-                        ? {
-                            type: "date",
-                            InputLabelProps: { shrink: true },
-                          }
-                        : {})}
                     />
                   )}
                 </Grid>

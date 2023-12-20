@@ -2,6 +2,6 @@
 {
     public class ReceivingOrderDTO
     {
-        public List<FrameBrief> Frame { get; set; }
+        public List<FrameBrief> Frames { get; set; }
     }
 }

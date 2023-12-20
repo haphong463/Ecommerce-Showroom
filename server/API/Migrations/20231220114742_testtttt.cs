@@ -4,12 +4,19 @@
 
 namespace API.Migrations
 {
-    public partial class testetstestsea : Migration
+    public partial class testtttt : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AddColumn<string>(
-                name: "Brand",
+                name: "ModelId",
+                table: "OrderCompanies",
+                type: "nvarchar(max)",
+                nullable: false,
+                defaultValue: "");
+
+            migrationBuilder.AddColumn<string>(
+                name: "Name",
                 table: "OrderCompanies",
                 type: "nvarchar(max)",
                 nullable: false,
@@ -19,7 +26,11 @@ namespace API.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropColumn(
-                name: "Brand",
+                name: "ModelId",
+                table: "OrderCompanies");
+
+            migrationBuilder.DropColumn(
+                name: "Name",
                 table: "OrderCompanies");
         }
     }

@@ -36,13 +36,16 @@ namespace API.Controllers
                     {
                         orderCompanyId = o.orderCompanyId,
                         Brand = o.Brand,
+                        ModelId = o.ModelId,
+                        Name = o.Name,
                         Quantity = o.Quantity,
                         SuggestPrice = o.SuggestPrice,
                         EmployeeId = o.EmployeeId,
                         Employee = new EmployeeDTO
                         {
                             EmployeeId = o.EmployeeId,
-                            AccountId = o.Employee.AccountId
+                            AccountId = o.Employee.AccountId,
+                            Name = o.Employee.Name,
                         },
                         VehicleId = o.VehicleId,
                         Vehicle = new include_VehicleDTO

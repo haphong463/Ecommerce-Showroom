@@ -28,7 +28,14 @@ export const columns = [
   { id: "orderId", label: "#", minWidth: 30 },
   { id: "account", label: "Customer", minWidth: 100 },
   { id: "employee", label: "Employee", minWidth: 200, align: "left" },
-  { id: "total", label: "Total", minWidth: 200, align: "center" },
+  {
+    id: "totalPrice",
+    label: "Total",
+    minWidth: 200,
+    align: "center",
+    format: (value) =>
+      value.toLocaleString("en-US", { style: "currency", currency: "USD" }),
+  },
   { id: "action", label: "Action", minWidth: 200, align: "center" },
 ];
 

@@ -45,7 +45,6 @@ namespace API.Controllers
                         Receiving_order = new include_ReceivingOdDTO
                         {
                             Id = o.ReceivingOrder.Id,
-                            FrameNumber = o.ReceivingOrder.FrameNumber,
                             PurchaseOrderId = o.ReceivingOrder.PurchaseOrderId
                         }
                     });
@@ -88,7 +87,6 @@ namespace API.Controllers
                         Receiving_order = new include_ReceivingOdDTO
                         {
                             Id = list.ReceivingOrder.Id,
-                            FrameNumber = list.ReceivingOrder.FrameNumber,
                             PurchaseOrderId = list.ReceivingOrder.PurchaseOrderId
                         }
                     };
