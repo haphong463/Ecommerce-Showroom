@@ -9,7 +9,9 @@ import TableRow from "@mui/material/TableRow";
 import {
   Button,
   Dialog,
+  DialogActions,
   DialogContent,
+  Grid,
   IconButton,
   Skeleton,
   Stack,
@@ -27,6 +29,7 @@ import {
   getOrder,
   getPurchaseOrder,
 } from "./PurchaseOrderLibrary";
+import { postReceivingOrder } from "../ReceivingOrder/ReceivingOrderLibrary";
 
 export const OrderList = ({ orderList }) => {
   const { orderData, setOrderData, setOrder, handleClickOpen } =
@@ -35,71 +38,38 @@ export const OrderList = ({ orderList }) => {
   const [loading, setLoading] = useState();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
-  //   const handleDelete = (id) => {
-  //     const order = orderData.find((item) => item.orderId === id);
-  //     console.log(order);
-  //     if (order && order.orders.length > 0) {
-  //       // Check if the specific brand has associated vehicles
-  //       Swal.fire({
-  //         title: "Cannot delete!",
-  //         text: "This Order has associated orders. Please delete the orders first.",
-  //         icon: "error",
-  //       });
-  //     } else {
-  //       Swal.fire({
-  //         title: "Are you sure?",
-  //         text: "You will not be able to recover this Order!",
-  //         icon: "warning",
-  //         showCancelButton: true,
-  //         confirmButtonText: "Yes, delete it!",
-  //         cancelButtonText: "No, cancel!",
-  //       }).then((result) => {
-  //         if (result.isConfirmed) {
-  //           // User clicked 'Yes, delete it!'
-  //           deleteOrder(id).then((data) => {
-  //             if (data !== null) {
-  //               console.log(data);
-  //               setOrderData((prev) =>
-  //                 prev.filter((item) => item.OrderId !== data.OrderId)
-  //               );
-  //               dangerMessage("Delete a Order successfully!");
-  //             }
-  //           });
-  //         } else if (result.dismiss === Swal.DismissReason.cancel) {
-  //           // User clicked 'No, cancel!'
-  //           Swal.fire("Cancelled", "Your Order is safe :)", "info");
-  //         }
-  //       });
-  //     }
-  //   };
-
-  //   const handleEdit = (id) => {
-  //     const Order = OrderData.find((item) => item.OrderId === id);
-  //     if (Order !== null) {
-  //       setOrder(Order);
-  //       handleClickOpen();
-  //     }
-  //   };
+  const [dataToPost, setDataToPost] = useState();
+  const [vehicleId, setVehicleId] = useState();
+  const [purchaseOrderId, setPurchaseOrderId] = useState();
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogFields, setDialogFields] = useState([]);
-  console.log(dialogFields);
-  // Function to handle the button click and open the dialog with text fields
-  const handleConfirmClick = (orderId, quantity) => {
+  const handleConfirmClick = (vehicleId, quantity, purchaseOrderId) => {
     const fields = [];
     for (let i = 0; i < quantity; i++) {
-      fields.push(""); // Initialize text fields with empty values
+      fields.push("");
     }
     setDialogFields(fields);
     setOpenDialog(true);
+    setPurchaseOrderId(purchaseOrderId);
+    setVehicleId(vehicleId);
     // Perform additional actions based on orderId if needed
-    console.log(`Clicked Confirm for Order ID ${orderId}`);
+    console.log(`Clicked Confirm for Order ID ${purchaseOrderId}`);
   };
 
-  // Function to handle the dialog close
+  const handleReceivingOrder = () => {
+    const frames = dialogFields.map((frameNumber, index) => ({
+      frameNumber,
+      vehicleId,
+    }));
+    const dataToPost = {
+      frame: frames,
+    };
+    postReceivingOrder(dataToPost);
+    console.log(dataToPost);
+  };
   const handleDialogClose = () => {
     setOpenDialog(false);
   };
-
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
@@ -110,14 +80,13 @@ export const OrderList = ({ orderList }) => {
   useEffect(() => {
     setLoading(true);
     getPurchaseOrder().then((data) => {
-      console.log(data);
       if (data !== null) {
         setOrderData(data);
         setLoading(false);
       }
     });
   }, []);
-  console.log(orderData);
+
   return (
     <>
       <TableContainer sx={{ height: "75vh" }}>
@@ -154,8 +123,9 @@ export const OrderList = ({ orderList }) => {
                             color="info"
                             onClick={() =>
                               handleConfirmClick(
-                                orderData[index].vehicleID,
-                                orderData[index].quantity
+                                orderData[index].vehicleId,
+                                orderData[index].quantity,
+                                orderData[index].orderCompanyId
                               )
                             }
                           >
@@ -187,24 +157,27 @@ export const OrderList = ({ orderList }) => {
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogContent>
           <Typography variant="h6">Enter chassis number</Typography>
-          <Stack spacing={2}>
+          <Grid container spacing={2}>
             {dialogFields.map((field, index) => (
-              <TextField
-                key={index}
-                label={`Field ${index + 1}`}
-                variant="outlined"
-                fullWidth
-                margin="normal"
-                value={field}
-                onChange={(e) => {
-                  const updatedFields = [...dialogFields];
-                  updatedFields[index] = e.target.value;
-                  setDialogFields(updatedFields);
-                }}
-              />
+              <Grid key={index} item xs={3}>
+                <TextField
+                  label={`Field ${index + 1}`}
+                  variant="outlined"
+                  fullWidth
+                  margin="normal"
+                  value={field}
+                  onChange={(e) => {
+                    const updatedFields = [...dialogFields];
+                    updatedFields[index] = e.target.value;
+                    setDialogFields(updatedFields);
+                  }}
+                />
+              </Grid>
             ))}
-            {/* Add other dialog content as needed */}
-          </Stack>
+          </Grid>
+          <DialogActions>
+            <Button onClick={handleReceivingOrder}>Confirm</Button>
+          </DialogActions>
         </DialogContent>
       </Dialog>
     </>

@@ -43,6 +43,7 @@ export const Signin = () => {
       } else {
         setGeneralError(res.message);
       }
+      setLoadingSubmit(false);
     });
   };
   const [capsLockEnabled, setCapsLockEnabled] = React.useState(false);

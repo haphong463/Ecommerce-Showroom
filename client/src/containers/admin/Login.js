@@ -39,7 +39,6 @@ export function Login() {
 
   const onSubmit = (data) => {
     loginAuth(data).then((res) => {
-      console.log(res);
       if (res.data !== null) {
         login(res);
       } else {

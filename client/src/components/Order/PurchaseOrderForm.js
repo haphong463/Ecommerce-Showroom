@@ -94,9 +94,11 @@ const OrderForm = ({ orderList, setOrderList }) => {
   useEffect(() => {
     getCustomer().then((data) => {
       if (data) {
-        const employeeId = data.find((item) => item.email === token.Email);
-        if (employeeId.role === "Employee") {
-          getEmployeeById(employeeId.accountId).then((data) => {
+        const employee = data.find(
+          (item) => item.accountId === Number(token.Id)
+        );
+        if (employee.role === "Employee") {
+          getEmployeeById(token.Id).then((data) => {
             setEmployeeId(data.employeeId);
           });
         }

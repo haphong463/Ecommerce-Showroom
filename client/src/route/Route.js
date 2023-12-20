@@ -69,7 +69,7 @@ export const publicRoutes = [
   },
   { path: "/admin/login", component: <Login /> },
   { path: "/login", component: <Signin /> },
-  { path: "/profile/:id", component: <Profile /> },
+  { path: "/profile", component: <Profile /> },
   { path: "cart", component: <Cart /> },
 ];
 

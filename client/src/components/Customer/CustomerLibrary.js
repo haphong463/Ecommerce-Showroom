@@ -27,6 +27,12 @@ export const getCustomerById = async (id) =>
 export const putCustomer = async (vehicle, id) =>
   await handleRequest("put", `/${id}`, vehicle);
 
+export const putChangePassword = async (id, oldPassword, newPassword) =>
+  await handleRequest("put", `/change-password/${id}`, {
+    oldPassword,
+    newPassword,
+  });
+
 export const columns = [
   { id: "accountId", label: "ID", minWidth: 30 },
   { id: "name", label: "Name", minWidth: 100 },

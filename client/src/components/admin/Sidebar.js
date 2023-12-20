@@ -154,7 +154,7 @@ export function Sidebar() {
       <CssBaseline />
       <Drawer variant="permanent" open={open}>
         <Box height={60} />
-        <List
+        <Box
           sx={{
             display: "flex",
             flexDirection: "column",
@@ -167,20 +167,22 @@ export function Sidebar() {
         >
           <Overlay />
           <Box>
-            {routes.map(
-              (route, index) =>
-                route.position === "top" && (
-                  <RouteItem
-                    key={index}
-                    navigate={navigate}
-                    route={route.route}
-                    primary={route.primary}
-                    open={open}
-                    icon={route.icon}
-                    disabled={location.pathname === route.route}
-                  />
-                )
-            )}
+            <List>
+              {routes.map(
+                (route, index) =>
+                  route.position === "top" && (
+                    <RouteItem
+                      key={index}
+                      navigate={navigate}
+                      route={route.route}
+                      primary={route.primary}
+                      open={open}
+                      icon={route.icon}
+                      disabled={location.pathname === route.route}
+                    />
+                  )
+              )}
+            </List>
           </Box>
           <Box>
             <List>
@@ -201,7 +203,7 @@ export function Sidebar() {
               )}
             </List>
           </Box>
-        </List>
+        </Box>
       </Drawer>
     </Box>
   );

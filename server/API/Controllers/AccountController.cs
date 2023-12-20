@@ -122,7 +122,7 @@ namespace API.Controllers
                     {
                         AccountId = account.AccountId,
                         Name = account.Name// Sử dụng AccountID từ tài khoản mới tạo
-                                                      // Các trường khác của Employee có thể được cập nhật tùy thuộc vào yêu cầu của bạn
+                                           // Các trường khác của Employee có thể được cập nhật tùy thuộc vào yêu cầu của bạn
                     };
 
                     _dbContext.Employees.Add(newEmployee);
@@ -333,6 +333,34 @@ namespace API.Controllers
             }
         }
 
+        [HttpPut("change-password/{id}")]
+        public async Task<IActionResult> ChangePassword(int id, [FromForm] ChangePasswordRequest request)
+        {
+            try
+            {
+                var account = await _dbContext.Accounts.FindAsync(id);
+                if (account == null)
+                {
+                    return Ok(new ApiResponse<Account>(null, "Account not found"));
+                }
+
+                // Check if the provided old password matches the stored password
+                if (!AccountSecurity.VerifyPassword(request.OldPassword, account.Password))
+                {
+                    return Ok(new ApiResponse<Account>(null, "Incorrect old password"));
+                }
+
+                // Update the password with the new one
+                account.Password = AccountSecurity.HashPassword(request.NewPassword);
+                await _dbContext.SaveChangesAsync();
+
+                return Ok(new ApiResponse<Account>(account, "Password changed successfully"));
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<Account>.Exception(ex);
+            }
+        }
 
 
 

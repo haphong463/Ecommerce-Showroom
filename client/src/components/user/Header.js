@@ -177,7 +177,7 @@ const Header = ({ title, state, setState }) => {
                 <Box component="div">
                   <MenuItem
                     onClick={() => {
-                      navigate("/profile/" + user.accountId);
+                      navigate("/profile");
                     }}
                   >
                     <Typography textAlign="center">{token.Name}</Typography>
