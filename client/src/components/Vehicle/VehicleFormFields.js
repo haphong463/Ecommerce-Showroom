@@ -157,9 +157,8 @@ export function VehicleFormFields({
                       onChange={onChange}
                       onBlur={onBlur}
                       type={field.type}
-                      value={value}
                       InputProps={
-                        field.name === "price"
+                        field.name === "purchasePrice"
                           ? {
                               startAdornment: (
                                 <InputAdornment position="start">

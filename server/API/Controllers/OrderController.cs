@@ -54,7 +54,7 @@ namespace API.Controllers
                     {
                         Name = odD.Vehicles.Name,
                         Price = odD.Vehicles.Price,
-                        Quantity = odD.Vehicles.Quantity,
+                        Quantity = (int)odD.Vehicles.Quantity,
                         BrandId = odD.Vehicles.BrandId,
                         ModelId = odD.Vehicles.ModelId
                     }
@@ -115,7 +115,7 @@ namespace API.Controllers
                         {
                             Name = odD.Vehicles.Name,
                             Price = odD.Vehicles.Price,
-                            Quantity = odD.Vehicles.Quantity,
+                            Quantity = (int)odD.Vehicles.Quantity,
                             BrandId = odD.Vehicles.BrandId,
                             ModelId = odD.Vehicles.ModelId
                         }

@@ -6,9 +6,11 @@ import Navbar from "../../components/admin/Navbar";
 import { OrderContext } from "../../context/OrderContext";
 import OrderForm from "../../components/Order/PurchaseOrderForm";
 import { OrderList } from "../../components/Order/PurchaseOrderList";
+import { DataContext } from "../../context/DataContext";
 
 export const Order = () => {
   const { handleClickOpen, openOrderForm, onClose } = useContext(OrderContext);
+  const { token } = useContext(DataContext);
   const [orderList, setOrderList] = useState([]);
   return (
     <>
@@ -32,18 +34,21 @@ export const Order = () => {
             <Typography variant="h4">
               <span className="title-text">Purchase Orders</span>
             </Typography>
-
-            <Fab
-              color="primary"
-              size="medium"
-              aria-label="add"
-              onClick={handleClickOpen}
-              sx={{
-                m: "10px",
-              }}
-            >
-              <AddIcon />
-            </Fab>
+            {token.Role !== "Company" && (
+              <>
+                <Fab
+                  color="primary"
+                  size="medium"
+                  aria-label="add"
+                  onClick={handleClickOpen}
+                  sx={{
+                    m: "10px",
+                  }}
+                >
+                  <AddIcon />
+                </Fab>
+              </>
+            )}
           </Stack>
           <OrderList orderList={orderList} />
         </Paper>

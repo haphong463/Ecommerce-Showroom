@@ -33,7 +33,7 @@ import { getCustomer } from "../Customer/CustomerLibrary";
 import { DataContext } from "../../context/DataContext";
 import { getEmployeeById } from "../Employee/EmployeeLibrary";
 const OrderForm = () => {
-  const { onClose, setOrderData, openOrderForm, order } =
+  const { onClose, setOrderData, orderData, openOrderForm, order } =
     useContext(OrderContext);
   const { token } = useContext(DataContext);
   const [employeeId, setEmployeeId] = useState();

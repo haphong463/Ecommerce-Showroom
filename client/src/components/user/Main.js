@@ -41,7 +41,7 @@ export function Main({ title, description, labelImg, img, home }) {
         <Box
           component="img"
           sx={{
-            height: "40vh",
+            height: "50vh",
             display: "block",
             maxWidth: "100%",
             overflow: "hidden",

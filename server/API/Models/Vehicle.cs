@@ -14,7 +14,7 @@ public class Vehicle
     public string Name { get; set; }
     [Column(TypeName = "decimal(10, 2)")]
     public decimal Price { get; set; }
-    public int Quantity { get; set; }
+    public int? Quantity { get; set; }
     public string Description { get; set; }
     [Required]
     public int BrandId { get; set; }
@@ -22,10 +22,6 @@ public class Vehicle
     public string? ModelId { get; set; }
     public string? VIN { get; set; }
     public int ManufacturingYear { get; set; }
-
-    [StringLength(20)]
-    [Column(TypeName = "nvarchar(20)")]
-    public string RegistrationNumber { get; set; }
 
     [StringLength(30)]
     [Column(TypeName = "nvarchar(30)")]
@@ -53,7 +49,7 @@ public class Vehicle
     public decimal PurchasePrice { get; set; }
 
     [EnumDataType(typeof(VehicleStatus))]
-    public VehicleStatus Status { get; set; } = (VehicleStatus) 1;
+    public VehicleStatus Status { get; set; } = (VehicleStatus)1;
     public bool IsUsed { get; set; }
     public List<Images>? Images { get; set; }
     public Brand? Brand { get; set; }

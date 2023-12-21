@@ -16,6 +16,8 @@ import Icon from "@mui/material/Icon";
 import { DataContext } from "../../context/DataContext";
 import { Link, Navigate, useLocation } from "react-router-dom";
 import { loginAuth } from "../../components/Auth";
+import { successToast } from "../../components/Message";
+import { getCustomerByToken } from "../../components/Customer/CustomerLibrary";
 
 // Define validation schema using yup
 const schema = yup.object().shape({
@@ -64,14 +66,23 @@ export const Signin = () => {
     const newUrl = `${protocol}//${host}${pathname}`;
     window.history.replaceState({}, document.title, newUrl);
   };
+
   useEffect(() => {
+    console.log("re-render");
     const verifyParam = query.get("verify");
-    if (verifyParam === "1") {
-      setVerificationMessage(
-        "Email verification successful. You can now log in."
-      );
-      clearQueryParams();
+    async function fetchDataCustomerByToken(verifyParam) {
+      const res = await getCustomerByToken(verifyParam);
+      if (res) {
+        setVerificationMessage(
+          "Email verification successful. You can now log in."
+        );
+      }
     }
+    if (verifyParam) {
+      fetchDataCustomerByToken(verifyParam);
+    }
+
+    clearQueryParams();
   }, []);
 
   if (token) {

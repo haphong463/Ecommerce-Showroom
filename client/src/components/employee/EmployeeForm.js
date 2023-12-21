@@ -6,6 +6,7 @@ import {
   Avatar,
   Box,
   Button,
+  Container,
   Dialog,
   DialogActions,
   DialogContent,
@@ -82,6 +83,7 @@ const EmployeeForm = () => {
     formData.append("dateOfBirth", newDate);
     formData.append("file", data.profileImage ? data.profileImage : null);
     formData.append("name", data.name);
+    formData.append("address", data.address);
     formData.append("gender", data.gender);
     formData.append("phone", data.phone);
     formData.append("role", "Employee");
@@ -121,127 +123,129 @@ const EmployeeForm = () => {
         {!account ? "NEW EMPLOYEE" : "EDIT EMPLOYEE"}
       </DialogTitle>
       <DialogContent>
-        <Box
-          sx={{
-            my: 8,
-            mx: 4,
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-          }}
-        >
-          <Avatar
-            className="custom-avatar"
-            sx={{
-              m: 1,
-              width: "200px",
-              height: "200px",
-              objectFit: "contain",
-            }}
-            alt="Avatar"
-            src={avatarImage} // Set the source of the Avatar
-          />
+        <Container>
           <Box
-            component="form"
-            noValidate
-            onSubmit={handleSubmit(onSubmit)}
-            sx={{ mt: 3 }}
+            sx={{
+              my: 8,
+              mx: 4,
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
           >
-            <Grid container spacing={2}>
-              {formFields.map(({ label, name }, index) => (
-                <Grid
-                  item
-                  xs={12}
-                  sm={name === "profileImage" || name === "address" ? 12 : 6}
-                  key={index}
-                >
-                  {name === "profileImage" ? (
-                    <div>
-                      <label
-                        htmlFor={name}
-                        style={{ display: "flex", alignItems: "center" }}
-                      >
-                        <input
-                          type="file"
-                          {...register(name)}
-                          accept="image/*"
-                          id={name}
-                          style={{
-                            display: "none",
-                          }}
-                          onChange={handleFileChange} // Call the handleFileChange function
-                        />
-                        <Button
-                          variant="contained"
-                          component="span"
-                          sx={{ width: "100%" }}
-                          startIcon={<CloudUploadIcon />}
-                        >
-                          Upload
-                        </Button>
-                      </label>
-                    </div>
-                  ) : name === "dateOfBirth" ? (
-                    <DatePicker
-                      label="Date of Birth"
-                      defaultValue={dayjs()}
-                      sx={{
-                        width: "100%",
-                      }}
-                      {...register(name)}
-                      onChange={(e) => {
-                        setValue(name, e);
-                      }}
-                    />
-                  ) : name === "gender" ? (
-                    <FormControl fullWidth>
-                      <InputLabel htmlFor="select-gender" shrink>
-                        Gender
-                      </InputLabel>
-                      <Select
-                        {...register(name)}
-                        defaultValue="Male"
-                        fullWidth
-                        label="Gender"
-                        inputProps={{
-                          name: name,
-                          id: "select-gender",
-                        }}
-                      >
-                        <MenuItem value="Male">Male</MenuItem>
-                        <MenuItem value="Female">Female</MenuItem>
-                        <MenuItem value="Other">Other</MenuItem>
-                      </Select>
-                    </FormControl>
-                  ) : (
-                    <TextField
-                      {...register(name)}
-                      type={name === "password" ? "password" : "text"}
-                      required
-                      fullWidth
-                      id={name}
-                      label={label}
-                      name={name}
-                      autoComplete={name}
-                      error={!!errors[name]}
-                      helperText={errors[name]?.message}
-                    />
-                  )}
-                </Grid>
-              ))}
-              {/* Other form fields... */}
-            </Grid>
-
-            <Button
-              type="submit"
-              fullWidth
-              variant="contained"
-              sx={{ mt: 3, mb: 2 }}
+            <Avatar
+              className="custom-avatar"
+              sx={{
+                m: 1,
+                width: "200px",
+                height: "200px",
+                objectFit: "contain",
+              }}
+              alt="Avatar"
+              src={avatarImage} // Set the source of the Avatar
+            />
+            <Box
+              component="form"
+              noValidate
+              onSubmit={handleSubmit(onSubmit)}
+              sx={{ mt: 3 }}
             >
-              Sign Up
-            </Button>
+              <Grid container spacing={2}>
+                {formFields.map(({ label, name }, index) => (
+                  <Grid
+                    item
+                    xs={12}
+                    sm={name === "profileImage" || name === "address" ? 12 : 6}
+                    key={index}
+                  >
+                    {name === "profileImage" ? (
+                      <div>
+                        <label
+                          htmlFor={name}
+                          style={{ display: "flex", alignItems: "center" }}
+                        >
+                          <input
+                            type="file"
+                            {...register(name)}
+                            accept="image/*"
+                            id={name}
+                            style={{
+                              display: "none",
+                            }}
+                            onChange={handleFileChange} // Call the handleFileChange function
+                          />
+                          <Button
+                            variant="contained"
+                            component="span"
+                            sx={{ width: "100%" }}
+                            startIcon={<CloudUploadIcon />}
+                          >
+                            Upload
+                          </Button>
+                        </label>
+                      </div>
+                    ) : name === "dateOfBirth" ? (
+                      <DatePicker
+                        label="Date of Birth"
+                        defaultValue={dayjs()}
+                        sx={{
+                          width: "100%",
+                        }}
+                        {...register(name)}
+                        onChange={(e) => {
+                          setValue(name, e);
+                        }}
+                      />
+                    ) : name === "gender" ? (
+                      <FormControl fullWidth>
+                        <InputLabel htmlFor="select-gender" shrink>
+                          Gender
+                        </InputLabel>
+                        <Select
+                          {...register(name)}
+                          defaultValue="Male"
+                          fullWidth
+                          label="Gender"
+                          inputProps={{
+                            name: name,
+                            id: "select-gender",
+                          }}
+                        >
+                          <MenuItem value="Male">Male</MenuItem>
+                          <MenuItem value="Female">Female</MenuItem>
+                          <MenuItem value="Other">Other</MenuItem>
+                        </Select>
+                      </FormControl>
+                    ) : (
+                      <TextField
+                        {...register(name)}
+                        type={name === "password" ? "password" : "text"}
+                        required
+                        fullWidth
+                        id={name}
+                        label={label}
+                        name={name}
+                        autoComplete={name}
+                        error={!!errors[name]}
+                        helperText={errors[name]?.message}
+                      />
+                    )}
+                  </Grid>
+                ))}
+                {/* Other form fields... */}
+              </Grid>
+
+              <Button
+                type="submit"
+                fullWidth
+                variant="contained"
+                sx={{ mt: 3, mb: 2 }}
+              >
+                Sign Up
+              </Button>
+            </Box>
           </Box>
-        </Box>
+        </Container>
       </DialogContent>
     </Dialog>
   );

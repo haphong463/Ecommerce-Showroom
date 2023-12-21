@@ -13,11 +13,15 @@ import LogoutIcon from "@mui/icons-material/ExitToApp";
 import LoginIcon from "@mui/icons-material/Login";
 import MenuIcon from "@mui/icons-material/Menu";
 import ReceiptIcon from "@mui/icons-material/Receipt";
+import LocalShippingIcon from "@mui/icons-material/LocalShipping";
 import PersonIcon from "@mui/icons-material/Person";
 import CategoryIcon from "@mui/icons-material/Category";
 import MiscellaneousServicesIcon from "@mui/icons-material/MiscellaneousServices";
 import BackgroundImage from "../../assets/images/HD-wallpaper-black-background-car-cars-vehicles.jpg";
+import SupportAgentIcon from "@mui/icons-material/SupportAgent";
 import { Divider } from "@mui/material";
+import { DataContext } from "../../context/DataContext";
+import { useContext } from "react";
 const drawerWidth = 240;
 
 const openedMixin = (theme) => ({
@@ -79,8 +83,8 @@ const routes = [
     position: "top",
   },
   {
-    route: "/admin/vehicles",
-    primary: "Vehicles",
+    route: "/admin/car",
+    primary: "Car",
     icon: <CarIcon />,
     position: "top",
   },
@@ -99,13 +103,13 @@ const routes = [
   {
     route: "/admin/purchaseOrder",
     primary: "Purchase Orders",
-    icon: <MiscellaneousServicesIcon />,
+    icon: <LocalShippingIcon />,
     position: "top",
   },
   {
     route: "/admin/employee",
     primary: "Employees",
-    icon: <MiscellaneousServicesIcon />,
+    icon: <SupportAgentIcon />,
     position: "top",
   },
   {
@@ -126,18 +130,7 @@ const routes = [
     icon: <ReceiptIcon />,
     position: "top",
   },
-  {
-    route: "/admin/settings",
-    primary: "Settings",
-    icon: <SettingsIcon />,
-    position: "bot",
-  },
-  {
-    route: "/admin/login",
-    primary: "Login",
-    icon: <LoginIcon />,
-    position: "bot",
-  },
+
   {
     route: "/admin/logout",
     primary: "Logout",
@@ -146,6 +139,7 @@ const routes = [
   },
 ];
 export function Sidebar() {
+  const { token } = useContext(DataContext);
   const navigate = useNavigate();
   const open = useAppStore((state) => state.dopen);
   const location = useLocation();
@@ -166,24 +160,41 @@ export function Sidebar() {
           component="nav"
         >
           <Overlay />
-          <Box>
-            <List>
-              {routes.map(
-                (route, index) =>
-                  route.position === "top" && (
-                    <RouteItem
-                      key={index}
-                      navigate={navigate}
-                      route={route.route}
-                      primary={route.primary}
-                      open={open}
-                      icon={route.icon}
-                      disabled={location.pathname === route.route}
-                    />
-                  )
-              )}
-            </List>
-          </Box>
+          {token.Role === "Company" ? (
+            <Box>
+              <List>
+                <RouteItem
+                  navigate={navigate}
+                  route="/admin/purchaseOrder"
+                  primary="Purchase Order"
+                  open={open}
+                  icon={<LocalShippingIcon />}
+                  disabled={location.pathname === "/admin/purchaseOrder"}
+                />
+              </List>
+            </Box>
+          ) : (
+            <>
+              <Box>
+                <List>
+                  {routes.map(
+                    (route, index) =>
+                      route.position === "top" && (
+                        <RouteItem
+                          key={index}
+                          navigate={navigate}
+                          route={route.route}
+                          primary={route.primary}
+                          open={open}
+                          icon={route.icon}
+                          disabled={location.pathname === route.route}
+                        />
+                      )
+                  )}
+                </List>
+              </Box>
+            </>
+          )}
           <Box>
             <List>
               <Divider sx={{ borderTop: "1px solid #2f2f2f" }} />

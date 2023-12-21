@@ -32,7 +32,6 @@ export const DataProvider = ({ children }) => {
     } else {
       navigate(redirectUserPath, { replace: true });
     }
-    successToast("Welcome back! " + decodedToken.Name);
   };
   const logout = () => {
     localStorage.removeItem("token");

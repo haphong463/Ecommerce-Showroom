@@ -14,6 +14,8 @@ import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { privateRoutes, publicRoutes } from "./route/Route";
 import { ToastContainer } from "react-toastify";
 import { DataContext } from "./context/DataContext";
+import { useEffect } from "react";
+import { successToast } from "./components/Message";
 
 const theme = createTheme({
   typography: {
@@ -40,7 +42,12 @@ const theme = createTheme({
 function App() {
   const { token } = useContext(DataContext);
   const location = useLocation();
-
+  useEffect(() => {
+    console.log("re-render");
+    if (token) {
+      successToast("Welcome back! " + token.Name);
+    }
+  }, [token]);
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <div

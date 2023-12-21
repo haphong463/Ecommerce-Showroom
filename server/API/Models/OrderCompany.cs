@@ -13,7 +13,7 @@ namespace API.Models
         public int Quantity { get; set; }
         [Column(TypeName = "decimal(10, 2)")]
         public decimal SuggestPrice { get; set; }
-        public bool OrderStatus { get; set; } = false;
+        public byte? OrderStatus { get; set; } = 0;
         public int VehicleId { get; set; }
         public int EmployeeId { get; set; }
         public Vehicle? Vehicle { get; set; }

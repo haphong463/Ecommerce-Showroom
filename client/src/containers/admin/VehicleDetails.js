@@ -65,7 +65,7 @@ export const VehicleDetails = () => {
             setVehicleData((prev) =>
               prev.filter((item) => item.vehicleID !== data.vehicleID)
             );
-            navigate("../admin/vehicles");
+            navigate("/admin/car");
             dangerMessage(`Deleted vehicle successfully.`);
           }
         });

@@ -75,22 +75,15 @@ export const generateModelID = (brand, name) => {
 export const generateValidationSchema = (isEditing) =>
   yup.object({
     name: yup.string().required("Name is required"),
-    price: yup
-      .number()
-      .required("Price is required")
-      .typeError("Price must be a number"),
     brandId: yup.string().required("Brand is required"),
     manufacturingYear: yup.number().required("Manufacturing Year is required"),
-    registrationNumber: yup
-      .string()
-      .required("Registration Number is required"),
+
     color: yup.string().required("Color is required"),
     mileage: yup.number().required("Mileage is required"),
     engineType: yup.string().required("Engine Type is required"),
     transmissionType: yup.string().required("Transmission Type is required"),
     fuelType: yup.string().required("Fuel Type is required"),
     numberOfSeats: yup.number().required("Number of Seats is required"),
-    purchaseDate: yup.date().required("Purchased Date is required"),
     purchasePrice: yup.number().required("Purchase Price is required"),
     description: yup.string().required("Description is required"),
     files: isEditing
@@ -100,7 +93,6 @@ export const generateValidationSchema = (isEditing) =>
 
 export const formFields = [
   { name: "name", label: "Name*", type: "text" },
-  { name: "price", label: "Price*", type: "number" },
   {
     name: "brandId",
     label: "Brand*",
@@ -108,14 +100,12 @@ export const formFields = [
   },
 
   { name: "manufacturingYear", label: "Manufacturing Year*", type: "number" },
-  { name: "registrationNumber", label: "Registration Number*", type: "text" },
   { name: "color", label: "Color*", type: "text" },
   { name: "mileage", label: "Mileage*", type: "number" },
   { name: "engineType", label: "Engine Type*", type: "text" },
   { name: "transmissionType", label: "Transmission Type*", type: "select" },
   { name: "fuelType", label: "Fuel Type*", type: "select" },
   { name: "numberOfSeats", label: "Number of Seats*", type: "number" },
-  { name: "purchaseDate", label: "Purchased Date*", type: "date" },
   { name: "purchasePrice", label: "Purchase Price*", type: "number" },
   { name: "description", label: "Description*", type: "text" },
   { name: "isUsed", label: "Used/New*" },

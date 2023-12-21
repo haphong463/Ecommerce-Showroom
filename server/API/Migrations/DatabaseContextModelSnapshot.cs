@@ -143,6 +143,8 @@ namespace API.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
+
                     b.Property<string>("FrameNumber")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -154,6 +156,8 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ReceivingOrderId");
 
                     b.HasIndex("VehicleId");
 
@@ -235,6 +239,9 @@ namespace API.Migrations
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<byte>("OrderStatus")
+                        .HasColumnType("tinyint");
 
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
@@ -443,13 +450,8 @@ namespace API.Migrations
                     b.Property<decimal>("PurchasePrice")
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<int>("Quantity")
+                    b.Property<int?>("Quantity")
                         .HasColumnType("int");
-
-                    b.Property<string>("RegistrationNumber")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
 
                     b.Property<int>("Status")
                         .HasColumnType("int");
@@ -484,7 +486,7 @@ namespace API.Migrations
                 {
                     b.HasOne("API.Models.ReceivingOrder", "ReceivingOrder")
                         .WithMany("Frame")
-                        .HasForeignKey("Id")
+                        .HasForeignKey("ReceivingOrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 

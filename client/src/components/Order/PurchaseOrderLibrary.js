@@ -26,14 +26,10 @@ export const getPurchaseOrderById = async (id) =>
 export const putPurchaseOrder = async (vehicle, id) =>
   await handleRequest("put", `/${id}`, vehicle);
 
-export const columns = [
-  { id: "modelId", label: "Model Number", minWidth: 30 },
-  { id: "price", label: "Price", minWidth: 100 },
-  { id: "quantity", label: "Quantity", minWidth: 200, align: "left" },
-  { id: "brandId", label: "Brands", minWidth: 200, align: "center" },
-  { id: "employee", label: "Employee", minWidth: 200, align: "center" },
-  { id: "action", label: "Action", minWidth: 200, align: "center" },
-];
+export const postCancelPurchaseOrder = async (id) =>
+  await handleRequest("post", `/cancel/${id}`, {
+    id,
+  });
 
 export const generateValidationSchemaOrder = () =>
   yup.object().shape({

@@ -176,7 +176,6 @@ namespace API.Controllers
         }
 
 
-
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(string token)
         {
@@ -192,7 +191,7 @@ namespace API.Controllers
                 // Đánh dấu email đã được xác minh, lưu thông tin xác minh thời gian, v.v.
                 account.VerifiedAt = DateTime.Now;
                 await _dbContext.SaveChangesAsync();
-                return Redirect("http://localhost:3000/login?verify=1");
+                return Redirect($"http://localhost:3000/login?verify={account.VerifitcationToken}");
             }
             catch (Exception ex)
             {
@@ -201,7 +200,26 @@ namespace API.Controllers
         }
 
 
+        [HttpGet("verify/{token}")]
+        public async Task<IActionResult> GetAccountByToken(string token)
+        {
+            try
+            {
+                var account = await _dbContext.Accounts.FirstOrDefaultAsync(x => x.VerifitcationToken == token);
+                if (account == null)
+                {
+                    return BadRequest("Invalid token");
+                }
 
+                // Xác minh email thành công: thực hiện các hành động cần thiết
+                // Đánh dấu email đã được xác minh, lưu thông tin xác minh thời gian, v.v.
+                return Ok(new ApiResponse<Account>(account, "Resource created"));
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<Account>.Exception(ex);
+            }
+        }
 
 
 
@@ -327,13 +345,64 @@ namespace API.Controllers
         {
             try
             {
-                var fromAddress = new MailAddress("vuongyennhi0912@gmail.com", "Showroom");
+                var fromAddress = new MailAddress("haphong2134@gmail.com", "Showroom");
                 var toAddress = new MailAddress(email, "Showroom");
-                const string fromPassword = "nexc uhaq eurs ntcw"; // Thay bằng mật khẩu email của bạn
+                const string fromPassword = "nfyr wdgm trma owas"; // Thay bằng mật khẩu email của bạn
                 const string subject = "Verify Your Email";
 
                 // Tạo nội dung email chứa URL xác minh
-                var body = $"Please click the following link to verify your email: <a href='{verificationUrl}'>Verify Email</a>";
+                string body = $@"
+    <html>
+    <head>
+        <style>
+            body {{
+                font-family: 'Arial', sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }}
+
+            .container {{
+                max-width: 600px;
+                margin: 20px auto;
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }}
+
+            h2 {{
+                color: #333333;
+            }}
+
+            p {{
+                color: #555555;
+            }}
+
+            a {{
+                color: #007BFF;
+                text-decoration: none;
+            }}
+
+            a:hover {{
+                text-decoration: underline;
+            }}
+
+            .logo {{
+                text-align: center;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <h2>Hello,</h2>
+            <p>Please click <a href='{verificationUrl}'>here</a> to verify your email address.</p>
+        </div>
+    </body>
+    </html>
+";
+
+
 
                 var smtp = new SmtpClient
                 {

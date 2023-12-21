@@ -24,7 +24,7 @@ import {
   Typography,
 } from "@mui/material";
 
-import { getVehicleById, getVehicles } from "../Vehicle/VehicleLibrary";
+import { getVehicles } from "../Vehicle/VehicleLibrary";
 import { dangerMessage } from "../Message";
 import dayjs from "dayjs";
 import { getCustomer } from "../Customer/CustomerLibrary";
@@ -32,9 +32,7 @@ import { getService } from "../Service/ServiceLibrary";
 import { InvoiceAddress } from "./InvoiceAddress";
 import { getEmployeeById } from "../Employee/EmployeeLibrary";
 const TAX_RATE = 0.07;
-function ccyFormat(num) {
-  return num?.toLocaleString("en-US", { style: "currency", currency: "USD" });
-}
+
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
 const MenuProps = {
@@ -45,7 +43,9 @@ const MenuProps = {
     },
   },
 };
-
+function ccyFormat(num) {
+  return num?.toLocaleString("en-US", { style: "currency", currency: "USD" });
+}
 export const InvoicePrintable = forwardRef(
   (
     { isAddRowVisible, listItem, setListItem, dataToPost, setDataToPost },
@@ -56,11 +56,23 @@ export const InvoicePrintable = forwardRef(
     const [listAccount, setListAccount] = useState([]);
     const [listService, setListService] = useState([]);
     const [service, setService] = useState([]);
+    const [vehicleList, setVehicleList] = useState([]);
     const [newRow, setNewRow] = useState({
       name: "",
       quantity: 0,
       unitPrice: 0,
     });
+
+    // ------------------------------------------------- checkQuantity -------------------------------------------------
+    const checkQuantity = (newQuantity, vehicleID) => {
+      const vehicle = vehicleList.find((v) => v.vehicleID === vehicleID);
+      if (vehicle && newQuantity > vehicle.quantity) {
+        return false;
+      }
+      return true;
+    };
+
+    // ------------------------------------------------- handleChange -------------------------------------------------
     const handleChange = (event) => {
       const {
         target: { value },
@@ -76,6 +88,8 @@ export const InvoicePrintable = forwardRef(
         })),
       }));
     };
+
+    // ------------------------------------------------- selectedAccount -------------------------------------------------
     const selectedAccount = useMemo(() => {
       const result = listAccount.find(
         (item) => item.accountId === dataToPost.accountId
@@ -83,6 +97,7 @@ export const InvoicePrintable = forwardRef(
       return result;
     }, [dataToPost?.accountId]);
 
+    // ------------------------------------------------- extractDataForPost -------------------------------------------------
     const extractDataForPost = (list) => {
       return list.map((item) => ({
         vehicleId: item.vehicleID,
@@ -90,6 +105,8 @@ export const InvoicePrintable = forwardRef(
         price: item.unitPrice,
       }));
     };
+
+    // ------------------------------------------------- addRow -------------------------------------------------
     const addRow = () => {
       if (!newRow.name || newRow.quantity <= 0) {
         dangerMessage("Please fill in all required fields.");
@@ -99,6 +116,10 @@ export const InvoicePrintable = forwardRef(
         dangerMessage("Item already exists.");
         return;
       }
+      if (!checkQuantity(newRow.quantity, newRow.vehicleID)) {
+        dangerMessage(`Car(${newRow.vehicleID}) out of stock.`);
+        return;
+      }
       setListItem([...listItem, newRow]);
       setDataToPost((prev) => ({
         ...prev,
@@ -106,12 +127,18 @@ export const InvoicePrintable = forwardRef(
       }));
       setNewRow({ name: "", quantity: "", unitPrice: "" });
     };
+
+    // ------------------------------------------------- handleRemoveRow -------------------------------------------------
+
     const handleRemoveRow = (indexRow) => {
       setListItem((prev) => prev.filter((item, index) => index !== indexRow));
     };
+    // ------------------------------------------------- calculateSubTotalItem -------------------------------------------------
+
     const calculateSubTotalItem = (item) => {
       return item.quantity * item.unitPrice;
     };
+    // ------------------------------------------------- calculateTotal -------------------------------------------------
 
     const calculateTotal = () => {
       const subTotal = listItem.reduce(
@@ -124,9 +151,12 @@ export const InvoicePrintable = forwardRef(
       return { subTotal, taxes, total };
     };
 
+    // ------------------------------------------------- useEffect getVehicles, getCustomer, getService -------------------------------------------------
+
     useEffect(() => {
       getVehicles().then((data) => {
         if (data) {
+          setVehicleList(data);
           const uniqueOptions = data.map((item) => ({
             label: item.name,
             value: item.vehicleID,
@@ -155,6 +185,9 @@ export const InvoicePrintable = forwardRef(
         }
       });
     }, []);
+
+    // ------------------------------------------------- useEffect setDataToPost -------------------------------------------------
+
     useEffect(() => {
       setDataToPost((prev) => ({
         ...prev,

@@ -23,6 +23,8 @@ export const postCustomer = async (data) =>
 
 export const getCustomerById = async (id) =>
   await handleRequest("get", `/${id}`);
+export const getCustomerByToken = async (token) =>
+  await handleRequest("get", `/verify/${token}`);
 
 export const putCustomer = async (vehicle, id) =>
   await handleRequest("put", `/${id}`, vehicle);

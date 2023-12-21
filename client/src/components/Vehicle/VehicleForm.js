@@ -51,19 +51,14 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
   const validationSchema = generateValidationSchema(entry);
   const initialValues = {
     name: entry ? entry.name : "",
-    price: entry ? entry.price : "",
-    quantity: entry ? entry.quantity : "",
     brandId: entry ? entry.brand?.brandId : "",
     manufacturingYear: entry ? entry.manufacturingYear : "",
-    registrationNumber: entry ? entry.registrationNumber : "",
     color: entry ? entry.color : "",
     mileage: entry ? entry.mileage : "",
     engineType: entry ? entry.engineType : "",
     transmissionType: entry ? entry.transmissionType : "",
     fuelType: entry ? entry.fuelType : "",
     numberOfSeats: entry ? entry.numberOfSeats : "",
-    purchaseDate: entry ? entry.purchaseDate : new Date(),
-    purchasePrice: entry ? entry.purchasePrice : "",
     files: entry && entry.images.length > 0 ? null : [],
     isUsed: entry ? entry.isUsed : false,
     description: entry ? entry.description : "",
@@ -114,9 +109,10 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
                 const selectedBrand = brand.find(
                   (item) => item.value === values.brandId
                 );
+                formikBag.setFieldValue("price", values.purchasePrice * 1.1);
+
                 const brandLabel = selectedBrand ? selectedBrand.label : "";
                 const modelID = generateModelID(brandLabel, values.name);
-                console.log(values);
                 let formData = new FormData();
                 formFields.map((field) => {
                   if (field.name === "files") {
@@ -129,10 +125,12 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
                   if (field.name === "purchaseDate") {
                     formData.append(field.name, newDay);
                   }
+
                   formData.append(field.name, values[field.name]);
 
                   return formData;
                 });
+                formData.append("price", values.price);
                 if (!entry) {
                   const vehicleNameExists = vehicleData.some(
                     (item) =>

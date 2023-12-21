@@ -40,6 +40,7 @@ namespace API.Controllers
                         Name = o.Name,
                         Quantity = o.Quantity,
                         SuggestPrice = o.SuggestPrice,
+                        OrderStatus = (byte)o.OrderStatus,
                         EmployeeId = o.EmployeeId,
                         Employee = new EmployeeDTO
                         {
@@ -114,7 +115,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<OrderCompany>>> PostOrder([FromForm] OrderCompanyBrief OCbrief)
+        public async Task<ActionResult<ApiResponse<byte>>> PostOrder([FromForm] OrderCompanyBrief OCbrief)
         {
             if (!ModelState.IsValid)
             {
@@ -128,14 +129,34 @@ namespace API.Controllers
                 await _dbContext.OrderCompanies.AddAsync(odCompany);
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(new ApiResponse<OrderCompany>(odCompany, "OrderCompany created successfully"));
+                return Ok(new ApiResponse<byte>(0, "OrderCompany created successfully"));
             }
             catch (Exception ex)
             {
                 return ApiResponse<OrderCompany>.Exception(ex);
             }
         }
+        [HttpPost("cancel/{id}")]
+        public async Task<ActionResult<ApiResponse<OrderCompany>>> PostCancel([FromForm] int id)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiResponse<OrderCompany>.BadRequest(ModelState);
+            }
 
+            try
+            {
+                var odCompany = await _dbContext.OrderCompanies.FindAsync(id);
+                odCompany.OrderStatus = 2;
+                await _dbContext.SaveChangesAsync();
+
+                return Ok(new ApiResponse<byte>(2, "OrderCompany created successfully"));
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<OrderCompany>.Exception(ex);
+            }
+        }
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<OrderCompany>>> UpdateOrder(int id, [FromForm] OrderCompanyBrief OCbrief)
         {

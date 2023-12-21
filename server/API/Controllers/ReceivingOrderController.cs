@@ -86,7 +86,10 @@ namespace API.Controllers
                 //var FrameNumber = ReceivingOd.FrameNumber;
                 //var PurchaseOrderId = ReceivingOd.PurchaseOrderId;
                 //var Frame = ReceivingOd.Frame;  //list<Frame>
-
+                var purchaseOrder = await _dbContext.OrderCompanies.FindAsync(purchaseOrderId);
+                var vehicles = await _dbContext.Vehicles.FindAsync(vehicleId);
+                vehicles!.Quantity += frames.Count();
+                purchaseOrder!.OrderStatus = 1;
                 var newReceive = new ReceivingOrder
                 {
                     PurchaseOrderId = purchaseOrderId

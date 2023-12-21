@@ -18,23 +18,23 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+
 import { OrderContext } from "../../context/OrderContext";
 import { dangerMessage } from "../Message";
 import Swal from "sweetalert2";
 import {
-  columns,
   deleteOrder,
   getOrder,
   getPurchaseOrder,
+  postCancelPurchaseOrder,
 } from "./PurchaseOrderLibrary";
 import { postReceivingOrder } from "../ReceivingOrder/ReceivingOrderLibrary";
+import { DataContext } from "../../context/DataContext";
 
 export const OrderList = ({ orderList }) => {
   const { orderData, setOrderData, setOrder, handleClickOpen } =
     useContext(OrderContext);
-
+  const { token } = useContext(DataContext);
   const [loading, setLoading] = useState();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -52,6 +52,18 @@ export const OrderList = ({ orderList }) => {
   };
 
   const handleReceivingOrder = () => {
+    const hasEmptyField = dialogFields.some((field) => !field.trim());
+
+    if (hasEmptyField) {
+      dangerMessage("Please enter chassis numbers for all fields.");
+      return;
+    }
+    const isDuplicate = new Set(dialogFields).size !== dialogFields.length;
+
+    if (isDuplicate) {
+      dangerMessage("Chassis numbers must be unique.");
+      return;
+    }
     const dataPost = {
       frames: [...dialogFields],
       vehicleId: dataToPost.vehicleId,
@@ -69,6 +81,10 @@ export const OrderList = ({ orderList }) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  const handleCancelOrder = (id) => {
+    console.log(id);
+    postCancelPurchaseOrder(id);
+  };
   useEffect(() => {
     setLoading(true);
     getPurchaseOrder().then((data) => {
@@ -85,17 +101,12 @@ export const OrderList = ({ orderList }) => {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
-              {columns.map((column, index) => {
-                return (
-                  <TableCell
-                    key={index}
-                    align={column.align}
-                    style={{ minWidth: column.minWidth }}
-                  >
-                    {column.label}
-                  </TableCell>
-                );
-              })}
+              <TableCell>Model Number</TableCell>
+              <TableCell>Suggest Price</TableCell>
+              <TableCell>Quantity</TableCell>
+              <TableCell>Brand</TableCell>
+              <TableCell>Employee</TableCell>
+              <TableCell></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
@@ -103,38 +114,66 @@ export const OrderList = ({ orderList }) => {
               ? orderData
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row, index) => {
-                    console.log(row);
                     return (
                       <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                         <TableCell>{row.modelId}</TableCell>
                         <TableCell>{row.suggestPrice}</TableCell>
                         <TableCell>{row.quantity}</TableCell>
-                        <TableCell align="center">{row.brand}</TableCell>
-                        <TableCell align="center">
-                          {row.employee.name}
-                        </TableCell>
+                        <TableCell>{row.brand}</TableCell>
+                        <TableCell>{row.employee.name}</TableCell>
 
-                        <TableCell align="center">
-                          <Button
-                            variant="contained"
-                            color="info"
-                            onClick={() =>
-                              handleConfirmClick(
-                                orderData[index].vehicleId,
-                                orderData[index].quantity,
-                                orderData[index].orderCompanyId
-                              )
-                            }
-                          >
-                            Xác nhận
-                          </Button>
+                        <TableCell>
+                          {token.Role === "Company" &&
+                            row.orderStatus === 0 && (
+                              <Stack spacing={1} direction="row">
+                                <Button
+                                  variant="contained"
+                                  color="info"
+                                  onClick={() =>
+                                    handleConfirmClick(
+                                      orderData[index].vehicleId,
+                                      orderData[index].quantity,
+                                      orderData[index].orderCompanyId
+                                    )
+                                  }
+                                >
+                                  Confirm
+                                </Button>
+                                <Button
+                                  variant="contained"
+                                  color="error"
+                                  onClick={() =>
+                                    handleCancelOrder(row.orderCompanyId)
+                                  }
+                                >
+                                  Cancel
+                                </Button>
+                              </Stack>
+                            )}
+                          {(token.Role === "Admin" ||
+                            token.Role === "Employee") &&
+                            row.orderStatus === 0 && (
+                              <Button
+                                variant="contained"
+                                onClick={() =>
+                                  handleCancelOrder(row.orderCompanyId)
+                                }
+                                color="error"
+                              >
+                                Cancel
+                              </Button>
+                            )}
+                          {(token.Role === "Admin" ||
+                            token.Role === "Employee") &&
+                            row.orderStatus === 1 &&
+                            "Confirmed"}
                         </TableCell>
                       </TableRow>
                     );
                   })
               : Array.from({ length: 4 }).map((_, index) => (
                   <TableRow key={index}>
-                    <TableCell colSpan={4}>
+                    <TableCell colSpan={6}>
                       <Skeleton variant="rectangular" />
                     </TableCell>
                   </TableRow>

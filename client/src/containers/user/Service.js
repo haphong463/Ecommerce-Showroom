@@ -37,7 +37,7 @@ export function Service() {
   }, []);
   return (
     <LayoutUser
-      img="https://img.freepik.com/free-photo/muscular-car-service-worker-repairing-vehicle_146671-19605.jpg?w=1380&t=st=1701960277~exp=1701960877~hmac=dde5d8f4ffca8200e8a72157dfe8acd7313fe232dc55c2959dc0ecd59271f6bf"
+      img="https://images.unsplash.com/photo-1487754180451-c456f719a1fc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
       title="Our Service"
       description="AutoCar is an efficient and convenient vehicle management system for car showrooms."
     >

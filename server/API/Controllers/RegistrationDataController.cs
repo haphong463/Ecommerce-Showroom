@@ -41,7 +41,6 @@ namespace API.Controllers
                         Brand = r.Vehicle.Brand,
                         ModelId = r.Vehicle.ModelId,
                         ManufacturingYear = r.Vehicle.ManufacturingYear,
-                        RegistrationNumber = r.Vehicle.RegistrationNumber,
                         FuelType = r.Vehicle.FuelType,
                         Color = r.Vehicle.Color
                     },
@@ -85,7 +84,6 @@ namespace API.Controllers
                         Brand = r.Vehicle.Brand,
                         ModelId = r.Vehicle.ModelId,
                         ManufacturingYear = r.Vehicle.ManufacturingYear,
-                        RegistrationNumber = r.Vehicle.RegistrationNumber,
                         FuelType = r.Vehicle.FuelType,
                         Color = r.Vehicle.Color
                     },

@@ -81,7 +81,7 @@ export const privateRoutes = [
     roles: ["Admin", "Employee"],
   },
   {
-    path: "/admin/vehicles",
+    path: "/admin/car",
     component: (
       <VehicleProvider>
         <Vehicles />
@@ -128,7 +128,7 @@ export const privateRoutes = [
         <Order />
       </OrderProvider>
     ),
-    roles: ["Admin", "Employee"],
+    roles: ["Admin", "Employee", "Company"],
   },
   {
     path: "/admin/salesOrder",

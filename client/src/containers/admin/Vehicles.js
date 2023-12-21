@@ -1,10 +1,4 @@
-import {
-  Box,
-  Fab,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Fab, Paper, Stack, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import { Sidebar } from "../../components/admin/Sidebar";
 import Navbar from "../../components/admin/Navbar";
@@ -44,7 +38,7 @@ export const Vehicles = () => {
             direction="row"
           >
             <Typography variant="h4">
-              <span className="title-text">Vehicles</span>
+              <span className="title-text">Cars</span>
             </Typography>
 
             <Fab
