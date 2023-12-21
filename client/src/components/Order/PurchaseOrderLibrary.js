@@ -26,8 +26,8 @@ export const getPurchaseOrderById = async (id) =>
 export const putPurchaseOrder = async (vehicle, id) =>
   await handleRequest("put", `/${id}`, vehicle);
 
-export const postCancelPurchaseOrder = async (id) =>
-  await handleRequest("post", `/cancel/${id}`, {
+export const putCancelPurchaseOrder = async (id) =>
+  await handleRequest("put", `/cancel/${id}`, {
     id,
   });
 

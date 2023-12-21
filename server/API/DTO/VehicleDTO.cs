@@ -29,5 +29,6 @@ namespace API.DTO
         public List<ImageDTO> Images { get; set; }
         public Vehicle_BrandDTO Brand { get; set; }
         public List<Vehicle_OrderDetail_DTO> OrderDetails { get; set; }
+        public List<Vehicle_Frame_DTO> Frames { get; set; }
     }
 }

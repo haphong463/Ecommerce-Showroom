@@ -32,7 +32,7 @@ import { getVehicles } from "../Vehicle/VehicleLibrary";
 import { getCustomer } from "../Customer/CustomerLibrary";
 import { DataContext } from "../../context/DataContext";
 import { getEmployeeById } from "../Employee/EmployeeLibrary";
-const OrderForm = () => {
+const OrderForm = ({ vehicleList }) => {
   const { onClose, setOrderData, orderData, openOrderForm, order } =
     useContext(OrderContext);
   const { token } = useContext(DataContext);
@@ -45,7 +45,6 @@ const OrderForm = () => {
     quantity: order?.quantity ?? "",
   };
 
-  const [vehicleList, setVehicleList] = useState([]);
   const handleChangeInfo = (e, formikBag) => {
     const vehicleInfo = vehicleList.find(
       (item) => item.vehicleID === e.target.value
@@ -56,6 +55,10 @@ const OrderForm = () => {
     formikBag.setFieldValue("modelId", vehicleInfo.modelId);
     formikBag.setFieldValue("brandId", vehicleInfo.brand.name);
     formikBag.setFieldValue("modelName", vehicleInfo.modelId);
+
+    const checkLastOrderDuplicate =
+      orderData[orderData.length - 1].suggestPrice;
+    console.log(checkLastOrderDuplicate);
   };
 
   const validationSchema = generateValidationSchemaOrder();
@@ -94,11 +97,6 @@ const OrderForm = () => {
   };
 
   useEffect(() => {
-    getVehicles().then((data) => {
-      if (data) {
-        setVehicleList(data);
-      }
-    });
     getCustomer().then((data) => {
       if (data) {
         const employee = data.find(

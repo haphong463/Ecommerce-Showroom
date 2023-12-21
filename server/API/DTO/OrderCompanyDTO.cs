@@ -6,7 +6,7 @@ namespace API.DTO
     {
         public int orderCompanyId { get; set; }
         public string Name { get; set; }
-        public string ModelId { get; set; }
+        public string ?ModelId { get; set; }
         public string Brand { get; set; }
         public int Quantity { get; set; }
         public decimal SuggestPrice { get; set; }

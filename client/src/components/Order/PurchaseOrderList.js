@@ -26,12 +26,12 @@ import {
   deleteOrder,
   getOrder,
   getPurchaseOrder,
-  postCancelPurchaseOrder,
+  putCancelPurchaseOrder,
 } from "./PurchaseOrderLibrary";
 import { postReceivingOrder } from "../ReceivingOrder/ReceivingOrderLibrary";
 import { DataContext } from "../../context/DataContext";
 
-export const OrderList = ({ orderList }) => {
+export const OrderList = ({ orderList, vehicleList }) => {
   const { orderData, setOrderData, setOrder, handleClickOpen } =
     useContext(OrderContext);
   const { token } = useContext(DataContext);
@@ -41,6 +41,8 @@ export const OrderList = ({ orderList }) => {
   const [dataToPost, setDataToPost] = useState();
   const [openDialog, setOpenDialog] = useState(false);
   const [dialogFields, setDialogFields] = useState([]);
+
+  // ---------------------------------------------------------------- handleConfirmClick ----------------------------------------------------------------
   const handleConfirmClick = (vehicleId, quantity, purchaseOrderId) => {
     const fields = [];
     for (let i = 0; i < quantity; i++) {
@@ -50,6 +52,7 @@ export const OrderList = ({ orderList }) => {
     setOpenDialog(true);
     setDataToPost((prev) => ({ ...prev, vehicleId, purchaseOrderId }));
   };
+  // ---------------------------------------------------------------- handleReceivingOrder ----------------------------------------------------------------
 
   const handleReceivingOrder = () => {
     const hasEmptyField = dialogFields.some((field) => !field.trim());
@@ -64,27 +67,83 @@ export const OrderList = ({ orderList }) => {
       dangerMessage("Chassis numbers must be unique.");
       return;
     }
-    const dataPost = {
-      frames: [...dialogFields],
-      vehicleId: dataToPost.vehicleId,
-      purchaseOrderId: dataToPost.purchaseOrderId,
-    };
-    postReceivingOrder(dataPost);
+
+    const vehicleId = dataToPost.vehicleId;
+
+    // Find the corresponding vehicle in vehicleList
+    const selectedVehicle = vehicleList.find(
+      (vehicle) => vehicle.vehicleID === vehicleId
+    );
+
+    if (selectedVehicle) {
+      const existingFrames = selectedVehicle.frames.map(
+        (frame) => frame.frameNumber
+      );
+
+      // Check for duplicate frame numbers
+      const duplicateFrame = dialogFields.find((frame) =>
+        existingFrames.includes(frame)
+      );
+
+      if (duplicateFrame) {
+        dangerMessage(
+          `Frame number '${duplicateFrame}' already exists for this vehicle.`
+        );
+        return;
+      }
+    }
+    // const dataPost = {
+    //   frames: [...dialogFields],
+    //   vehicleId: dataToPost.vehicleId,
+    //   purchaseOrderId: dataToPost.purchaseOrderId,
+    // };
+    // postReceivingOrder(dataPost);
   };
+  // ---------------------------------------------------------------- handleDialogClose ----------------------------------------------------------------
+
   const handleDialogClose = () => {
     setOpenDialog(false);
   };
+  // ---------------------------------------------------------------- handleChangePage ----------------------------------------------------------------
+
   const handleChangePage = (event, newPage) => {
     setPage(newPage);
   };
+  // ---------------------------------------------------------------- handleChangeRowsPerPage ----------------------------------------------------------------
+
   const handleChangeRowsPerPage = (event) => {
     setRowsPerPage(+event.target.value);
     setPage(0);
   };
+  // ---------------------------------------------------------------- handleCancelOrder ----------------------------------------------------------------
+
   const handleCancelOrder = (id) => {
-    console.log(id);
-    postCancelPurchaseOrder(id);
+    Swal.fire({
+      title: "Confirm Cancel Order",
+      text: "Are you sure you want to cancel this order?",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Confirm",
+      cancelButtonText: "Cancel",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        // User confirmed canceling the order
+        // console.log("Confirmed order cancellation");
+        putCancelPurchaseOrder(id).then((data) => {
+          if (data) {
+            setOrderData((prev) =>
+              prev.map((item) =>
+                item.orderCompanyId === data.orderCompanyId ? data : item
+              )
+            );
+          }
+        });
+      }
+    });
   };
+
   useEffect(() => {
     setLoading(true);
     getPurchaseOrder().then((data) => {
@@ -163,10 +222,11 @@ export const OrderList = ({ orderList }) => {
                                 Cancel
                               </Button>
                             )}
-                          {(token.Role === "Admin" ||
-                            token.Role === "Employee") &&
-                            row.orderStatus === 1 &&
-                            "Confirmed"}
+                          {row.orderStatus === 1
+                            ? "Confirmed"
+                            : row.orderStatus === 2
+                            ? "Cancelled"
+                            : ""}
                         </TableCell>
                       </TableRow>
                     );

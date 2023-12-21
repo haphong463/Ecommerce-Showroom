@@ -54,7 +54,8 @@ namespace API.Controllers
                             VehicleId = o.Vehicle.VehicleId,
                             Name = o.Vehicle.Name,
                             ModelId = o.Vehicle.ModelId,
-                        }
+                        },
+
                     });
                     return Ok(new ApiResponse<IEnumerable<OrderCompanyDTO>>(Result, "Get all Orders successfully"));
                 }
@@ -115,7 +116,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<byte>>> PostOrder([FromForm] OrderCompanyBrief OCbrief)
+        public async Task<ActionResult<ApiResponse<OrderCompany>>> PostOrder([FromForm] OrderCompanyBrief OCbrief)
         {
             if (!ModelState.IsValid)
             {
@@ -129,14 +130,20 @@ namespace API.Controllers
                 await _dbContext.OrderCompanies.AddAsync(odCompany);
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(new ApiResponse<byte>(0, "OrderCompany created successfully"));
+                var result = await _dbContext.OrderCompanies
+                    .Include(o => o.Vehicle).Include(o => o.Employee)
+                    .SingleOrDefaultAsync(o => o.orderCompanyId == odCompany.orderCompanyId);
+
+                var odCompanyDTO = _mapper.Map<OrderCompanyDTO>(result);
+
+                return Ok(new ApiResponse<OrderCompanyDTO>(odCompanyDTO, "OrderCompany created successfully"));
             }
             catch (Exception ex)
             {
                 return ApiResponse<OrderCompany>.Exception(ex);
             }
         }
-        [HttpPost("cancel/{id}")]
+        [HttpPut("cancel/{id}")]
         public async Task<ActionResult<ApiResponse<OrderCompany>>> PostCancel([FromForm] int id)
         {
             if (!ModelState.IsValid)
@@ -146,17 +153,49 @@ namespace API.Controllers
 
             try
             {
-                var odCompany = await _dbContext.OrderCompanies.FindAsync(id);
-                odCompany.OrderStatus = 2;
+                var result = await _dbContext.OrderCompanies
+ .Include(o => o.Vehicle).Include(o => o.Employee)
+ .SingleOrDefaultAsync(o => o.orderCompanyId == id);
+                result.OrderStatus = 2;
                 await _dbContext.SaveChangesAsync();
 
-                return Ok(new ApiResponse<byte>(2, "OrderCompany created successfully"));
+
+                var odCompanyDTO = _mapper.Map<OrderCompanyDTO>(result);
+                return Ok(new ApiResponse<OrderCompanyDTO>(odCompanyDTO, "OrderCompany created successfully"));
             }
             catch (Exception ex)
             {
                 return ApiResponse<OrderCompany>.Exception(ex);
             }
         }
+        /*[HttpPost]
+        public async Task<ActionResult<ApiResponse<OrderCompanyDTO>>> PostOrder([FromForm] OrderCompany odCompany)
+        {
+            if (!ModelState.IsValid)
+            {
+                return ApiResponse<OrderCompany>.BadRequest(ModelState);
+            }
+
+            try
+            {
+
+                await _dbContext.OrderCompanies.AddAsync(odCompany);
+                await _dbContext.SaveChangesAsync();
+
+                var result = await _dbContext.OrderCompanies
+                    .Include(o => o.Vehicle).Include(o => o.Employee)
+                    .SingleOrDefaultAsync(o => o.orderCompanyId == odCompany.orderCompanyId);
+
+                var odCompanyDTO = _mapper.Map<OrderCompanyDTO>(result);
+
+                return Ok(new ApiResponse<OrderCompanyDTO>(odCompanyDTO, "OrderCompany created successfully"));
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<OrderCompanyDTO>.Exception(ex);
+            }
+        }*/
+
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<OrderCompany>>> UpdateOrder(int id, [FromForm] OrderCompanyBrief OCbrief)
         {

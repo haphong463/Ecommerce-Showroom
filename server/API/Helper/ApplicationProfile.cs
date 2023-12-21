@@ -25,6 +25,13 @@ namespace API.Helper
                     OrderId = x.OrderId,
                     Quantity = x.Quantity
                 }).ToList()))
+                .ForMember(dest => dest.Frames, opt => opt.MapFrom(src => src.Frames!.Select(x => new Vehicle_Frame_DTO
+                {
+                    Id = x.Id,
+                    FrameNumber = x.FrameNumber,
+                    ReceivingOrderId = x.ReceivingOrderId,
+                    VehicleId = x.VehicleId
+                }).ToList()))
                 .ReverseMap();
             CreateMap<Brand, BrandDTO>().ReverseMap();
             CreateMap<Account, AccountDTO>().ReverseMap();
@@ -51,7 +58,25 @@ namespace API.Helper
             CreateMap<RegistrationDataDTO, RegistrationData>().ReverseMap();
 
             CreateMap<OrderCompanyBrief, OrderCompany>().ReverseMap();
+            CreateMap<OrderCompany, OrderCompanyDTO>().ReverseMap();
             CreateMap<FrameBrief, Frame>().ReverseMap();
+
+            CreateMap<OrderCompany, OrderCompanyDTO>()
+                .ForMember(dest => dest.Vehicle, opt => opt.MapFrom(src => new include_VehicleDTO
+                {
+                    VehicleId = src.Vehicle!.VehicleId,
+                    Name = src.Vehicle.Name,
+                    Price = src.Vehicle.Price,
+                    Quantity = (int)src.Vehicle.Quantity,
+                    BrandId = src.Vehicle.BrandId,
+                    ModelId = src.Vehicle.ModelId,
+                }))
+                .ForMember(dest => dest.Employee, opt => opt.MapFrom(src => new EmployeeDTO
+                {
+                    EmployeeId = src.Employee!.EmployeeId,
+                    Name = src.Employee.Name,
+                }))
+                .ReverseMap();
 
         }
     }
