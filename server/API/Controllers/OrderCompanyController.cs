@@ -40,7 +40,7 @@ namespace API.Controllers
                         Name = o.Name,
                         Quantity = o.Quantity,
                         SuggestPrice = o.SuggestPrice,
-                        OrderStatus = (byte)o.OrderStatus,
+                        OrderStatus = o.OrderStatus,
                         EmployeeId = o.EmployeeId,
                         Employee = new EmployeeDTO
                         {

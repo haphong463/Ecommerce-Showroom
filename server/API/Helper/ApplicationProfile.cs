@@ -58,10 +58,9 @@ namespace API.Helper
             CreateMap<RegistrationDataDTO, RegistrationData>().ReverseMap();
 
             CreateMap<ReceivingOrder, ReceivingOrderDTO>().ReverseMap();
-            CreateMap<OrderCompanyBrief, OrderCompany>().ReverseMap();
-            CreateMap<OrderCompany, OrderCompanyDTO>().ReverseMap();
             CreateMap<FrameBrief, Frame>().ReverseMap();
 
+            CreateMap<OrderCompanyBrief, OrderCompany>().ReverseMap();
             CreateMap<OrderCompany, OrderCompanyDTO>()
                 .ForMember(dest => dest.Vehicle, opt => opt.MapFrom(src => new include_VehicleDTO
                 {
@@ -76,6 +75,24 @@ namespace API.Helper
                 {
                     EmployeeId = src.Employee!.EmployeeId,
                     Name = src.Employee.Name,
+                }))
+                .ReverseMap();
+
+            CreateMap<AppointmentBrief, Appointment>().ReverseMap();
+            CreateMap<Appointment, AppointmentDTO>()
+                .ForMember(dest => dest.Vehicles, opt => opt.MapFrom(src => new include_VehicleDTO
+                {
+                    VehicleId = src.Vehicles!.VehicleId,
+                    Name = src.Vehicles.Name,
+                    Price = src.Vehicles.Price,
+                    Quantity = (int)src.Vehicles.Quantity,
+                    BrandId = src.Vehicles.BrandId,
+                    ModelId = src.Vehicles.ModelId,
+                }))
+                .ForMember(dest => dest.Accounts, opt => opt.MapFrom(src => new AccountDTO
+                {
+                    AccountId = src.Accounts!.AccountId,
+                    Name = src.Accounts.Name,
                 }))
                 .ReverseMap();
 
