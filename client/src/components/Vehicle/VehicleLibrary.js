@@ -77,15 +77,12 @@ export const generateValidationSchema = (isEditing) =>
     name: yup.string().required("Name is required"),
     brandId: yup.string().required("Brand is required"),
     manufacturingYear: yup.number().required("Manufacturing Year is required"),
-
     color: yup.string().required("Color is required"),
     mileage: yup.number().required("Mileage is required"),
     engineType: yup.string().required("Engine Type is required"),
     transmissionType: yup.string().required("Transmission Type is required"),
     fuelType: yup.string().required("Fuel Type is required"),
     numberOfSeats: yup.number().required("Number of Seats is required"),
-    purchasePrice: yup.number().required("Purchase Price is required"),
-    description: yup.string().required("Description is required"),
     files: isEditing
       ? yup.array().nullable()
       : yup.array().min(1, "Please upload at least one image."),
@@ -106,9 +103,6 @@ export const formFields = [
   { name: "transmissionType", label: "Transmission Type*", type: "select" },
   { name: "fuelType", label: "Fuel Type*", type: "select" },
   { name: "numberOfSeats", label: "Number of Seats*", type: "number" },
-  { name: "purchasePrice", label: "Purchase Price*", type: "number" },
-  { name: "description", label: "Description*", type: "text" },
-  { name: "isUsed", label: "Used/New*" },
   {
     name: "files",
     label: "Image",
@@ -116,4 +110,5 @@ export const formFields = [
     accept: "image/*",
     multiple: true,
   },
+  { name: "isUsed", label: "Used/New*" },
 ];

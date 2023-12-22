@@ -63,9 +63,11 @@ const OrderForm = ({ vehicleList }) => {
     const checkLastOrderDuplicate =
       newArrayToCheckLastOrderDuplicate[
         newArrayToCheckLastOrderDuplicate.length - 1
-      ].suggestPrice;
+      ];
 
-    setSuggestPrice(checkLastOrderDuplicate);
+    if (checkLastOrderDuplicate) {
+      setSuggestPrice(checkLastOrderDuplicate.suggestPrice);
+    }
   };
 
   const validationSchema = generateValidationSchemaOrder();

@@ -73,7 +73,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        public async Task<ActionResult<ApiResponse<string>>> PostReceivingOrder([FromForm] List<string> frames, [FromForm] int vehicleId, [FromForm] int purchaseOrderId)
+        public async Task<ActionResult<ApiResponse<string>>> PostReceivingOrder([FromForm] List<string> frames, [FromForm] int vehicleId, [FromForm] int purchaseOrderId, [FromForm] decimal price)
         {
             if (!ModelState.IsValid)
             {
@@ -86,10 +86,15 @@ namespace API.Controllers
                 //var FrameNumber = ReceivingOd.FrameNumber;
                 //var PurchaseOrderId = ReceivingOd.PurchaseOrderId;
                 //var Frame = ReceivingOd.Frame;  //list<Frame>
+                decimal RATE = 1.1m;
                 var purchaseOrder = await _dbContext.OrderCompanies
                                     .Include(o => o.Vehicle).Include(o => o.Employee)
-                                    .SingleOrDefaultAsync(o => o.orderCompanyId == purchaseOrderId); var vehicles = await _dbContext.Vehicles.FindAsync(vehicleId);
+                                    .SingleOrDefaultAsync(o => o.orderCompanyId == purchaseOrderId); 
+                var vehicles = await _dbContext.Vehicles.FindAsync(vehicleId);
                 vehicles!.Quantity += frames.Count();
+                vehicles.PurchasePrice = price;
+                vehicles.Price = price * RATE;
+                    ;
                 purchaseOrder!.OrderStatus = 1;
                 var newReceive = new ReceivingOrder
                 {

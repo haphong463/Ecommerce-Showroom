@@ -11,6 +11,7 @@ import {
   Dialog,
   DialogActions,
   DialogContent,
+  Divider,
   Grid,
   IconButton,
   Skeleton,
@@ -39,11 +40,14 @@ export const OrderList = ({ orderList, vehicleList }) => {
     useContext(OrderContext);
   const { token } = useContext(DataContext);
   const [loading, setLoading] = useState();
+  const [getRelated, setGetRelated] = useState([]);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
   const [dataToPost, setDataToPost] = useState();
   const [openDialog, setOpenDialog] = useState(false);
+  const [openDialogDetails, setOpenDialogDetails] = useState(false);
   const [dialogFields, setDialogFields] = useState([]);
+  const [frameDetail, setFrameDetail] = useState([]);
 
   // ---------------------------------------------------------------- handleConfirmClick ----------------------------------------------------------------
   const handleConfirmClick = (vehicleId, quantity, purchaseOrderId) => {
@@ -99,22 +103,29 @@ export const OrderList = ({ orderList, vehicleList }) => {
       frames: [...dialogFields],
       vehicleId: dataToPost.vehicleId,
       purchaseOrderId: dataToPost.purchaseOrderId,
+      price: dataToPost.price,
     };
-    postReceivingOrder(dataPost).then((data) => {
-      if (data) {
-        setOrderData((prev) =>
-          prev.map((item) =>
-            item.orderCompanyId === data.orderCompanyId ? data : item
-          )
-        );
-        setOpenDialog(false);
-      }
-    });
+    console.log(dataPost);
+    // postReceivingOrder(dataPost).then((data) => {
+    //   if (data) {
+    //     setOrderData((prev) =>
+    //       prev.map((item) =>
+    //         item.orderCompanyId === data.orderCompanyId ? data : item
+    //       )
+    //     );
+    //     setOpenDialog(false);
+    //   }
+    // });
   };
   // ---------------------------------------------------------------- handleDialogClose ----------------------------------------------------------------
 
   const handleDialogClose = () => {
-    setOpenDialog(false);
+    if (openDialog) {
+      setOpenDialog(false);
+    }
+    if (openDialogDetails) {
+      setOpenDialogDetails(false);
+    }
   };
   // ---------------------------------------------------------------- handleChangePage ----------------------------------------------------------------
 
@@ -156,10 +167,28 @@ export const OrderList = ({ orderList, vehicleList }) => {
     });
   };
 
+  const handleViewOrderDetails = (purchaseOrderId) => {
+    // Find the related data for the current purchaseOrderId
+    const relatedData = getRelated.find(
+      (data) => data.purchaseOrderId === purchaseOrderId
+    );
+    console.log(relatedData);
+    if (relatedData) {
+      // Extract frames from related data
+      const frames = relatedData.frames || [];
+
+      // Open a dialog to display the frames
+      setOpenDialogDetails(true);
+      setFrameDetail(frames);
+    }
+  };
+
   useEffect(() => {
     setLoading(true);
     getReceivingOrder().then((data) => {
-      console.log(data);
+      if (data) {
+        setGetRelated(data);
+      }
     });
     getPurchaseOrder().then((data) => {
       if (data !== null) {
@@ -175,10 +204,12 @@ export const OrderList = ({ orderList, vehicleList }) => {
         <Table stickyHeader aria-label="sticky table">
           <TableHead>
             <TableRow>
+              <TableCell>Name</TableCell>
+              <TableCell>Brand</TableCell>
               <TableCell>Model Number</TableCell>
+
               <TableCell>Suggest Price</TableCell>
               <TableCell>Quantity</TableCell>
-              <TableCell>Brand</TableCell>
               <TableCell>Employee</TableCell>
               <TableCell></TableCell>
             </TableRow>
@@ -190,10 +221,11 @@ export const OrderList = ({ orderList, vehicleList }) => {
                   .map((row, index) => {
                     return (
                       <TableRow hover role="checkbox" tabIndex={-1} key={index}>
+                        <TableCell>{row.name}</TableCell>
+                        <TableCell>{row.brand}</TableCell>
                         <TableCell>{row.modelId}</TableCell>
                         <TableCell>{row.suggestPrice}</TableCell>
                         <TableCell>{row.quantity}</TableCell>
-                        <TableCell>{row.brand}</TableCell>
                         <TableCell>{row.employee.name}</TableCell>
 
                         <TableCell>
@@ -237,11 +269,22 @@ export const OrderList = ({ orderList, vehicleList }) => {
                                 Cancel
                               </Button>
                             )}
-                          {row.orderStatus === 1
-                            ? "Confirmed"
-                            : row.orderStatus === 2
-                            ? "Cancelled"
-                            : ""}
+                          {row.orderStatus === 1 ? (
+                            <Stack direction="row" alignItems="center">
+                              <Typography variant="body2">Confirmed</Typography>
+                              <Button
+                                onClick={() =>
+                                  handleViewOrderDetails(row.orderCompanyId)
+                                }
+                              >
+                                View
+                              </Button>
+                            </Stack>
+                          ) : row.orderStatus === 2 ? (
+                            <Typography variant="body2">Cancelled</Typography>
+                          ) : (
+                            ""
+                          )}
                         </TableCell>
                       </TableRow>
                     );
@@ -268,28 +311,63 @@ export const OrderList = ({ orderList, vehicleList }) => {
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogContent>
           <Typography variant="h6">Enter chassis number</Typography>
-          <Grid container spacing={2}>
+          <Stack direction="row" container spacing={2}>
             {dialogFields.map((field, index) => (
+              <TextField
+                key={index}
+                label={`Car ${index + 1}`}
+                variant="outlined"
+                fullWidth
+                margin="normal"
+                value={field}
+                onChange={(e) => {
+                  const updatedFields = [...dialogFields];
+                  updatedFields[index] = e.target.value;
+                  setDialogFields(updatedFields);
+                }}
+              />
+            ))}
+          </Stack>
+
+          <TextField
+            sx={{
+              mt: 1,
+            }}
+            variant="outlined"
+            label="Price"
+            onChange={(e) => {
+              setDataToPost((prev) => ({ ...prev, price: e.target.value }));
+            }}
+          />
+
+          <DialogActions>
+            <Button onClick={handleReceivingOrder}>Confirm</Button>
+          </DialogActions>
+        </DialogContent>
+      </Dialog>
+      <Dialog open={openDialogDetails} onClose={handleDialogClose}>
+        <DialogContent>
+          <Typography variant="h6">Frames for Purchase Order</Typography>
+          <Grid container spacing={2}>
+            {frameDetail.map((field, index) => (
               <Grid key={index} item xs={3}>
                 <TextField
-                  label={`Field ${index + 1}`}
+                  label={`Frame ${index + 1}`}
                   variant="outlined"
                   fullWidth
                   margin="normal"
-                  value={field}
-                  onChange={(e) => {
-                    const updatedFields = [...dialogFields];
-                    updatedFields[index] = e.target.value;
-                    setDialogFields(updatedFields);
+                  value={field.frameNumber}
+                  InputProps={{
+                    readOnly: true,
                   }}
                 />
               </Grid>
             ))}
           </Grid>
-          <DialogActions>
-            <Button onClick={handleReceivingOrder}>Confirm</Button>
-          </DialogActions>
         </DialogContent>
+        <DialogActions>
+          <Button onClick={handleDialogClose}>Close</Button>
+        </DialogActions>
       </Dialog>
     </>
   );

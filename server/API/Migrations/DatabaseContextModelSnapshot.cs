@@ -240,7 +240,7 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<byte>("OrderStatus")
+                    b.Property<byte?>("OrderStatus")
                         .HasColumnType("tinyint");
 
                     b.Property<int>("Quantity")
@@ -407,10 +407,6 @@ namespace API.Migrations
                         .HasMaxLength(30)
                         .HasColumnType("nvarchar(30)");
 
-                    b.Property<string>("Description")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("EngineType")
                         .IsRequired()
                         .HasMaxLength(50)
@@ -441,13 +437,13 @@ namespace API.Migrations
                     b.Property<int>("NumberOfSeats")
                         .HasColumnType("int");
 
-                    b.Property<decimal>("Price")
+                    b.Property<decimal?>("Price")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<DateTime?>("PurchaseDate")
                         .HasColumnType("datetime2");
 
-                    b.Property<decimal>("PurchasePrice")
+                    b.Property<decimal?>("PurchasePrice")
                         .HasColumnType("decimal(10,2)");
 
                     b.Property<int?>("Quantity")
@@ -485,7 +481,7 @@ namespace API.Migrations
             modelBuilder.Entity("API.Models.Frame", b =>
                 {
                     b.HasOne("API.Models.ReceivingOrder", "ReceivingOrder")
-                        .WithMany("Frame")
+                        .WithMany("Frames")
                         .HasForeignKey("ReceivingOrderId")
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
@@ -650,7 +646,7 @@ namespace API.Migrations
 
             modelBuilder.Entity("API.Models.ReceivingOrder", b =>
                 {
-                    b.Navigation("Frame");
+                    b.Navigation("Frames");
                 });
 
             modelBuilder.Entity("API.Models.Service", b =>

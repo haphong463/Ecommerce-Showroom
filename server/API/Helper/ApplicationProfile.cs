@@ -67,7 +67,7 @@ namespace API.Helper
                 {
                     VehicleId = src.Vehicle!.VehicleId,
                     Name = src.Vehicle.Name,
-                    Price = src.Vehicle.Price,
+                    Price = (decimal)src.Vehicle.Price,
                     Quantity = (int)src.Vehicle.Quantity,
                     BrandId = src.Vehicle.BrandId,
                     ModelId = src.Vehicle.ModelId,

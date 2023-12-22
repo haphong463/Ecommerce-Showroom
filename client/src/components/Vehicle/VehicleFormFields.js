@@ -32,11 +32,7 @@ export function VehicleFormFields({
     <Grid container spacing={2}>
       {formFields.map((field) => {
         return (
-          <Grid
-            item
-            xs={field.name === "description" ? 12 : 3}
-            key={field.name}
-          >
+          <Grid item xs={3} key={field.name}>
             {field.name === "isUsed" ? (
               <FormControlLabel
                 control={
@@ -146,32 +142,20 @@ export function VehicleFormFields({
                       id={name}
                       name={name}
                       label={field.label}
-                      multiline={field.name === "description"}
-                      rows={field.name === "description" ? 4 : 1}
                       helperText={
                         touched[field.name] && errors[field.name]
                           ? errors[field.name]
                           : ""
                       }
+                      value={value}
                       error={Boolean(touched[field.name] && errors[field.name])}
                       onChange={onChange}
                       onBlur={onBlur}
                       type={field.type}
-                      InputProps={
-                        field.name === "purchasePrice"
-                          ? {
-                              startAdornment: (
-                                <InputAdornment position="start">
-                                  $
-                                </InputAdornment>
-                              ),
-                            }
-                          : undefined
-                      }
                     />
                   </>
                 )}
-              </FastField>
+            </FastField>
             )}
           </Grid>
         );

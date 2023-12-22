@@ -55,7 +55,7 @@ namespace API.Controllers
                     Vehicles = new include_VehicleDTO
                     {
                         Name = odD.Vehicles.Name,
-                        Price = odD.Vehicles.Price,
+                        Price = (decimal)odD.Vehicles.Price,
                         Quantity = (int)odD.Vehicles.Quantity,
                         BrandId = odD.Vehicles.BrandId,
                         ModelId = odD.Vehicles.ModelId
@@ -116,7 +116,7 @@ namespace API.Controllers
                         Vehicles = new include_VehicleDTO
                         {
                             Name = odD.Vehicles.Name,
-                            Price = odD.Vehicles.Price,
+                            Price = (decimal)odD.Vehicles.Price,
                             Quantity = (int)odD.Vehicles.Quantity,
                             BrandId = odD.Vehicles.BrandId,
                             ModelId = odD.Vehicles.ModelId
@@ -229,7 +229,6 @@ namespace API.Controllers
                 var accountId = order.AccountId;
                 var orderServices = order.OrderServices; // List<OrderService>
                 var orderDetails = order.OrderDetails; // List<OrderDetails>
-                var emailAcc = order.Account.Email;
                 var totalPrice = order.TotalPrice;
 
                 // Tạo đối tượng Order
@@ -278,7 +277,8 @@ namespace API.Controllers
                 }
 
                 // Trả về thông tin đơn hàng đã tạo
-                var savedOrder = await _dbContext.Orders.FindAsync(newOrder.OrderId);
+                var savedOrder = await _dbContext.Orders.Include(x => x.Account).SingleOrDefaultAsync(x => x.OrderId == newOrder.OrderId);
+                var emailAcc = savedOrder.Account.Email;
 
                 // Gửi email xác nhận đơn hàng
                 const string subject = "Confirm Order";
@@ -286,7 +286,7 @@ namespace API.Controllers
                 string body = $@"
             <h2>Order Confirmation</h2>
             <p>Thank you for your order! Here are the details:</p>
-            <p><strong>Order ID:</strong> {order.OrderId}</p>
+            <p><strong>Order ID:</strong> {newOrder.OrderId}</p>
             <p><strong>Employee ID:</strong> {order.EmployeeId}</p>
             <p><strong>Account ID:</strong> {order.AccountId}</p>
             <p><strong>Total Price:</strong> {order.TotalPrice}</p>
