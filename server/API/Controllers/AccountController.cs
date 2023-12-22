@@ -1,6 +1,7 @@
 ﻿using API.Data;
 using API.Helper;
 using API.Models;
+using API.Services;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -141,7 +142,59 @@ namespace API.Controllers
                 var verificationUrl = Url.Action("VerifyEmail", "Account", new { token = account.VerifitcationToken }, Request.Scheme);
 
                 // Gửi email xác minh
-                await SendVerificationEmail(account.Email, verificationUrl);
+                const string subject = "Verify Your Email";
+
+                string body = $@"
+    <html>
+    <head>
+        <style>
+            body {{
+                font-family: 'Arial', sans-serif;
+                background-color: #f4f4f4;
+                margin: 0;
+                padding: 0;
+            }}
+
+            .container {{
+                max-width: 600px;
+                margin: 20px auto;
+                background-color: #ffffff;
+                padding: 20px;
+                border-radius: 5px;
+                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            }}
+
+            h2 {{
+                color: #333333;
+            }}
+
+            p {{
+                color: #555555;
+            }}
+
+            a {{
+                color: #007BFF;
+                text-decoration: none;
+            }}
+
+            a:hover {{
+                text-decoration: underline;
+            }}
+
+            .logo {{
+                text-align: center;
+            }}
+        </style>
+    </head>
+    <body>
+        <div class='container'>
+            <h2>Hello,</h2>
+            <p>Please click <a href='{verificationUrl}'>here</a> to verify your email address.</p>
+        </div>
+    </body>
+    </html>
+";
+                await EmailServices.SendEmail(account.Email, body, subject);
 
 
                 if (account.Role == "Employee" || account.Role == "Admin")
@@ -175,6 +228,7 @@ namespace API.Controllers
             }
         }
 
+   
 
         [HttpGet("verify-email")]
         public async Task<IActionResult> VerifyEmail(string token)
@@ -341,94 +395,7 @@ namespace API.Controllers
 
 
 
-        private async Task SendVerificationEmail(string email, string verificationUrl)
-        {
-            try
-            {
-                var fromAddress = new MailAddress("haphong2134@gmail.com", "Showroom");
-                var toAddress = new MailAddress(email, "Showroom");
-                const string fromPassword = "nfyr wdgm trma owas"; // Thay bằng mật khẩu email của bạn
-                const string subject = "Verify Your Email";
-
-                // Tạo nội dung email chứa URL xác minh
-                string body = $@"
-    <html>
-    <head>
-        <style>
-            body {{
-                font-family: 'Arial', sans-serif;
-                background-color: #f4f4f4;
-                margin: 0;
-                padding: 0;
-            }}
-
-            .container {{
-                max-width: 600px;
-                margin: 20px auto;
-                background-color: #ffffff;
-                padding: 20px;
-                border-radius: 5px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-            }}
-
-            h2 {{
-                color: #333333;
-            }}
-
-            p {{
-                color: #555555;
-            }}
-
-            a {{
-                color: #007BFF;
-                text-decoration: none;
-            }}
-
-            a:hover {{
-                text-decoration: underline;
-            }}
-
-            .logo {{
-                text-align: center;
-            }}
-        </style>
-    </head>
-    <body>
-        <div class='container'>
-            <h2>Hello,</h2>
-            <p>Please click <a href='{verificationUrl}'>here</a> to verify your email address.</p>
-        </div>
-    </body>
-    </html>
-";
-
-
-
-                var smtp = new SmtpClient
-                {
-                    Host = "smtp.gmail.com", // Thay bằng địa chỉ SMTP của bạn
-                    Port = 587, // Thay đổi cổng nếu cần
-                    EnableSsl = true, // Sử dụng SSL/TLS, thay đổi nếu không cần
-                    DeliveryMethod = SmtpDeliveryMethod.Network,
-                    UseDefaultCredentials = false,
-                    Credentials = new NetworkCredential(fromAddress.Address, fromPassword)
-                };
-
-                using var message = new MailMessage(fromAddress, toAddress)
-                {
-                    Subject = subject,
-                    Body = body,
-                    IsBodyHtml = true
-                };
-
-                await smtp.SendMailAsync(message);
-            }
-            catch (Exception ex)
-            {
-                // Xử lý lỗi khi gửi email
-                Console.WriteLine("Error sending email: " + ex.Message);
-            }
-        }
+        
 
         [HttpPut("change-password/{id}")]
         public async Task<IActionResult> ChangePassword(int id, [FromForm] ChangePasswordRequest request)

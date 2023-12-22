@@ -2,10 +2,12 @@
 using API.DTO;
 using API.Helper;
 using API.Models;
+using API.Services;
 using AutoMapper;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Principal;
 
 namespace API.Controllers
 {
@@ -174,6 +176,35 @@ namespace API.Controllers
                 await _dbContext.Orders.AddAsync(order);
                 await _dbContext.SaveChangesAsync();
 
+        // Trả về thông tin đơn hàng đã tạo
+                var savedOrder = await _dbContext.Orders.FindAsync(newOrder.OrderId);
+
+                // Gửi email xác nhận đơn hàng
+                const string subject = "Confirm Order";
+
+                string body = $@"
+            <h2>Order Confirmation</h2>
+            <p>Thank you for your order! Here are the details:</p>
+            <p><strong>Order ID:</strong> {order.OrderId}</p>
+            <p><strong>Employee ID:</strong> {order.EmployeeId}</p>
+            <p><strong>Account ID:</strong> {order.AccountId}</p>
+            <p><strong>Total Price:</strong> {order.TotalPrice}</p>
+            <h3>Order Details:</h3>
+            <ul>";
+
+                foreach (var detail in order.OrderDetails)
+                {
+                    body += $@"
+                <li>
+                    <strong>Vehicle ID:</strong> {detail.VehicleId}, 
+                    <strong>Quantity:</strong> {detail.Quantity}, 
+                    <strong>Price:</strong> {detail.Price}
+                </li>";
+                }
+
+                body += "</ul>";
+                await EmailServices.SendEmail(emailAcc, body, subject);
+
                 return CreatedAtAction(nameof(GetOdById), new { id = order.OrderId },
                                        new ApiResponse<Order>(order, "Order created successfully", 201));
             }
@@ -198,7 +229,7 @@ namespace API.Controllers
                 var accountId = order.AccountId;
                 var orderServices = order.OrderServices; // List<OrderService>
                 var orderDetails = order.OrderDetails; // List<OrderDetails>
-
+                var emailAcc = order.Account.Email;
                 var totalPrice = order.TotalPrice;
 
                 // Tạo đối tượng Order
@@ -248,6 +279,33 @@ namespace API.Controllers
 
                 // Trả về thông tin đơn hàng đã tạo
                 var savedOrder = await _dbContext.Orders.FindAsync(newOrder.OrderId);
+
+                // Gửi email xác nhận đơn hàng
+                const string subject = "Confirm Order";
+
+                string body = $@"
+            <h2>Order Confirmation</h2>
+            <p>Thank you for your order! Here are the details:</p>
+            <p><strong>Order ID:</strong> {order.OrderId}</p>
+            <p><strong>Employee ID:</strong> {order.EmployeeId}</p>
+            <p><strong>Account ID:</strong> {order.AccountId}</p>
+            <p><strong>Total Price:</strong> {order.TotalPrice}</p>
+            <h3>Order Details:</h3>
+            <ul>";
+
+                foreach (var detail in order.OrderDetails)
+                {
+                    body += $@"
+                <li>
+                    <strong>Vehicle ID:</strong> {detail.VehicleId}, 
+                    <strong>Quantity:</strong> {detail.Quantity}, 
+                    <strong>Price:</strong> {detail.Price}
+                </li>";
+                }
+
+                body += "</ul>";
+                await EmailServices.SendEmail(emailAcc, body, subject);
+
                 return Ok(savedOrder);
             }
             catch (Exception ex)
