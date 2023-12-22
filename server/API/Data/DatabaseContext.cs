@@ -91,5 +91,6 @@ namespace API.Data
         public DbSet<ReceivingOrder> ReceivingOrders { get; set; }
         public DbSet<OrderCompany> OrderCompanies { get; set; }
         public DbSet<Frame> Frames { get; set; }
+        public DbSet<Appointment> Appointments { get; set; }
     }
 }
