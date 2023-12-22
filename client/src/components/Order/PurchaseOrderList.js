@@ -28,7 +28,10 @@ import {
   getPurchaseOrder,
   putCancelPurchaseOrder,
 } from "./PurchaseOrderLibrary";
-import { postReceivingOrder } from "../ReceivingOrder/ReceivingOrderLibrary";
+import {
+  getReceivingOrder,
+  postReceivingOrder,
+} from "../ReceivingOrder/ReceivingOrderLibrary";
 import { DataContext } from "../../context/DataContext";
 
 export const OrderList = ({ orderList, vehicleList }) => {
@@ -92,12 +95,21 @@ export const OrderList = ({ orderList, vehicleList }) => {
         return;
       }
     }
-    // const dataPost = {
-    //   frames: [...dialogFields],
-    //   vehicleId: dataToPost.vehicleId,
-    //   purchaseOrderId: dataToPost.purchaseOrderId,
-    // };
-    // postReceivingOrder(dataPost);
+    const dataPost = {
+      frames: [...dialogFields],
+      vehicleId: dataToPost.vehicleId,
+      purchaseOrderId: dataToPost.purchaseOrderId,
+    };
+    postReceivingOrder(dataPost).then((data) => {
+      if (data) {
+        setOrderData((prev) =>
+          prev.map((item) =>
+            item.orderCompanyId === data.orderCompanyId ? data : item
+          )
+        );
+        setOpenDialog(false);
+      }
+    });
   };
   // ---------------------------------------------------------------- handleDialogClose ----------------------------------------------------------------
 
@@ -146,6 +158,9 @@ export const OrderList = ({ orderList, vehicleList }) => {
 
   useEffect(() => {
     setLoading(true);
+    getReceivingOrder().then((data) => {
+      console.log(data);
+    });
     getPurchaseOrder().then((data) => {
       if (data !== null) {
         setOrderData(data);

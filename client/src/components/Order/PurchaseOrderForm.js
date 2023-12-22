@@ -37,6 +37,7 @@ const OrderForm = ({ vehicleList }) => {
     useContext(OrderContext);
   const { token } = useContext(DataContext);
   const [employeeId, setEmployeeId] = useState();
+  const [suggestPrice, setSuggestPrice] = useState();
   const initialValues = {
     vehicleId: order?.vehicleID ?? "",
     modelName: order?.modelName ?? "",
@@ -56,9 +57,15 @@ const OrderForm = ({ vehicleList }) => {
     formikBag.setFieldValue("brandId", vehicleInfo.brand.name);
     formikBag.setFieldValue("modelName", vehicleInfo.modelId);
 
+    const newArrayToCheckLastOrderDuplicate = orderData.filter(
+      (item) => item.vehicleId === vehicleInfo.vehicleID
+    );
     const checkLastOrderDuplicate =
-      orderData[orderData.length - 1].suggestPrice;
-    console.log(checkLastOrderDuplicate);
+      newArrayToCheckLastOrderDuplicate[
+        newArrayToCheckLastOrderDuplicate.length - 1
+      ].suggestPrice;
+
+    setSuggestPrice(checkLastOrderDuplicate);
   };
 
   const validationSchema = generateValidationSchemaOrder();
@@ -187,8 +194,11 @@ const OrderForm = ({ vehicleList }) => {
                       formikProps.setFieldValue("suggestPrice", e.target.value);
                     }}
                     helperText={
-                      formikProps.touched.suggestPrice &&
-                      formikProps.errors.suggestPrice
+                      formikProps.touched.suggestPrice
+                        ? formikProps.errors.suggestPrice
+                        : suggestPrice
+                        ? `Suggested price for the last order: ${suggestPrice}`
+                        : ""
                     }
                     error={
                       formikProps.touched.suggestPrice &&

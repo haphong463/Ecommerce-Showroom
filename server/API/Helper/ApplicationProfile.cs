@@ -57,6 +57,7 @@ namespace API.Helper
             CreateMap<RegistrationData, RegistrationDataDTO>().ReverseMap();
             CreateMap<RegistrationDataDTO, RegistrationData>().ReverseMap();
 
+            CreateMap<ReceivingOrder, ReceivingOrderDTO>().ReverseMap();
             CreateMap<OrderCompanyBrief, OrderCompany>().ReverseMap();
             CreateMap<OrderCompany, OrderCompanyDTO>().ReverseMap();
             CreateMap<FrameBrief, Frame>().ReverseMap();

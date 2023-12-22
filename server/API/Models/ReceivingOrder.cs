@@ -8,7 +8,7 @@ namespace API.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int PurchaseOrderId { get; set; }
-        public List<Frame>? Frame { get; set; }
+        public List<Frame>? Frames { get; set; }
         public OrderCompany? OrderCompany { get; set; }
     }
 }

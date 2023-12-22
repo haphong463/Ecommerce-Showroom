@@ -68,7 +68,7 @@ namespace API.Data
     .OnDelete(DeleteBehavior.Restrict);
 
             modelBuilder.Entity<ReceivingOrder>()
-                .HasMany(ro => ro.Frame)
+                .HasMany(ro => ro.Frames)
                 .WithOne(f => f.ReceivingOrder)
                 .HasForeignKey(f => f.ReceivingOrderId)
                 .OnDelete(DeleteBehavior.Restrict);

@@ -26,13 +26,13 @@ namespace API.Controllers
             try
             {
                 var list = await _dbContext.ReceivingOrders
-                    .Include(o => o.Frame).Include(o => o.OrderCompany)
+                    .Include(o => o.Frames).Include(o => o.OrderCompany)
                     .ToListAsync();
 
                 if (list != null && list.Any())
                 {
-                    var Result = _mapper.Map<List<ReceivingOrderDTO>>(list);
-                    return Ok(new ApiResponse<IEnumerable<ReceivingOrderDTO>>(Result, "Get all successfully"));
+                    var result = _mapper.Map<List<ReceivingOrderDTO>>(list);
+                    return Ok(new ApiResponse<IEnumerable<ReceivingOrderDTO>>(result, "Get all successfully"));
                 }
                 else
                 {
@@ -52,7 +52,7 @@ namespace API.Controllers
             try
             {
                 var list = await _dbContext.ReceivingOrders
-                    .Include(o => o.Frame).Include(o => o.OrderCompany)
+                    .Include(o => o.Frames).Include(o => o.OrderCompany)
                     .SingleOrDefaultAsync(o => o.Id == id);
 
                 if (list != null)
@@ -86,8 +86,9 @@ namespace API.Controllers
                 //var FrameNumber = ReceivingOd.FrameNumber;
                 //var PurchaseOrderId = ReceivingOd.PurchaseOrderId;
                 //var Frame = ReceivingOd.Frame;  //list<Frame>
-                var purchaseOrder = await _dbContext.OrderCompanies.FindAsync(purchaseOrderId);
-                var vehicles = await _dbContext.Vehicles.FindAsync(vehicleId);
+                var purchaseOrder = await _dbContext.OrderCompanies
+                                    .Include(o => o.Vehicle).Include(o => o.Employee)
+                                    .SingleOrDefaultAsync(o => o.orderCompanyId == purchaseOrderId); var vehicles = await _dbContext.Vehicles.FindAsync(vehicleId);
                 vehicles!.Quantity += frames.Count();
                 purchaseOrder!.OrderStatus = 1;
                 var newReceive = new ReceivingOrder
@@ -116,7 +117,11 @@ namespace API.Controllers
                 }
 
 
-                return Ok(result);
+
+
+                var odCompanyDTO = _mapper.Map<OrderCompanyDTO>(purchaseOrder);
+
+                return Ok(new ApiResponse<OrderCompanyDTO>(odCompanyDTO, "OrderCompany created successfully"));
             }
             catch (Exception ex)
             {
