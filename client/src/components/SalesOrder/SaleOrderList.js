@@ -14,6 +14,7 @@ import Swal from "sweetalert2";
 import { DataContext } from "../../context/DataContext";
 import { columns, getOrder } from "./SaleOrderLibrary";
 import { SaleOrderContext } from "../../context/SaleOrderContext";
+import { RemoveRedEye } from "@mui/icons-material";
 
 export const SaleOrderList = () => {
   const [loading, setLoading] = useState();
@@ -116,26 +117,12 @@ export const SaleOrderList = () => {
                           return (
                             <TableCell key={column.id} align={column.align}>
                               {column.id === "actions" ? (
-                                <Stack
-                                  direction="row"
-                                  sx={{
-                                    display: "flex",
-                                    justifyContent: "flex-end",
-                                  }}
+                                <IconButton
+                                  aria-label="edit"
+                                  // onClick={() => handleEdit(row.brandId)}
                                 >
-                                  <IconButton
-                                    aria-label="edit"
-                                    // onClick={() => handleEdit(row.brandId)}
-                                  >
-                                    <EditIcon />
-                                  </IconButton>
-                                  <IconButton
-                                    aria-label="delete"
-                                    // onClick={() => handleDelete(row.brandId)}
-                                  >
-                                    <DeleteIcon />
-                                  </IconButton>
-                                </Stack>
+                                  <RemoveRedEye />
+                                </IconButton>
                               ) : column.id === "account" ? (
                                 row.account.name
                               ) : column.id === "employee" ? (

@@ -16,6 +16,8 @@ import { TabContext, TabList, TabPanel } from "@mui/lab";
 import { ProfileInformation } from "../../components/Profile/ProfileInformation";
 import { PrivacyInformation } from "../../components/Profile/PrivacyInformation";
 import { getCustomerById } from "../../components/Customer/CustomerLibrary";
+import { useTitle } from "../../UseTitle";
+import OrderDetailsInformation from "../../components/Profile/OrderDetailsInformation";
 
 export const Profile = () => {
   const [value, setValue] = React.useState("1");
@@ -35,6 +37,8 @@ export const Profile = () => {
       }
     });
   }, []);
+  console.log(information);
+  useTitle("Profile");
   if (!token) {
     return <Navigate to="/login" />;
   }
@@ -44,8 +48,7 @@ export const Profile = () => {
       <Box
         component="section"
         sx={{
-          mb: 27,
-          mt: 10,
+          mb: 25,
           height: "50vh",
         }}
       >
@@ -65,12 +68,14 @@ export const Profile = () => {
                 </Box>
                 <ProfileInformation
                   information={information}
+                  setInformation={setInformation}
                   loading={loading}
                   token={token}
-                  id={token.Id}
                 />
-                <PrivacyInformation id={token.Id} />
-                <TabPanel value="3">Item Three</TabPanel>
+                <PrivacyInformation />
+                <TabPanel value="3">
+                  <OrderDetailsInformation order={information.order ?? []} />
+                </TabPanel>
               </TabContext>
             </Grid>
           </Grid>

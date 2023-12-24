@@ -23,6 +23,7 @@ import { useContext, useEffect, useState } from "react";
 import { getService } from "../../components/Service/ServiceLibrary";
 import { ServiceContext } from "../../context/ServiceContext";
 import { DatePicker } from "@mui/x-date-pickers";
+import { useTitle } from "../../UseTitle";
 export function Service() {
   const [loading, setLoading] = useState(false);
   const { setServiceData, serviceData } = useContext(ServiceContext);
@@ -35,6 +36,7 @@ export function Service() {
       }
     });
   }, []);
+  useTitle("Service");
   return (
     <LayoutUser
       img="https://images.unsplash.com/photo-1487754180451-c456f719a1fc?q=80&w=2070&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"

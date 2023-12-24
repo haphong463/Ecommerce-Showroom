@@ -1,6 +1,7 @@
 import React from "react";
 import { Main } from "../components/user/Main";
 import { Footer } from "../components/user/Footer";
+import { Box } from "@mui/material";
 
 export const LayoutUser = ({
   title,
@@ -21,6 +22,7 @@ export const LayoutUser = ({
         imgDetail={imgDetail}
         home={home}
       />
+      <Box height={80} />
       {children}
       <Footer />
     </>

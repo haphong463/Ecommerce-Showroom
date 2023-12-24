@@ -16,6 +16,7 @@ import { ToastContainer } from "react-toastify";
 import { DataContext } from "./context/DataContext";
 import { useEffect } from "react";
 import { successToast } from "./components/Message";
+import NotFound from "./NotFound";
 
 const theme = createTheme({
   typography: {
@@ -86,7 +87,9 @@ function App() {
                 );
               }
             })}
+            <Route path="*" element={<NotFound />} />
           </Routes>
+
           <ToastContainer />
         </ThemeProvider>
       </div>

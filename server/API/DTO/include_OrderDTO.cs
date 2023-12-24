@@ -6,5 +6,6 @@
         public int AccountId { get; set; }
         public int EmployeeId { get; set; }
         public decimal TotalPrice { get; set; }
+        public DateTime OrderDate { get; set; }
     }
 }

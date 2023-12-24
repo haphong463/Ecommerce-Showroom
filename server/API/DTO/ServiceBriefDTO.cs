@@ -6,6 +6,6 @@
         public string Name { get; set; }
         public decimal Price { get; set; }
         public string Description { get; set; }
-        public List<include_OrderDTO>? Orders { get; set; }
+        public List<Order_Service_DTO>? OrderServices { get; set; }
     }
 }

@@ -30,7 +30,6 @@ import {
   CheckCircle as CheckCircleIcon,
   ArrowBack as ArrowBackIcon,
 } from "@mui/icons-material";
-import DescriptionIcon from "@mui/icons-material/Description";
 
 import dayjs from "dayjs";
 import RelatedVehicles from "../../components/user/Vehicles/RelatedVehicles";
@@ -38,6 +37,7 @@ import { VehicleSpec } from "../../components/user/Vehicles/VehicleSpec";
 import { DataContext } from "../../context/DataContext";
 import CustomSlider from "../../components/admin/VehicleDetails/ImageList";
 import { dangerMessage } from "../../components/Message";
+import { useTitle } from "../../UseTitle";
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { vehicle, setVehicle } = useContext(VehicleContext);
@@ -88,16 +88,6 @@ export const VehicleDetails = () => {
       value: vehicle.isUsed ? "New" : "Used",
     },
     {
-      icon: <EventAvailableIcon />,
-      title: "Purchase Date",
-      value: dayjs(vehicle.purchaseDate).format("MMMM, DD YYYY"),
-    },
-    {
-      icon: <MonetizationOnIcon />,
-      title: "Purchase Price",
-      value: `$${vehicle.purchasePrice}`,
-    },
-    {
       icon: <CheckCircleIcon />,
       title: "Status",
       value:
@@ -106,11 +96,6 @@ export const VehicleDetails = () => {
           : vehicle.status === 1
           ? "Unavailable"
           : "",
-    },
-    {
-      icon: <DescriptionIcon />,
-      title: "Description",
-      value: vehicle.description,
     },
   ];
   const handleAddToCart = () => {
@@ -153,13 +138,13 @@ export const VehicleDetails = () => {
   useEffect(() => {
     refreshVehicleData();
   }, [id]);
+  useTitle(vehicle.name);
   return (
     loading && (
-      <LayoutUser img=''>
+      <LayoutUser img="">
         <Box
           component="section"
           sx={{
-            mt: 10,
             mb: 30,
           }}
         >
@@ -199,10 +184,12 @@ export const VehicleDetails = () => {
                     </Breadcrumbs>
                     <Typography variant="h6">
                       <span className="price-text">
-                        {vehicle.purchasePrice.toLocaleString("en-US", {
-                          style: "currency",
-                          currency: "USD",
-                        })}
+                        {vehicle.price > 0
+                          ? vehicle.price.toLocaleString("en-US", {
+                              style: "currency",
+                              currency: "USD",
+                            })
+                          : "Updating..."}
                       </span>
                     </Typography>
                   </Stack>

@@ -18,12 +18,15 @@ import { Service } from "../containers/admin/Service";
 import { Invoice } from "../containers/admin/Invoice";
 import { ServiceProvider } from "../context/ServiceContext";
 import { Profile } from "../containers/user/Profile";
-import { Order } from "../containers/admin/Order";
+import { Order as OrderAdmin } from "../containers/admin/Order";
 import { OrderProvider } from "../context/OrderContext";
 import { SaleOrder } from "../containers/admin/SaleOrder";
 import { SaleOrderProvider } from "../context/SaleOrderContext";
 import { Employee } from "../containers/admin/Employee";
 import { AccountProvider } from "../context/AccountContext";
+import { Comparison } from "../containers/user/Comparison";
+import { ResetPassword } from "../containers/user/ResetPassword";
+import { Order } from "../containers/user/Order";
 
 export const publicRoutes = [
   {
@@ -52,12 +55,24 @@ export const publicRoutes = [
     ),
   },
   {
+    path: "/reset-password/:token",
+    component: <ResetPassword />,
+  },
+  {
     path: "/vehiclesUsed",
     component: (
       <VehicleProvider>
         <VehicleUser />
       </VehicleProvider>
     ),
+  },
+  {
+    path: "/profile/order/:orderId",
+    component: <Order />,
+  },
+  {
+    path: "/comparison",
+    component: <Comparison />,
   },
   {
     path: "/vehicle/:id",
@@ -125,7 +140,7 @@ export const privateRoutes = [
     path: "/admin/purchaseOrder",
     component: (
       <OrderProvider>
-        <Order />
+        <OrderAdmin />
       </OrderProvider>
     ),
     roles: ["Admin", "Employee", "Company"],

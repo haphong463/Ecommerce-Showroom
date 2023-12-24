@@ -35,5 +35,4 @@ export const generateValidationSchemaOrder = () =>
   yup.object().shape({
     modelName: yup.string().required("Model number is required."),
     quantity: yup.number().required("Quantity is required"),
-    suggestPrice: yup.number().required("Suggest price is required"),
   });

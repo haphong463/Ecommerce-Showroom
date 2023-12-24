@@ -18,6 +18,9 @@ const handleRequest = async (method, endpoint, data = null) => {
 
 export const getVehicles = async () => await handleRequest("get", "");
 
+export const getFeaturedCar = async () =>
+  await handleRequest("get", "/FeatureVehicles");
+
 export const postVehicle = async (vehicle) =>
   await handleRequest("post", "", vehicle);
 
@@ -30,6 +33,13 @@ export const getVehicleById = async (id) =>
 export const putVehicle = async (vehicle, id) =>
   await handleRequest("put", `/${id}`, vehicle);
 
+export const putVehicleQuantity = async (id, quantity, purchaseOrderId) =>
+  await handleRequest("put", `/updateQuantity/${id}`, {
+    id,
+    quantity,
+    purchaseOrderId,
+  });
+
 export const columns = [
   { id: "name", label: "Name", minWidth: 170 },
   { id: "brand", label: "Brand", minWidth: 100 },
@@ -38,30 +48,27 @@ export const columns = [
   { id: "actions", label: "Actions", minWidth: 170, align: "right" },
 ];
 export const fuelType = [
-  {
-    value: "Diesel",
-    label: "Diesel",
-  },
-  { value: "Gasoline", label: "Gasoline" },
-  { value: "Electric", label: "Electric" },
-  { value: "Hybrid", label: "Hybrid" },
+  { value: "Diesel", label: "Diesel Transmission" },
+  { value: "Gasoline", label: "Gasoline Transmission" },
+  { value: "Electric", label: "Electric Transmission" },
+  { value: "Hybrid", label: "Hybrid Transmission" },
 ];
 
 export const transmissionType = [
-  {
-    value: "Manual",
-    label: "Manual",
-  },
+  { value: "Manual", label: "Manual" },
   { value: "Automatic", label: "Automatic" },
   { value: "CVT", label: "CVT" },
   { value: "DCT", label: "DCT" },
 ];
 export const status = [
-  {
-    value: "0",
-    label: "Available",
-  },
+  { value: "0", label: "Available" },
   { value: "1", label: "Unavailable" },
+];
+export const numberOfSeats = [
+  { value: "2", label: "2 slot" },
+  { value: "4", label: "4 slot" },
+  { value: "5", label: "5 slot" },
+  { value: "7", label: "7 slot" },
 ];
 
 export const generateModelID = (brand, name) => {
@@ -102,7 +109,9 @@ export const formFields = [
   { name: "engineType", label: "Engine Type*", type: "text" },
   { name: "transmissionType", label: "Transmission Type*", type: "select" },
   { name: "fuelType", label: "Fuel Type*", type: "select" },
-  { name: "numberOfSeats", label: "Number of Seats*", type: "number" },
+  { name: "numberOfSeats", label: "Number of Seats*", type: "select" },
+  { name: "isUsed", label: "Used/New*" },
+
   {
     name: "files",
     label: "Image",
@@ -110,5 +119,4 @@ export const formFields = [
     accept: "image/*",
     multiple: true,
   },
-  { name: "isUsed", label: "Used/New*" },
 ];

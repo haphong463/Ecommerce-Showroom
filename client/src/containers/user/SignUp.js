@@ -27,6 +27,7 @@ import { postCustomer } from "../../components/Customer/CustomerLibrary";
 import { successToast } from "../../components/Message";
 import { DataContext } from "../../context/DataContext";
 import { useContext } from "react";
+import { useTitle } from "../../UseTitle";
 const schema = yup.object().shape({
   name: yup
     .string()
@@ -109,6 +110,8 @@ export function SignUp() {
       reader.readAsDataURL(file);
     }
   };
+  useTitle("Sign in");
+
   if (token) {
     return <Navigate to="/" />;
   }

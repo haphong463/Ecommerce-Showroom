@@ -26,13 +26,23 @@ export const getCustomerById = async (id) =>
 export const getCustomerByToken = async (token) =>
   await handleRequest("get", `/verify/${token}`);
 
-export const putCustomer = async (vehicle, id) =>
-  await handleRequest("put", `/${id}`, vehicle);
+export const putCustomer = async (data, id) =>
+  await handleRequest("put", `/${id}`, data);
 
 export const putChangePassword = async (id, oldPassword, newPassword) =>
   await handleRequest("put", `/change-password/${id}`, {
     oldPassword,
     newPassword,
+  });
+
+export const postForgotPassword = async (email) =>
+  await handleRequest("post", "/forgot-password", email);
+
+export const postResetPassword = async (token, data) =>
+  await handleRequest("post", "/reset-password", {
+    ...data,
+    password: data.newPassword,
+    token,
   });
 
 export const columns = [

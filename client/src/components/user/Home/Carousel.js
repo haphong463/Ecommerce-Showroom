@@ -1,29 +1,11 @@
 import React from "react";
-import { useTheme } from "@mui/material/styles";
-import SwipeableViews from "react-swipeable-views";
-import { autoPlay } from "react-swipeable-views-utils";
-import MobileStepper from "@mui/material/MobileStepper";
-import Button from "@mui/material/Button";
+import { Box, Typography, Button } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
-import { Box, Typography } from "@mui/material";
-const AutoPlaySwipeableViews = autoPlay(SwipeableViews);
+import Carousel from "react-material-ui-carousel";
+
 export const CarouselComponent = ({ images, state, setState }) => {
-  const theme = useTheme();
   const [activeStep, setActiveStep] = React.useState(0);
-  const maxSteps = images.length;
-
-  const handleNext = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep + 1);
-  };
-
-  const handleBack = () => {
-    setActiveStep((prevActiveStep) => prevActiveStep - 1);
-  };
-
-  const handleStepChange = (step) => {
-    setActiveStep(step);
-  };
 
   const handleImageLoad = (index) => {
     // Đặt state khi hình ảnh được tải
@@ -33,152 +15,73 @@ export const CarouselComponent = ({ images, state, setState }) => {
       return { ...prev, imagesLoaded: updatedImagesLoaded };
     });
   };
+
   return (
-    <>
-      <AutoPlaySwipeableViews
-        interval={3000}
-        axis={theme.direction === "rtl" ? "x-reverse" : "x"}
+    <Box sx={{}}>
+      <Carousel
+        animation="slide"
         index={activeStep}
-        onChangeIndex={handleStepChange}
-        enableMouseEvents
+        onChangeIndex={setActiveStep}
+        navButtonsAlwaysVisible
+        fullHeightHover
       >
         {images.map((step, index) => (
           <div key={step.label} style={{ position: "relative" }}>
-            {Math.abs(activeStep - index) <= 2 ? (
-              <>
-                <Box
-                  component="img"
+            <Box
+              component={"img"}
+              src={step.imgPath}
+              alt={step.label}
+              onLoad={() => handleImageLoad(index)}
+              sx={{
+                width: "100%",
+                height: "auto",
+                objectFit: "cover",
+                filter: "brightness(40%)",
+              }}
+            />
+            {state.imagesLoaded[index] && (
+              <Box
+                sx={{
+                  position: "absolute",
+                  top: ["60%", "60%", "60%", "50%"],
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                  color: "#fff",
+                  textAlign: "center",
+                  width: "100%",
+                }}
+              >
+                <Typography
+                  variant="h1"
                   sx={{
-                    height: {
-                      xs: "40vh", // Đối với breakpoint xs, sử dụng chiều cao tự động
-                      md: "50vh", // Đối với breakpoint md, sử dụng chiều cao là 300px
-                      lg: "70vh", // Đối với breakpoint lg, sử dụng chiều cao là 400px
-                      xl: "90vh", // Đối với breakpoint xl, sử dụng chiều cao là 500px
+                    mb: 2,
+                    fontSize: {
+                      xs: "1rem",
+                      sm: "1.5rem",
+                      md: "2rem",
+                      lg: "2.5rem",
                     },
-                    display: "block",
-                    overflow: "hidden",
-                    width: "100%",
-                    position: "relative",
-                    filter: "brightness(40%)", // Giảm độ sáng
                   }}
-                  src={step.imgPath}
-                  alt={step.label}
-                  onLoad={() => handleImageLoad(index)}
-                />
-                {state.imagesLoaded[index] && (
-                  <Box
-                    sx={{
-                      position: "absolute",
-                      top: ["60%", "60%", "60%", "50%"],
-                      left: "50%",
-                      transform: "translate(-50%, -50%)",
-                      color: "#fff",
-                      textAlign: "center",
-                      width: "100%",
-                    }}
-                  >
-                    <Typography
-                      variant="h1"
-                      sx={{
-                        mb: 2,
-                        fontSize: {
-                          xs: "1rem",
-                          sm: "1.5rem",
-                          md: "2rem",
-                          lg: "2.5rem",
-                        },
-                      }}
-                      component="div"
-                    >
-                      {step.label}
-                    </Typography>
-                    <Button variant="contained" size="large">
-                      View More
-                    </Button>
-                  </Box>
-                )}
-              </>
-            ) : null}
+                  component="div"
+                >
+                  {step.label}
+                </Typography>
+                <Button
+                  variant="contained"
+                  sx={{
+                    fontSize: {
+                      md: "1.5rem",
+                      xs: "0.5rem",
+                    },
+                  }}
+                >
+                  View More
+                </Button>
+              </Box>
+            )}
           </div>
         ))}
-      </AutoPlaySwipeableViews>
-      {state.imagesLoaded[activeStep] && ( // Hiển thị button khi hình ảnh tại activeStep đã tải
-        <MobileStepper
-          style={{ background: "transparent" }}
-          sx={{
-            position: "absolute",
-            bottom: 20,
-            left: "50%",
-            transform: "translateX(-50%)",
-            width: "80%",
-            background: "transparent",
-            "& .MuiMobileStepper-progress": {
-              backgroundColor: "#888585",
-            },
-            "& .css-5xe99f-MuiLinearProgress-bar1": {
-              backgroundColor: theme.palette.common.white,
-            },
-          }}
-          variant="progress"
-          steps={maxSteps}
-          position="static"
-          activeStep={activeStep}
-          nextButton={
-            <Button
-              sx={{
-                color: "white",
-              }}
-              size="small"
-              onClick={handleNext}
-              disabled={activeStep === maxSteps - 1}
-            >
-              {theme.direction === "rtl" ? (
-                <KeyboardArrowLeft />
-              ) : (
-                <KeyboardArrowRight />
-              )}
-            </Button>
-          }
-          backButton={
-            <Button
-              size="small"
-              sx={{
-                color: "white",
-              }}
-              onClick={handleBack}
-              disabled={activeStep === 0}
-            >
-              {theme.direction === "rtl" ? (
-                <KeyboardArrowRight />
-              ) : (
-                <KeyboardArrowLeft />
-              )}
-            </Button>
-          }
-        />
-      )}
-      {/* <Carousel
-      autoPlay={false}
-      // interval={1000}
-      animation="slide"
-      indicators={false}
-      navButtonsAlwaysVisible
-    >
-      {images.map((image, index) => (
-        <Box key={image.imagePath}>
-          <img
-            src={image.imgPath}
-            alt={`Product ${index + 1}`}
-            style={{
-              width: "100%",
-              height: "50vh",
-              objectFit: "cover",
-              border: "1px solid #cbcbcb",
-            }}
-          />
-        </Box>
-      ))}
-    </Carousel> */}
-    </>
+      </Carousel>
+    </Box>
   );
 };

@@ -12,7 +12,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { formFields, fuelType, transmissionType } from "./VehicleLibrary";
+import {
+  formFields,
+  fuelType,
+  numberOfSeats,
+  transmissionType,
+} from "./VehicleLibrary";
 import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 
 import { FastField } from "formik";
@@ -32,7 +37,7 @@ export function VehicleFormFields({
     <Grid container spacing={2}>
       {formFields.map((field) => {
         return (
-          <Grid item xs={3} key={field.name}>
+          <Grid item xs={field.name === "files" ? 12 : 3} key={field.name}>
             {field.name === "isUsed" ? (
               <FormControlLabel
                 control={
@@ -70,6 +75,14 @@ export function VehicleFormFields({
                     errors={errors}
                     props={props}
                     list={fuelType}
+                  />
+                ) : field.name === "numberOfSeats" ? (
+                  <VehicleFormFieldSelect
+                    field={field}
+                    touched={touched}
+                    errors={errors}
+                    props={props}
+                    list={numberOfSeats}
                   />
                 ) : (
                   <VehicleFormFieldSelect
@@ -155,7 +168,7 @@ export function VehicleFormFields({
                     />
                   </>
                 )}
-            </FastField>
+              </FastField>
             )}
           </Grid>
         );

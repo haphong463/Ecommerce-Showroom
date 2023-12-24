@@ -21,7 +21,6 @@ import {
   MonetizationOn as MonetizationOnIcon,
   CheckCircle as CheckCircleIcon,
 } from "@mui/icons-material";
-import DescriptionIcon from "@mui/icons-material/Description";
 import {
   deleteVehicle,
   getVehicleById,
@@ -124,7 +123,10 @@ export const VehicleDetails = () => {
     {
       icon: <MonetizationOnIcon />,
       title: "Price",
-      value: `$${vehicle.price}`,
+      value: `${vehicle.price?.toLocaleString("en-US", {
+        style: "currency",
+        currency: "USD",
+      })}`,
     },
     {
       icon: <CheckCircleIcon />,
@@ -135,11 +137,6 @@ export const VehicleDetails = () => {
           : vehicle.status === 1
           ? "Unavailable"
           : "",
-    },
-    {
-      icon: <DescriptionIcon />,
-      title: "Description",
-      value: vehicle.description,
     },
   ];
 

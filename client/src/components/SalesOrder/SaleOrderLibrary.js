@@ -36,7 +36,7 @@ export const columns = [
     format: (value) =>
       value.toLocaleString("en-US", { style: "currency", currency: "USD" }),
   },
-  { id: "action", label: "Action", minWidth: 200, align: "center" },
+  { id: "actions", label: "Action", minWidth: 200, align: "center" },
 ];
 
 export const generateValidationSchemaOrder = () =>

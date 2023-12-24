@@ -58,7 +58,7 @@ export const FAQ = memo(() => {
           align="center"
           variant="h4"
           sx={{
-            fontSize: ["1.5rem", "2rem"],
+            fontSize: ["1.5rem", "2.3rem", "3rem"],
           }}
           className="title-specs"
         >

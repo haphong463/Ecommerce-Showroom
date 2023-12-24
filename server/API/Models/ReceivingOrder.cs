@@ -8,6 +8,7 @@ namespace API.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
         public int PurchaseOrderId { get; set; }
+        public DateTime? ReceivedDate { get; set; } = DateTime.Now;
         public List<Frame>? Frames { get; set; }
         public OrderCompany? OrderCompany { get; set; }
     }

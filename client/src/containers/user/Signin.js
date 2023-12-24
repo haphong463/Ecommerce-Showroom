@@ -11,6 +11,7 @@ import {
   Box,
   Alert,
   CircularProgress,
+  Tab,
 } from "@mui/material";
 import Icon from "@mui/material/Icon";
 import { DataContext } from "../../context/DataContext";
@@ -18,6 +19,9 @@ import { Link, Navigate, useLocation } from "react-router-dom";
 import { loginAuth } from "../../components/Auth";
 import { successToast } from "../../components/Message";
 import { getCustomerByToken } from "../../components/Customer/CustomerLibrary";
+import { useTitle } from "../../UseTitle";
+import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { ForgotPassword } from "../../components/user/ForgotPassword";
 
 // Define validation schema using yup
 const schema = yup.object().shape({
@@ -43,7 +47,11 @@ export const Signin = () => {
   } = useForm({
     resolver: yupResolver(schema),
   });
+  const [value, setValue] = React.useState("1");
 
+  const handleChange = (event, newValue) => {
+    setValue(newValue);
+  };
   const onSubmit = (data) => {
     setLoadingSubmit(true);
     loginAuth(data).then((res) => {
@@ -84,7 +92,7 @@ export const Signin = () => {
 
     clearQueryParams();
   }, []);
-
+  useTitle("Sign in");
   if (token) {
     return <Navigate to="/" />;
   }
@@ -123,92 +131,114 @@ export const Signin = () => {
             />
           </Box>
           <Container>
-            <Typography variant="h4" align="center" gutterBottom>
-              SIGN IN
-            </Typography>
-            <form onSubmit={handleSubmit(onSubmit)}>
-              {generalError && (
-                <Alert
-                  severity="error"
-                  sx={{
-                    my: 2,
-                  }}
-                >
-                  {generalError}
-                </Alert>
-              )}
-              {verificationMessage && (
-                <Alert
-                  severity="success"
-                  sx={{
-                    my: 2,
-                  }}
-                >
-                  {verificationMessage}
-                </Alert>
-              )}
+            <Box sx={{ width: "100%", typography: "body1" }}>
+              <TabContext value={value}>
+                <Box sx={{ borderBottom: 1, borderColor: "divider" }}>
+                  <TabList
+                    onChange={handleChange}
+                    aria-label="lab API tabs example"
+                  >
+                    <Tab label="Sign in" value="1" />
+                    <Tab label="Forgot password" value="2" />
+                  </TabList>
+                </Box>
+                <TabPanel value="1">
+                  <form onSubmit={handleSubmit(onSubmit)}>
+                    {generalError && (
+                      <Alert
+                        severity="error"
+                        sx={{
+                          my: 2,
+                        }}
+                      >
+                        {generalError}
+                      </Alert>
+                    )}
+                    {verificationMessage && (
+                      <Alert
+                        severity="success"
+                        sx={{
+                          my: 2,
+                        }}
+                      >
+                        {verificationMessage}
+                      </Alert>
+                    )}
 
-              <Controller
-                name="email"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Email*"
-                    fullWidth
-                    margin="normal"
-                    placeholder="enter your email address..."
-                    variant="outlined"
-                    error={!!errors.email}
-                    helperText={errors.email?.message}
+                    <Controller
+                      name="email"
+                      control={control}
+                      defaultValue=""
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="Email*"
+                          fullWidth
+                          margin="normal"
+                          placeholder="enter your email address..."
+                          variant="outlined"
+                          error={!!errors.email}
+                          helperText={errors.email?.message}
+                        />
+                      )}
+                    />
+                    <Controller
+                      name="password"
+                      control={control}
+                      defaultValue=""
+                      render={({ field }) => (
+                        <TextField
+                          {...field}
+                          label="Password*"
+                          fullWidth
+                          margin="normal"
+                          variant="outlined"
+                          placeholder="enter your password..."
+                          type="password"
+                          error={!!errors.password}
+                          helperText={
+                            capsLockEnabled
+                              ? "CapsLock is ON"
+                              : errors.password?.message
+                          }
+                          onKeyDown={handleKeyPress}
+                        />
+                      )}
+                    />
+                    <Button
+                      type="submit"
+                      variant="contained"
+                      color="primary"
+                      fullWidth
+                      style={{ marginTop: "16px" }}
+                      disabled={loadingSubmit}
+                      endIcon={
+                        loadingSubmit && (
+                          <CircularProgress size="1rem" color="inherit" />
+                        )
+                      }
+                    >
+                      Sign in
+                    </Button>
+                    <Typography variant="body2" style={{ marginTop: "16px" }}>
+                      Don't have an account?{" "}
+                      <Link
+                        to="/signup"
+                        style={{ textDecoration: "underline" }}
+                      >
+                        Sign up here
+                      </Link>
+                    </Typography>
+                  </form>
+                </TabPanel>
+                <TabPanel value="2">
+                  <ForgotPassword
+                    loadingSubmit={loadingSubmit}
+                    setLoadingSubmit={setLoadingSubmit}
                   />
-                )}
-              />
-              <Controller
-                name="password"
-                control={control}
-                defaultValue=""
-                render={({ field }) => (
-                  <TextField
-                    {...field}
-                    label="Password*"
-                    fullWidth
-                    margin="normal"
-                    variant="outlined"
-                    placeholder="enter your password..."
-                    type="password"
-                    error={!!errors.password}
-                    helperText={
-                      capsLockEnabled
-                        ? "CapsLock is ON"
-                        : errors.password?.message
-                    }
-                    onKeyDown={handleKeyPress}
-                  />
-                )}
-              />
-              <Button
-                type="submit"
-                variant="contained"
-                color="primary"
-                fullWidth
-                style={{ marginTop: "16px" }}
-                endIcon={
-                  loadingSubmit && (
-                    <CircularProgress size="1rem" color="inherit" />
-                  )
-                }
-              >
-                Sign in
-              </Button>
-              <Typography variant="body2" style={{ marginTop: "16px" }}>
-                Don't have an account?{" "}
-                <Link to="/signup" style={{ textDecoration: "underline" }}>
-                  Sign up here
-                </Link>
-              </Typography>
-            </form>
+                </TabPanel>
+              </TabContext>
+            </Box>
           </Container>
         </Container>
       </Box>

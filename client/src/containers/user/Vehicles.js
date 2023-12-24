@@ -2,14 +2,17 @@ import React, { useContext, useEffect, useState } from "react";
 import {
   Box,
   Grid,
-  Dialog,
-  DialogContent,
   Container,
-  Pagination,
   useMediaQuery,
+  Stack,
+  IconButton,
+  Tooltip,
+  Button,
   Typography,
 } from "@mui/material";
-
+import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
+import WindowIcon from "@mui/icons-material/Window";
+import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
 import { VehicleContext } from "../../context/VehicleContext";
 import { getVehicles } from "../../components/Vehicle/VehicleLibrary";
 import { LayoutUser } from "../../layout/LayoutUser";
@@ -19,67 +22,24 @@ import { DataContext } from "../../context/DataContext";
 import { WaitVehicles } from "../../components/user/Vehicles/WaitVehicles";
 import { VehicleItem } from "../../components/user/Vehicles/VehicleItem";
 import { PaginationVehicles } from "../../components/user/Vehicles/PaginationVehicles";
-
-function VehicleContent(props) {
-  return (
-    <Grid container spacing={2}>
-      <Grid item xs={12}>
-        {/* FILTER VEHICLES: dùng để filter vehicle theo tên, brand */}
-
-        <Filter vehicles={props.vehicleData} />
-
-        {/* END FILTER VEHICLES */}
-      </Grid>
-      <Grid item xs={12}>
-        {props.loading ? ( // Render skeleton when loading
-          <WaitVehicles vehiclesPerPage={props.vehiclesPerPage} /> // Render actual data when not loading
-        ) : (
-          <Grid container spacing={2}>
-            {props.currentVehicles.map((vehicle, index) => (
-              <VehicleItem
-                key={index}
-                vehicle={vehicle}
-                navigate={props.navigate}
-              />
-            ))}
-            {props.searchData.length === 0 && (
-              <Grid item xs={12}>
-                <Typography
-                  sx={{
-                    position: "relative",
-                  }}
-                >
-                  No vehicles found!
-                </Typography>
-              </Grid>
-            )}
-          </Grid>
-        )}
-      </Grid>
-      <Grid item xs={12}>
-        {/* Pagination vehicles theo search data */}
-        <PaginationVehicles
-          searchData={props.searchData}
-          vehiclesPerPage={props.vehiclesPerPage}
-          currentPage={props.currentPage}
-          handlePageChange={props.handlePageChange}
-        />
-        {/* END PAGINATION VEHICLES */}
-      </Grid>
-    </Grid>
-  );
-}
+import { useTitle } from "../../UseTitle";
+import { VehicleContent } from "../../components/user/Vehicles/VehicleContent";
 
 export function Vehicles() {
   const isMobile = useMediaQuery("(max-width:800px)");
   const { vehicleData, setVehicleData } = useContext(VehicleContext);
   const { searchData, setSearchData } = useContext(DataContext);
   const navigate = useNavigate();
-  const [selectedImage, setSelectedImage] = useState(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true); // New loading state
   const vehiclesPerPage = 9; // Số lượng phương tiện trên mỗi trang
   const location = useLocation();
+  const title =
+    location.pathname === "/vehicles"
+      ? "New Car"
+      : location.pathname === "/vehiclesUsed"
+      ? "Used Car"
+      : "";
   useEffect(() => {
     setLoading(true);
 
@@ -109,26 +69,22 @@ export function Vehicles() {
     indexOfFirstVehicle,
     indexOfLastVehicle
   );
+  useTitle(title);
   return (
-    <LayoutUser
-      img="https://images.wallpaperscraft.com/image/single/road_asphalt_marking_130996_1920x1080.jpg"
-      title={location.pathname === "/vehicles" ? "NEW CAR" : "USED CAR"}
-    >
+    <LayoutUser img="https://wallpapercave.com/wp/wp3368288.jpg" title={title}>
       <Box
         component="section"
         sx={{
-          height: searchData.length > 0 ? "100%" : "90vh",
-          mb: 10,
-          mt: 5,
+          height: searchData.length > 0 ? "auto" : "90vh",
+          mt: 2,
+          mb: 15,
           mx: {
             xs: 3,
           },
         }}
       >
-        {/* VEHILE CONTENT */}
-
         {!isMobile ? (
-          <Container>
+          <Container maxWidth="xl">
             <VehicleContent
               vehicleData={vehicleData}
               searchData={searchData}
@@ -138,6 +94,7 @@ export function Vehicles() {
               vehiclesPerPage={vehiclesPerPage}
               handlePageChange={handlePageChange}
               currentVehicles={currentVehicles}
+              title={title}
             />
           </Container>
         ) : (
@@ -150,6 +107,8 @@ export function Vehicles() {
             vehiclesPerPage={vehiclesPerPage}
             handlePageChange={handlePageChange}
             currentVehicles={currentVehicles}
+            isMobile
+            title={title}
           />
         )}
       </Box>

@@ -24,7 +24,6 @@ const BrandSection = () => {
   const handleMouseLeave = () => {
     setHoveredIndex(-1);
   };
-  console.log(brand.length);
   const sliderSettings = {
     infinite: true,
     slidesToShow: brand.length > 0 ? (brand.length > 4 ? 4 : brand.length) : 1,
@@ -68,11 +67,21 @@ const BrandSection = () => {
       }
     });
   }, []);
+
+  console.log("re-render");
   return (
     <Container maxWidth="lg">
       <Box sx={{ my: 4 }} component="section">
-        <Typography variant="h3" align="center" gutterBottom>
-          <span className="title-section">FEATURED BRANDS</span>
+        <Typography
+          variant="h3"
+          align="center"
+          sx={{
+            fontSize: ["1.5rem", "2.3rem", "3rem"],
+          }}
+          gutterBottom
+          className="title-specs"
+        >
+          <span className="title-text">FEATURED BRANDS</span>
         </Typography>
         <Slider {...sliderSettings}>
           {brand.map((product, index) => (

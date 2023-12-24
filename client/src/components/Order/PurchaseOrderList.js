@@ -17,6 +17,7 @@ import {
   Skeleton,
   Stack,
   TextField,
+  Tooltip,
   Typography,
 } from "@mui/material";
 
@@ -34,6 +35,10 @@ import {
   postReceivingOrder,
 } from "../ReceivingOrder/ReceivingOrderLibrary";
 import { DataContext } from "../../context/DataContext";
+import { Print, RemoveRedEye } from "@mui/icons-material";
+import jsPDF from "jspdf";
+import "jspdf-autotable";
+import { putVehicleQuantity } from "../Vehicle/VehicleLibrary";
 
 export const OrderList = ({ orderList, vehicleList }) => {
   const { orderData, setOrderData, setOrder, handleClickOpen } =
@@ -105,17 +110,17 @@ export const OrderList = ({ orderList, vehicleList }) => {
       purchaseOrderId: dataToPost.purchaseOrderId,
       price: dataToPost.price,
     };
-    console.log(dataPost);
-    // postReceivingOrder(dataPost).then((data) => {
-    //   if (data) {
-    //     setOrderData((prev) =>
-    //       prev.map((item) =>
-    //         item.orderCompanyId === data.orderCompanyId ? data : item
-    //       )
-    //     );
-    //     setOpenDialog(false);
-    //   }
-    // });
+    postReceivingOrder(dataPost).then((data) => {
+      if (data) {
+        console.log(data);
+        setOrderData((prev) =>
+          prev.map((item) =>
+            item.orderCompanyId === data.orderCompanyId ? data : item
+          )
+        );
+        setOpenDialog(false);
+      }
+    });
   };
   // ---------------------------------------------------------------- handleDialogClose ----------------------------------------------------------------
 
@@ -167,12 +172,15 @@ export const OrderList = ({ orderList, vehicleList }) => {
     });
   };
 
+  // ---------------------------------------------------------------- handleViewOrderDetails ----------------------------------------------------------------
+
   const handleViewOrderDetails = (purchaseOrderId) => {
     // Find the related data for the current purchaseOrderId
-    const relatedData = getRelated.find(
-      (data) => data.purchaseOrderId === purchaseOrderId
-    );
-    console.log(relatedData);
+    const relatedData = getRelated.find((data) => {
+      console.log("data.purchaseOrderId: ", data.purchaseOrderId);
+      console.log("purchaseOrderId: ", purchaseOrderId);
+      return data.purchaseOrderId === purchaseOrderId;
+    });
     if (relatedData) {
       // Extract frames from related data
       const frames = relatedData.frames || [];
@@ -182,21 +190,141 @@ export const OrderList = ({ orderList, vehicleList }) => {
       setFrameDetail(frames);
     }
   };
+  // ---------------------------------------------------------------- generatePDF ----------------------------------------------------------------
+
+  const generatePDF = (order) => {
+    const pdf = new jsPDF();
+    const relatedData = getRelated.find(
+      (data) => data.purchaseOrderId === order.orderCompanyId
+    );
+    console.log(relatedData);
+    Swal.fire({
+      title: "Generate PDF",
+      text: "Do you want to generate the PDF?",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonText: "Yes",
+      cancelButtonText: "No",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        if (order.orderStatus === 1) {
+          putVehicleQuantity(
+            order.vehicle.vehicleId,
+            order.quantity,
+            order.orderCompanyId
+          ).then((data) => {
+            console.log(data);
+          });
+        }
+
+        pdf.setFont("helvetica");
+        pdf.setFontSize(12);
+
+        pdf.text("------------------ GOODS RECEIPT ------------------", 10, 10);
+        pdf.text(`Received Date: ${relatedData.receivedDate}`, 10, 20);
+        pdf.text(`Receipt Number: ${relatedData.id}`, 10, 30);
+        pdf.text("-------------------------------------", 10, 40);
+
+        // Uncomment and customize showroom information
+        pdf.text(`Showroom Information:`, 10, 50);
+        pdf.text(`Showroom Name: AutoCar`, 10, 60);
+        pdf.text(`Address: 123 Main Street, City Vile`, 10, 70);
+        pdf.text(`Phone Number: 094-214-4124`, 10, 80);
+        pdf.text("-------------------------------------", 10, 90);
+        // Uncomment and customize supplier information
+        pdf.text(`Supplier Information:`, 10, 100);
+        pdf.text(`Supplier Name: ABC Supplier`, 10, 110);
+        pdf.text(`Address: 456 Supplier Avenue, Townsville`, 10, 120);
+        pdf.text(`Phone Number: 987-654-3210`, 10, 130);
+
+        pdf.text(
+          "------------------ RECEIVED VEHICLES ------------------",
+          10,
+          140
+        );
+
+        const headers = [
+          "No.",
+          "Model",
+          "Name",
+          "Brand",
+          "Color",
+          "Condition",
+          "Fuel Type",
+          "Transmission Type",
+          "Chassis Number",
+        ];
+
+        // Modify this part to create an array of arrays for body data
+        const bodyData = relatedData.frames.map((item, index) => [
+          (index + 1).toString(),
+          order.modelId,
+          order.name,
+          order.brand,
+          order.vehicle.color,
+          order.vehicle.isUsed ? "Used" : "New",
+          order.vehicle.fuelType,
+          order.vehicle.transmissionType,
+          item.frameNumber,
+        ]);
+
+        pdf.autoTable({
+          startY: 150,
+          head: [headers],
+          body: bodyData,
+        });
+        pdf.text(
+          "------------------ TOTAL ------------------",
+          10,
+          pdf.autoTable.previous.finalY + 10
+        );
+        pdf.text(
+          `Total Quantity: ${order.quantity}`,
+          10,
+          pdf.autoTable.previous.finalY + 20
+        );
+
+        // Uncomment and customize receiver's signature and other footer information
+        pdf.text(
+          "------------------ RECEIVER'S SIGNATURE ------------------",
+          10,
+          pdf.autoTable.previous.finalY + 50
+        );
+        pdf.text(
+          "Received By: ____________________ ",
+          10,
+          pdf.autoTable.previous.finalY + 60
+        );
+
+        pdf.text(
+          "------------------ END OF GOODS RECEIPT ------------------",
+          10,
+          pdf.autoTable.previous.finalY + 70
+        );
+
+        pdf.save(`Receipt_${relatedData.id}.pdf`);
+      }
+    });
+  };
 
   useEffect(() => {
     setLoading(true);
+
+    getPurchaseOrder().then((data) => {
+      if (data !== null) {
+        setOrderData(data.reverse());
+      }
+      setLoading(false);
+    });
+  }, []);
+
+  useEffect(() => {
     getReceivingOrder().then((data) => {
       if (data) {
         setGetRelated(data);
       }
     });
-    getPurchaseOrder().then((data) => {
-      if (data !== null) {
-        setOrderData(data);
-      }
-      setLoading(false);
-    });
-  }, []);
+  }, [orderData]);
 
   return (
     <>
@@ -207,8 +335,9 @@ export const OrderList = ({ orderList, vehicleList }) => {
               <TableCell>Name</TableCell>
               <TableCell>Brand</TableCell>
               <TableCell>Model Number</TableCell>
-
-              <TableCell>Suggest Price</TableCell>
+              <TableCell>Condition</TableCell>
+              <TableCell>Fuel Type</TableCell>
+              <TableCell>Transmission Type</TableCell>
               <TableCell>Quantity</TableCell>
               <TableCell>Employee</TableCell>
               <TableCell></TableCell>
@@ -223,8 +352,12 @@ export const OrderList = ({ orderList, vehicleList }) => {
                       <TableRow hover role="checkbox" tabIndex={-1} key={index}>
                         <TableCell>{row.name}</TableCell>
                         <TableCell>{row.brand}</TableCell>
-                        <TableCell>{row.modelId}</TableCell>
-                        <TableCell>{row.suggestPrice}</TableCell>
+                        <TableCell>{row.vehicle.modelId}</TableCell>
+                        <TableCell>
+                          {row.vehicle.isUsed ? "Used" : "New"}
+                        </TableCell>
+                        <TableCell>{row.vehicle.fuelType}</TableCell>
+                        <TableCell>{row.vehicle.transmissionType}</TableCell>
                         <TableCell>{row.quantity}</TableCell>
                         <TableCell>{row.employee.name}</TableCell>
 
@@ -237,9 +370,9 @@ export const OrderList = ({ orderList, vehicleList }) => {
                                   color="info"
                                   onClick={() =>
                                     handleConfirmClick(
-                                      orderData[index].vehicleId,
-                                      orderData[index].quantity,
-                                      orderData[index].orderCompanyId
+                                      row.vehicleId,
+                                      row.quantity,
+                                      row.orderCompanyId
                                     )
                                   }
                                 >
@@ -256,8 +389,7 @@ export const OrderList = ({ orderList, vehicleList }) => {
                                 </Button>
                               </Stack>
                             )}
-                          {(token.Role === "Admin" ||
-                            token.Role === "Employee") &&
+                          {["Admin", "Employee"].includes(token.Role) &&
                             row.orderStatus === 0 && (
                               <Button
                                 variant="contained"
@@ -269,19 +401,46 @@ export const OrderList = ({ orderList, vehicleList }) => {
                                 Cancel
                               </Button>
                             )}
-                          {row.orderStatus === 1 ? (
-                            <Stack direction="row" alignItems="center">
-                              <Typography variant="body2">Confirmed</Typography>
+                          {(["Admin", "Employee"].includes(token.Role) &&
+                            row.orderStatus === 1) ||
+                          row.orderStatus === 3 ? (
+                            <Stack
+                              direction="row"
+                              alignItems="center"
+                              spacing={1}
+                            >
                               <Button
+                                variant="contained"
                                 onClick={() =>
                                   handleViewOrderDetails(row.orderCompanyId)
                                 }
                               >
-                                View
+                                <RemoveRedEye />
                               </Button>
+                              {row.orderStatus !== 3 && (
+                                <Tooltip title="Click to create a goods receipt">
+                                  <Button
+                                    onClick={() => generatePDF(row)}
+                                    variant="contained"
+                                    startIcon={<Print />}
+                                  >
+                                    PDF
+                                  </Button>
+                                </Tooltip>
+                              )}
                             </Stack>
                           ) : row.orderStatus === 2 ? (
                             <Typography variant="body2">Cancelled</Typography>
+                          ) : row.orderStatus === 1 &&
+                            token.Role === "Company" ? (
+                            <Button
+                              variant="contained"
+                              onClick={() =>
+                                handleViewOrderDetails(row.orderCompanyId)
+                              }
+                            >
+                              <RemoveRedEye />
+                            </Button>
                           ) : (
                             ""
                           )}
@@ -311,7 +470,7 @@ export const OrderList = ({ orderList, vehicleList }) => {
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogContent>
           <Typography variant="h6">Enter chassis number</Typography>
-          <Stack direction="row" container spacing={2}>
+          <Stack direction="row" spacing={2}>
             {dialogFields.map((field, index) => (
               <TextField
                 key={index}
@@ -350,7 +509,19 @@ export const OrderList = ({ orderList, vehicleList }) => {
           <Typography variant="h6">Frames for Purchase Order</Typography>
           <Grid container spacing={2}>
             {frameDetail.map((field, index) => (
-              <Grid key={index} item xs={3}>
+              <Grid
+                key={index}
+                item
+                xs={
+                  frameDetail.length === 1
+                    ? 12
+                    : frameDetail.length === 2
+                    ? 6
+                    : frameDetail.length === 3
+                    ? 4
+                    : 3
+                }
+              >
                 <TextField
                   label={`Frame ${index + 1}`}
                   variant="outlined"

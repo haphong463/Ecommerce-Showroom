@@ -40,6 +40,7 @@ namespace API.Controllers
                         Name = o.Name,
                         Quantity = o.Quantity,
                         SuggestPrice = o.SuggestPrice,
+
                         OrderStatus = o.OrderStatus,
                         EmployeeId = o.EmployeeId,
                         Employee = new EmployeeDTO
@@ -54,6 +55,12 @@ namespace API.Controllers
                             VehicleId = o.Vehicle.VehicleId,
                             Name = o.Vehicle.Name,
                             ModelId = o.Vehicle.ModelId,
+                            TransmissionType = o.Vehicle.TransmissionType,
+                            NumberOfSeats = o.Vehicle.NumberOfSeats,
+                            FuelType = o.Vehicle.FuelType,
+                            IsUsed = o.Vehicle.IsUsed,
+                            Color = o.Vehicle.Color,
+
                         },
 
                     });

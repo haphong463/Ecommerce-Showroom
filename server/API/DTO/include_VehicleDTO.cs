@@ -8,5 +8,12 @@
         public int Quantity { get; set; }
         public int BrandId { get; set; }
         public string? ModelId { get; set; }
+        public bool IsUsed { get; set; }
+        public int NumberOfSeats { get; set; }
+        public string FuelType { get; set; }
+        public string TransmissionType { get; set; }
+        public string Color { get; set; }
+        public List<ImageDTO> Images { get; set; }
+
     }
 }

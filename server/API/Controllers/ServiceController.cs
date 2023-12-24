@@ -21,28 +21,30 @@ namespace API.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public async Task<ActionResult<ApiResponse<IEnumerable<ServiceBriefDTO>>>> GetServices()
+        public async Task<ActionResult<ApiResponse<IEnumerable<Service>>>> GetServices()
         {
             var services = await _dbContext.Services
                 .Include(s => s.OrderServices)
-                .ThenInclude(os => os.Orders)
                 .ToListAsync();
 
-            /*var serviceDTO = _mapper.Map<List<ServiceDTO>>(services);*/
-            var serviceDTO = services.Select(s => new ServiceBriefDTO
-            {
-                ServiceId = s.ServiceId,
-                Name = s.Name,
-                Description = s.Description,
-                Price = s.Price,
-                Orders = s.OrderServices.Select(o => new include_OrderDTO
-                {
-                    OrderId = o.OrderId,
-                    AccountId = o.Orders.AccountId,
-                    EmployeeId = (int)o.Orders.EmployeeId,
-                    TotalPrice = o.Orders.TotalPrice
-                }).ToList()
-            });
+            var serviceDTO = _mapper.Map<List<ServiceBriefDTO>>(services);
+
+            #region 
+            //var serviceDTO = services.Select(s => new ServiceBriefDTO
+            //{
+            //    ServiceId = s.ServiceId,
+            //    Name = s.Name,
+            //    Description = s.Description,
+            //    Price = s.Price,
+            //    Orders = s.OrderServices!.Select(o => new include_OrderDTO
+            //    {
+            //        OrderId = o.OrderId,
+            //        AccountId = o.Orders.AccountId,
+            //        EmployeeId = (int)o.Orders.EmployeeId,
+            //        TotalPrice = o.Orders.TotalPrice
+            //    }).ToList()
+            //});
+            #endregion
             return Ok(new ApiResponse<IEnumerable<ServiceBriefDTO>>(serviceDTO, "Get all Services successfully"));
         }
         [HttpGet("{id}")]
@@ -66,13 +68,7 @@ namespace API.Controllers
                     Name = service.Name,
                     Description = service.Description,
                     Price = service.Price,
-                    Orders = service.OrderServices.Select(o => new include_OrderDTO
-                    {
-                        OrderId = o.OrderId,
-                        AccountId = o.Orders.AccountId,
-                        EmployeeId = (int)o.Orders.EmployeeId,
-                        TotalPrice = o.Orders.TotalPrice
-                    }).ToList()
+
                 };
 
                 return Ok(new ApiResponse<ServiceBriefDTO>(serviceDTO, "Get Service successfully"));

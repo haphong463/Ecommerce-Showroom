@@ -120,7 +120,10 @@ const VehicleForm = ({ open, handleClose, refreshVehicleData }) => {
             });
             if (!entry) {
               const vehicleNameExists = vehicleData.some(
-                (item) => item.name.toLowerCase() === values.name.toLowerCase()
+                (item) =>
+                  item.name.toLowerCase() === values.name.toLowerCase() &&
+                  item.brandId === values.brandId &&
+                  item.color === values.color
               );
               if (vehicleNameExists) {
                 formikBag.setFieldError(

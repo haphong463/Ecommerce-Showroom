@@ -75,7 +75,6 @@ const OrderForm = ({ vehicleList }) => {
     if (!order) {
       const dataToPost = {
         vehicleId: values.vehicleId,
-        suggestPrice: values.suggestPrice,
         quantity: values.quantity,
         employeeId: employeeId,
         brand: values.brandId,
@@ -86,7 +85,7 @@ const OrderForm = ({ vehicleList }) => {
       postPurchaseOrder(dataToPost).then((data) => {
         if (data !== null) {
           console.log(data);
-          setOrderData((prev) => [...prev, data]);
+          setOrderData((prev) => [data, ...prev]);
           onClose();
           successToast("Create a new purchase order successfully!");
         }
@@ -186,28 +185,6 @@ const OrderForm = ({ vehicleList }) => {
                   />
                 </Grid>
 
-                <Grid item xs={12} md={6}>
-                  <TextField
-                    name="suggestPrice"
-                    id="suggestPrice"
-                    fullWidth
-                    label="Suggest Price*"
-                    onChange={(e) => {
-                      formikProps.setFieldValue("suggestPrice", e.target.value);
-                    }}
-                    helperText={
-                      formikProps.touched.suggestPrice
-                        ? formikProps.errors.suggestPrice
-                        : suggestPrice
-                        ? `Suggested price for the last order: ${suggestPrice}`
-                        : ""
-                    }
-                    error={
-                      formikProps.touched.suggestPrice &&
-                      !!formikProps.errors.suggestPrice
-                    }
-                  />
-                </Grid>
                 <Grid item xs={12} md={6}>
                   <TextField
                     name="quantity"

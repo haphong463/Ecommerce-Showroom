@@ -49,6 +49,7 @@ namespace API.Helper
             CreateMap<Service, ServiceDTO>().ReverseMap();
             CreateMap<ServiceDTO, Service>().ReverseMap();
             CreateMap<Service, ServiceBriefDTO>().ReverseMap();
+                
 
             //CreateMap<Vehicle, VehicleDTO>().ReverseMap();
             //CreateMap<VehicleDTO, Vehicle>().ReverseMap();
@@ -70,6 +71,11 @@ namespace API.Helper
                     Quantity = (int)src.Vehicle.Quantity,
                     BrandId = src.Vehicle.BrandId,
                     ModelId = src.Vehicle.ModelId,
+                    FuelType = src.Vehicle.FuelType,
+                    IsUsed = src.Vehicle.IsUsed,
+                    NumberOfSeats = src.Vehicle.NumberOfSeats,
+                    TransmissionType = src.Vehicle.TransmissionType,
+                    Color = src.Vehicle.Color
                 }))
                 .ForMember(dest => dest.Employee, opt => opt.MapFrom(src => new EmployeeDTO
                 {
@@ -84,7 +90,7 @@ namespace API.Helper
                 {
                     VehicleId = src.Vehicles!.VehicleId,
                     Name = src.Vehicles.Name,
-                    Price = src.Vehicles.Price,
+                    Price = (decimal)src.Vehicles.Price,
                     Quantity = (int)src.Vehicles.Quantity,
                     BrandId = src.Vehicles.BrandId,
                     ModelId = src.Vehicles.ModelId,

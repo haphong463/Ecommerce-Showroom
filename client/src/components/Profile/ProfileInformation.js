@@ -25,7 +25,7 @@ const schema = yup.object().shape({
   phone: yup.string().required("Phone is required"),
 });
 
-export function ProfileInformation({ information, loading }) {
+export function ProfileInformation({ information, setInformation, loading }) {
   const [load, setLoad] = useState(false);
   const { token } = useContext(DataContext);
   const [avatarPreview, setAvatarPreview] = useState(token.Avatar || null);
@@ -53,7 +53,7 @@ export function ProfileInformation({ information, loading }) {
             gender: information.gender || "",
           }}
           validationSchema={schema}
-          onSubmit={(values) => {
+          onSubmit={(values, formikBag) => {
             // Handle form submission logic here
             setLoad(true);
             console.log({
@@ -63,17 +63,28 @@ export function ProfileInformation({ information, loading }) {
             const formData = new FormData();
             formData.append("accountId", Number(token.Id));
             formData.append("name", values.name);
-            formData.append("dateOfBirth", values.dateOfBirth);
+            formData.append(
+              "dateOfBirth",
+              dayjs(values.dateOfBirth).format("YYYY-MM-DD")
+            );
             formData.append("address", values.address);
+            formData.append("gender", values.gender);
             formData.append("phone", values.phone);
             formData.append("file", values.file);
+            formData.append("email", token.Email);
 
             putCustomer(formData, Number(token.Id)).then((data) => {
-              console.log(data);
+              if (data) {
+                setInformation((prev) => ({
+                  ...prev,
+                  ...data,
+                }));
+              }
+              setLoad(false);
             });
           }}
         >
-          {({ setFieldValue }) => (
+          {({ setFieldValue, dirty }) => (
             <Form>
               <Stack spacing={2}>
                 <Stack
@@ -93,12 +104,19 @@ export function ProfileInformation({ information, loading }) {
                   />
                   <label htmlFor="avatar">
                     <Avatar
-                      src={avatarPreview}
+                      src={
+                        information.avatarUrl
+                          ? information.avatarUrl
+                          : avatarPreview
+                      }
                       alt={information.name}
-                      style={{
-                        width: "50px",
-                        height: "50px",
+                      sx={{
+                        width: "75px",
+                        height: "75px",
                         borderRadius: "50%",
+                        "& img": {
+                          objectFit: "contain",
+                        },
                       }}
                     />
                   </label>
@@ -162,7 +180,6 @@ export function ProfileInformation({ information, loading }) {
                         labelId="gender-label"
                         id="gender"
                         label="Gender"
-                        defaultValue={information.gender}
                         {...field}
                         error={meta.touched && !!meta.error}
                       >
@@ -180,7 +197,7 @@ export function ProfileInformation({ information, loading }) {
                   type="submit"
                   variant="contained"
                   color="primary"
-                  disabled={load}
+                  disabled={!dirty || load}
                   endIcon={
                     load && <CircularProgress color="inherit" size="1rem" />
                   }

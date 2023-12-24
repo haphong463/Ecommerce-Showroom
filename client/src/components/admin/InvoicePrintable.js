@@ -152,7 +152,7 @@ export const InvoicePrintable = forwardRef(
     };
 
     // ------------------------------------------------- useEffect getVehicles, getCustomer, getService -------------------------------------------------
-
+    console.log(dataToPost);
     useEffect(() => {
       getVehicles().then((data) => {
         if (data) {
@@ -172,7 +172,7 @@ export const InvoicePrintable = forwardRef(
         if (data) {
           setListAccount(data.filter((item) => item.role === "User"));
           const employeeId = data.find((item) => item.email === token.Email);
-          if (employeeId.role === "Employee") {
+          if (employeeId.role === "Employee" || employeeId.role === "Admin") {
             getEmployeeById(employeeId.accountId).then((data) => {
               setDataToPost({ ...dataToPost, employeeId: data.employeeId });
             });

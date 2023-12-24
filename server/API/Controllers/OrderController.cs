@@ -84,7 +84,7 @@ namespace API.Controllers
                 var od = await _dbContext.Orders
                     .Include(x => x.Account).Include(x => x.Employee).Include(o => o.OrderDetails)
                     .Include(o => o.OrderServices).ThenInclude(os => os.Services)
-                    .Include(o => o.OrderDetails).ThenInclude(os => os.Vehicles)
+                    .Include(o => o.OrderDetails).ThenInclude(os => os.Vehicles).ThenInclude(x => x.Images)
                     .SingleOrDefaultAsync(x => x.OrderId == id);
 
                 if (od == null)
@@ -119,7 +119,12 @@ namespace API.Controllers
                             Price = (decimal)odD.Vehicles.Price,
                             Quantity = (int)odD.Vehicles.Quantity,
                             BrandId = odD.Vehicles.BrandId,
-                            ModelId = odD.Vehicles.ModelId
+                            ModelId = odD.Vehicles.ModelId,
+                            Images = odD.Vehicles.Images.Select(x => new ImageDTO
+                            {
+                                ImagePath = x.ImagePath
+                            }).ToList()
+                            
                         }
                     }).ToList(),
                     OrderService = od.OrderServices.Select(odD => new OrderServiceDTO
@@ -295,6 +300,7 @@ namespace API.Controllers
 
                 foreach (var detail in order.OrderDetails)
                 {
+                    var car = await _dbContext.Vehicles.Include(x => x.Images).SingleOrDefaultAsync(x => x.VehicleId == detail.VehicleId);
                     body += $@"
                 <li>
                     <strong>Vehicle ID:</strong> {detail.VehicleId}, 

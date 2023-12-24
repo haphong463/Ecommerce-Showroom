@@ -2,21 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import Autocomplete from "@mui/material/Autocomplete";
 import TextField from "@mui/material/TextField";
 import {
-  Box,
-  Button,
-  Container,
-  Divider,
   FormControl,
-  Grid,
   InputLabel,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
   MenuItem,
   Select,
-  SwipeableDrawer,
+  Stack,
   Typography,
 } from "@mui/material";
 import { VehicleContext } from "../../../context/VehicleContext";
@@ -37,21 +27,6 @@ export const Filter = ({ vehicles }) => {
   const [inputValue, setInputValue] = useState("");
   const [open, setOpen] = React.useState(false);
   const [brandList, setBrandList] = useState([]);
-  const [state, setState] = React.useState({
-    top: false,
-  });
-
-  const toggleDrawer = (anchor, open) => (event) => {
-    if (
-      event &&
-      event.type === "keydown" &&
-      (event.key === "Tab" || event.key === "Shift")
-    ) {
-      return;
-    }
-
-    setState({ ...state, [anchor]: open });
-  };
 
   const handleOpen = () => {
     if (inputValue.length > 0) {
@@ -130,134 +105,94 @@ export const Filter = ({ vehicles }) => {
   // console.log(vehicles, status);
   return (
     <>
-      <Button
-        onClick={toggleDrawer("top", true)}
-        variant="outlined"
-        sx={{
-          fontSize: "1.2rem",
-        }}
-      >
-        Filters
-      </Button>
-      <SwipeableDrawer
-        BackdropProps={{ invisible: true }}
-        anchor="top"
-        open={state["top"]}
-        onClose={toggleDrawer("top", false)}
-        onOpen={toggleDrawer("top", true)}
-        sx={{
-          zIndex: "1",
-        }}
-      >
-        <Container
-          maxWidth="lg"
-          sx={{
-            mt: 10,
-            mb: 5,
-          }}
-        >
-          <Typography
-            variant="body2"
-            gutterBottom
-            sx={{ marginBottom: 2, fontSize: ["1rem", "1.3rem"] }}
+      <Stack spacing={2}>
+        <Typography variant="h6" align="center" className="title-text">
+          Filter
+        </Typography>
+        <Autocomplete
+          options={options}
+          getOptionLabel={(option) => option.label}
+          renderInput={(params) => (
+            <TextField
+              {...params}
+              variant="outlined"
+              placeholder="Search vehicle by name..."
+            />
+          )}
+          freeSolo
+          disableClearable
+          fullWidth
+          inputValue={inputValue}
+          open={open}
+          onOpen={handleOpen}
+          onClose={() => setOpen(false)}
+          onInputChange={handleInputChange}
+        />
+        <FormControl fullWidth>
+          <InputLabel>Brand</InputLabel>
+
+          <Select
+            onChange={handleChangeBrand}
+            label="Brand"
+            value={brand ? brand : "all"}
           >
-            Are you looking for a car? Using filters will help you search more
-            easily.
-          </Typography>
-          <Grid container spacing={2}>
-            <Grid item xs={12} md={9}>
-              <Autocomplete
-                options={options}
-                getOptionLabel={(option) => option.label}
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    label="Vehicle"
-                    variant="outlined"
-                    placeholder="Search vehicle by name..."
-                  />
-                )}
-                freeSolo
-                disableClearable
-                fullWidth
-                inputValue={inputValue}
-                open={open}
-                onOpen={handleOpen}
-                onClose={() => setOpen(false)}
-                onInputChange={handleInputChange}
-              />
-            </Grid>
-            <Grid item xs={6} md={3}>
-              <Select
-                onChange={handleChangeBrand}
-                value={brand ? brand : "all"}
-                fullWidth
-              >
-                <MenuItem value="all">All</MenuItem>
-                {brandList.map((item) => (
-                  <MenuItem value={item.brandId} key={item.brandId}>
-                    {item.name}
-                  </MenuItem>
-                ))}
-              </Select>
-            </Grid>
-            <Grid item xs={6} md={3}>
-              <FormControl fullWidth>
-                <InputLabel>Fuel</InputLabel>
-                <Select
-                  label="Fuel"
-                  value={fuelType ? fuelType : "all"}
-                  fullWidth
-                  onChange={handleChangeFuelType}
-                >
-                  <MenuItem value="all">All</MenuItem>
-                  {fuelTypeList.map((item) => (
-                    <MenuItem value={item.value} key={item.value}>
-                      {item.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={6} md={3}>
-              <FormControl fullWidth>
-                <InputLabel>Transmission</InputLabel>
-                <Select
-                  label="Transmission"
-                  value={transmission ? transmission : "all"}
-                  fullWidth
-                  onChange={handleChangeTranmission}
-                >
-                  <MenuItem value="all">All</MenuItem>
-                  {transmissionType.map((item) => (
-                    <MenuItem value={item.value} key={item.value}>
-                      {item.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-            <Grid item xs={6} md={3}>
-              <FormControl fullWidth>
-                <InputLabel>Available</InputLabel>
-                <Select
-                  label="Available"
-                  value={status ? status : "all"}
-                  fullWidth
-                  onChange={handleChangeStatus}
-                >
-                  <MenuItem value="all">All</MenuItem>
-                  {statusList.map((item) => (
-                    <MenuItem value={item.value} key={item.value}>
-                      {item.label}
-                    </MenuItem>
-                  ))}
-                </Select>
-              </FormControl>
-            </Grid>
-          </Grid>
-        </Container>
-      </SwipeableDrawer>
+            <MenuItem value="all">All</MenuItem>
+            {brandList.map((item) => (
+              <MenuItem value={item.brandId} key={item.brandId}>
+                {item.name}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel>Fuel</InputLabel>
+          <Select
+            label="Fuel"
+            value={fuelType ? fuelType : "all"}
+            fullWidth
+            onChange={handleChangeFuelType}
+          >
+            <MenuItem value="all">All</MenuItem>
+            {fuelTypeList.map((item) => (
+              <MenuItem value={item.value} key={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel>Transmission</InputLabel>
+          <Select
+            label="Transmission"
+            value={transmission ? transmission : "all"}
+            fullWidth
+            onChange={handleChangeTranmission}
+          >
+            <MenuItem value="all">All</MenuItem>
+            {transmissionType.map((item) => (
+              <MenuItem value={item.value} key={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+        <FormControl fullWidth>
+          <InputLabel>Available</InputLabel>
+          <Select
+            label="Available"
+            value={status ? status : "all"}
+            fullWidth
+            onChange={handleChangeStatus}
+          >
+            <MenuItem value="all">All</MenuItem>
+            {statusList.map((item) => (
+              <MenuItem value={item.value} key={item.value}>
+                {item.label}
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+      </Stack>
     </>
   );
 };

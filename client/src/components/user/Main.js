@@ -34,6 +34,8 @@ export function Main({ title, description, labelImg, img, home }) {
 
   return (
     <Box sx={{ maxWidth: "100%", flexGrow: 1, position: "relative" }}>
+      <Header title="AutoCar" state={state} setState={setState} />
+
       {home && (
         <CarouselComponent images={images} state={state} setState={setState} />
       )}
@@ -41,14 +43,15 @@ export function Main({ title, description, labelImg, img, home }) {
         <Box
           component="img"
           sx={{
-            height: "50vh",
+            height: ["15vh", "30vh"],
             display: "block",
             maxWidth: "100%",
             overflow: "hidden",
             width: "100%",
             position: "relative",
-            filter: "brightness(50%)",
+            filter: imageLoaded ? "brightness(50%)" : "brightness(100%)", // Thêm filter brightness
             objectFit: "cover",
+            transition: "filter 0.5s ease-in-out", // Thêm transitiontion
           }}
           src={img}
           alt={labelImg}
@@ -60,10 +63,10 @@ export function Main({ title, description, labelImg, img, home }) {
           sx={{
             position: "absolute",
             top: "60%",
-            left: "50%",
+            left: "40%",
             transform: "translate(-50%, -50%)",
             color: "#fff",
-            textAlign: "center",
+            textAlign: "left",
             width: "50%",
           }}
         >
@@ -78,11 +81,10 @@ export function Main({ title, description, labelImg, img, home }) {
               textTransform: "uppercase",
             }}
           >
-            <span className="title-banner">{title}</span>
+            {title}
           </Typography>
         </Box>
       )}
-      <Header title="AutoCar" state={state} setState={setState} />
     </Box>
   );
 }

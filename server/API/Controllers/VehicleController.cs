@@ -31,7 +31,41 @@ namespace API.Controllers
             var vehicleDtos = _mapper.Map<List<VehicleDTO>>(vehicles);
             return Ok(new ApiResponse<IEnumerable<VehicleDTO>>(vehicleDtos, "Get all vehicles successfully"));
         }
+        [HttpGet("FeatureVehicles")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<VehicleDTO>>>> GetFeatureVehicles()
+        {
+            try
+            {
+                var uniqueVehicleIds = await _dbContext.OrderDetails
+            .Where(od => od.Quantity > 0)
+            .GroupBy(od => od.VehicleId)
+            .OrderByDescending(g => g.Sum(od => od.Quantity))
+            .Select(g => g.Key)
+            .ToListAsync();
 
+                if (uniqueVehicleIds == null || !uniqueVehicleIds.Any())
+                {
+                    return NotFound(new ApiResponse<IEnumerable<VehicleDTO>>(null, "No unique vehicles found with quantity greater than one"));
+                }
+
+                var uniqueVehicles = await _dbContext.Vehicles
+                .Include(x => x.Brand).Include(x => x.Images).Include(x => x.OrderDetails).Include(x => x.Frames)
+                    .Where(v => uniqueVehicleIds.Contains(v.VehicleId))
+                    .ToListAsync();
+
+                var orderedUniqueVehicles = uniqueVehicles
+                    .OrderByDescending(v => uniqueVehicleIds.IndexOf(v.VehicleId))  // In-memory ordering
+                    .ToList();
+
+                var vehicleDtos = _mapper.Map<List<VehicleDTO>>(uniqueVehicles);
+
+                return Ok(new ApiResponse<IEnumerable<VehicleDTO>>(vehicleDtos, "Get unique vehicles with quantity greater than one successfully"));
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<Vehicle>.Exception(ex);
+            }
+        }
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<VehicleDTO>>> GetVehicleById(int id)
         {
@@ -101,20 +135,6 @@ namespace API.Controllers
         {
             try
             {
-                // Kiểm tra và tạo modelID dựa trên Brand và Name
-                if (vehicleUpdate.Brand != null && !string.IsNullOrEmpty(vehicleUpdate.Brand.Name) && !string.IsNullOrEmpty(vehicleUpdate.Name))
-                {
-                    string brandInitial = vehicleUpdate.Brand.Name.Substring(0, 1).ToUpper();
-                    string nameInitial = vehicleUpdate.Name.Substring(0, 1).ToUpper();
-
-                    Random random = new Random();
-                    int randomNumber = random.Next(100, 1000);
-
-                    string modelID = $"{brandInitial}{nameInitial}-{randomNumber}";
-
-                    vehicleUpdate.ModelId = modelID; // Thêm modelID vào đối tượng Vehicle
-                }
-
                 if (!ModelState.IsValid)
                 {
                     return ApiResponse<VehicleDTO>.BadRequest(ModelState);
@@ -144,6 +164,7 @@ namespace API.Controllers
                     {
                         vehicleUpdate.Images = vehicleExisting.Images;
                     }
+                    vehicleUpdate.Price = vehicleExisting.Price;
                     _dbContext.Entry(vehicleExisting).CurrentValues.SetValues(vehicleUpdate);
                     await _dbContext.SaveChangesAsync();
 
@@ -158,6 +179,37 @@ namespace API.Controllers
                 return ApiResponse<VehicleDTO>.Exception(ex);
             }
         }
+
+
+
+        [HttpPut("updateQuantity/{id}")]
+        public async Task<ActionResult<ApiResponse<bool>>> UpdateQuantity(int id, [FromForm] int quantity, [FromForm] int purchaseOrderId)
+        {
+            try
+            {
+                // Kiểm tra và tạo modelID dựa trên Brand và Name
+
+                var vehicleExisting = await _dbContext.Vehicles.SingleOrDefaultAsync(x => x.VehicleId == id);
+                if (vehicleExisting != null)
+                {
+                    var orderCompany = await _dbContext.OrderCompanies.FindAsync(purchaseOrderId);
+                    orderCompany.OrderStatus = 3;
+                    vehicleExisting.Quantity += quantity;
+                    vehicleExisting.Status = 0;
+
+                    await _dbContext.SaveChangesAsync();
+                    return Ok(new ApiResponse<bool>(true, "Vehicle updated successfully"));
+                }
+
+                return NotFound(new ApiResponse<bool>(false, "Vehicle not found"));
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<bool>.Exception(ex);
+            }
+        }
+
+
 
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteVehicle(int id)
@@ -196,7 +248,7 @@ namespace API.Controllers
                 {
                     var vehicleUpdate = _mapper.Map<Vehicle>(vehicleBriefDTO);
 
-                    vehicleExisting.Status = 0; 
+                    vehicleExisting.Status = 0;
                     vehicleExisting.VIN = vehicleUpdate.VIN;
 
                     await _dbContext.SaveChangesAsync();

@@ -89,12 +89,11 @@ namespace API.Controllers
                 decimal RATE = 1.1m;
                 var purchaseOrder = await _dbContext.OrderCompanies
                                     .Include(o => o.Vehicle).Include(o => o.Employee)
-                                    .SingleOrDefaultAsync(o => o.orderCompanyId == purchaseOrderId); 
+                                    .SingleOrDefaultAsync(o => o.orderCompanyId == purchaseOrderId);
                 var vehicles = await _dbContext.Vehicles.FindAsync(vehicleId);
-                vehicles!.Quantity += frames.Count();
                 vehicles.PurchasePrice = price;
                 vehicles.Price = price * RATE;
-                    ;
+                ;
                 purchaseOrder!.OrderStatus = 1;
                 var newReceive = new ReceivingOrder
                 {

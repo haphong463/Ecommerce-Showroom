@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { TabPanel } from "@mui/lab";
 import {
+  Alert,
   Button,
   CircularProgress,
   Stack,
@@ -13,28 +14,35 @@ import {
   getCustomerById,
   putChangePassword,
 } from "../Customer/CustomerLibrary";
+import { DataContext } from "../../context/DataContext";
 
 const schema = yup.object().shape({
-  oldPassword: yup.string().required("Old Password is required"),
+  oldPassword: yup.string().required("Old Password is required."),
   newPassword: yup
     .string()
-    .min(8, "Password must be at least 8 characters")
-    .required("New Password is required")
+    .min(8, "Password must be at least 8 characters.")
+    .required("New Password is required.")
+    .notOneOf(
+      [yup.ref("oldPassword")],
+      "New password must be different from old p.assword"
+    )
     .matches(
       /^(?=.*[A-Z])(?=.*[\W_]).+$/,
       "Password must contain at least one uppercase letter and one special character or underscore."
     ),
   confirmPassword: yup
     .string()
-    .oneOf([yup.ref("newPassword"), null], "Passwords must match")
-    .required("Confirm Password is required"),
+    .oneOf([yup.ref("newPassword"), null], "Passwords must match.")
+    .required("Confirm password is required."),
 });
 
-export function PrivacyInformation({ id }) {
+export function PrivacyInformation() {
   const [loading, setLoading] = useState(false);
-
+  const { token } = useContext(DataContext);
+  const [generalMessage, setGeneralMessage] = useState("");
   return (
     <TabPanel value="2">
+      {generalMessage && <Alert severity="success">{generalMessage}</Alert>}
       <Formik
         initialValues={{
           oldPassword: "",
@@ -42,19 +50,23 @@ export function PrivacyInformation({ id }) {
           confirmPassword: "",
         }}
         validationSchema={schema}
-        onSubmit={(values, { resetForm }) => {
+        onSubmit={(values, { resetForm, setFieldError }) => {
           setLoading(true);
-          putChangePassword(id, values.oldPassword, values.newPassword)
-            .then(() => {
-              console.log("Password changed successfully");
+
+          putChangePassword(
+            token.Id,
+            values.oldPassword,
+            values.newPassword
+          ).then((data) => {
+            if (data) {
+              setGeneralMessage("Password changed successfully");
               resetForm(); // Reset the form after successful submission
-            })
-            .catch((error) => {
-              console.error("Error changing password", error);
-            })
-            .finally(() => {
-              setLoading(false);
-            });
+            } else {
+              setFieldError("oldPassword", "Incorrect old password");
+            }
+            setLoading(false);
+          });
+
           console.log(values);
         }}
       >
