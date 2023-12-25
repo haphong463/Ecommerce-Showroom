@@ -4,6 +4,7 @@ using API.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,10 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace API.Migrations
 {
     [DbContext(typeof(DatabaseContext))]
-    partial class DatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20231222075803_deleteDescription")]
+    partial class deleteDescription
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -88,35 +90,6 @@ namespace API.Migrations
                     b.HasKey("AccountId");
 
                     b.ToTable("Accounts");
-                });
-
-            modelBuilder.Entity("API.Models.Appointment", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("AccountId")
-                        .HasColumnType("int");
-
-                    b.Property<DateTime>("AppointmentDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<DateTime>("CreatedDate")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("VehicleId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AccountId");
-
-                    b.HasIndex("VehicleId");
-
-                    b.ToTable("Appointments");
                 });
 
             modelBuilder.Entity("API.Models.Brand", b =>
@@ -269,9 +242,6 @@ namespace API.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<DateTime?>("OrderDate")
-                        .HasColumnType("datetime2");
-
                     b.Property<byte?>("OrderStatus")
                         .HasColumnType("tinyint");
 
@@ -300,10 +270,6 @@ namespace API.Migrations
                         .HasColumnType("int");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("OrderDetailsId"), 1L, 1);
-
-                    b.Property<string>("FrameNumber")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("OrderId")
                         .HasColumnType("int");
@@ -359,9 +325,6 @@ namespace API.Migrations
 
                     b.Property<int>("PurchaseOrderId")
                         .HasColumnType("int");
-
-                    b.Property<DateTime?>("ReceivedDate")
-                        .HasColumnType("datetime2");
 
                     b.Property<int?>("orderCompanyId")
                         .HasColumnType("int");
@@ -504,25 +467,6 @@ namespace API.Migrations
                     b.HasIndex("BrandId");
 
                     b.ToTable("Vehicles");
-                });
-
-            modelBuilder.Entity("API.Models.Appointment", b =>
-                {
-                    b.HasOne("API.Models.Account", "Accounts")
-                        .WithMany()
-                        .HasForeignKey("AccountId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Vehicle", "Vehicles")
-                        .WithMany()
-                        .HasForeignKey("VehicleId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Accounts");
-
-                    b.Navigation("Vehicles");
                 });
 
             modelBuilder.Entity("API.Models.Employee", b =>

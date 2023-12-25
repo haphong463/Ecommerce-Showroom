@@ -9,6 +9,7 @@ namespace API.Models
         public int OrderDetailsId { get; set; }
         public int OrderId { get; set; }
         public int VehicleId { get; set; }
+        public string FrameNumber { get; set; }
         public Vehicle? Vehicles { get; set; }
         public Order? Orders { get; set; }
         public int Quantity { get; set; }

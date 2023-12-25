@@ -31,10 +31,11 @@ import { getCustomer } from "../Customer/CustomerLibrary";
 import { getService } from "../Service/ServiceLibrary";
 import { InvoiceAddress } from "./InvoiceAddress";
 import { getEmployeeById } from "../Employee/EmployeeLibrary";
+import { HeaderPrint } from "./HeaderPrint";
 const TAX_RATE = 0.07;
-
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
+
 const MenuProps = {
   PaperProps: {
     style: {
@@ -46,6 +47,9 @@ const MenuProps = {
 function ccyFormat(num) {
   return num?.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
+
+
+
 export const InvoicePrintable = forwardRef(
   (
     { isAddRowVisible, listItem, setListItem, dataToPost, setDataToPost },
@@ -120,6 +124,7 @@ export const InvoicePrintable = forwardRef(
         dangerMessage(`Car(${newRow.vehicleID}) out of stock.`);
         return;
       }
+      
       setListItem([...listItem, newRow]);
       setDataToPost((prev) => ({
         ...prev,
@@ -219,77 +224,18 @@ export const InvoicePrintable = forwardRef(
         </Stack>
 
         <Divider sx={{ border: "1px solid", my: 1.5 }} />
-        <Stack direction="row" justifyContent="space-between">
-          <Stack>
-            {!isAddRowVisible ? (
-              <Stack>
-                <Typography fontWeight={600} variant="body1">
-                  {selectedAccount?.name}
-                </Typography>
-                <Typography variant="body1">
-                  {selectedAccount?.phone}
-                </Typography>
-                <Typography variant="body1">
-                  {selectedAccount?.email}
-                </Typography>
-              </Stack>
-            ) : (
-              <Stack direction="row" spacing={1}>
-                <Select
-                  value={selectedAccount?.accountId ?? "Select customer"}
-                  onChange={(e) => {
-                    setDataToPost({ ...dataToPost, accountId: e.target.value });
-                  }}
-                  MenuProps={MenuProps}
-                >
-                  <MenuItem disabled value="Select customer">
-                    Select customer
-                  </MenuItem>
-                  {listAccount.map((item) => (
-                    <MenuItem key={item.accountId} value={item.accountId}>
-                      {item.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-                <FormControl sx={{ width: 300 }}>
-                  <InputLabel id="demo-multiple-checkbox-label">
-                    Service
-                  </InputLabel>
-                  <Select
-                    labelId="demo-multiple-checkbox-label"
-                    label="Service"
-                    id="demo-multiple-checkbox"
-                    multiple
-                    value={service}
-                    onChange={handleChange}
-                    renderValue={(selected) =>
-                      selected
-                        .map(
-                          (id) =>
-                            listService.find((item) => item.serviceId === id)
-                              .name
-                        )
-                        .join(", ")
-                    }
-                    MenuProps={MenuProps}
-                  >
-                    {listService.map((item, index) => (
-                      <MenuItem key={index} value={item.serviceId}>
-                        <Checkbox
-                          checked={service.indexOf(item.serviceId) > -1}
-                        />
-                        <ListItemText primary={item.name} />
-                      </MenuItem>
-                    ))}
-                  </Select>
-                </FormControl>
-              </Stack>
-            )}
-          </Stack>
-          <Stack>
-            <Typography variant="body2">Issued by {token.Name}</Typography>
-          </Stack>
-        </Stack>
+        <HeaderPrint
+          Name={token.Name}
+          listAccount={listAccount}
+          listService={listService}
+          service={service}
+          handleChange={handleChange}
+          selectedAccount={selectedAccount}
+          isAddRowVisible={isAddRowVisible}
+          dataToPost={dataToPost}
+          setDataToPost={setDataToPost}
+          MenuProps={MenuProps}
+        />
         <TableContainer component={Paper}>
           <Table>
             <TableHead>
