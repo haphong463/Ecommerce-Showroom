@@ -117,7 +117,7 @@ export function SignUp() {
   }
   return (
     <LayoutUser>
-      <Box component="section" mt={15} mb={10}>
+      <Box component="section" pb={10}>
         <Grid
           container
           component="main"

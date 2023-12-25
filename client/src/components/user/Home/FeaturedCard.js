@@ -4,12 +4,13 @@ import {
   CardContent,
   Typography,
   Breadcrumbs,
+  Stack,
 } from "@mui/material";
 import { styled } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 
 const HoverCardContent = styled(CardContent)({
-  opacity: 1,
+  opacity: 0,
   transition: "opacity 0.3s",
   position: "absolute",
   top: "50%",
@@ -29,7 +30,7 @@ const HoverCardContent = styled(CardContent)({
 const HoverTypography = styled(Typography)({
   color: "#fff",
   marginBottom: "8px",
-  fontSize: "1.1rem",
+  fontSize: [".8rem", "1.1rem", "1.4rem"],
   // Add margin-bottom to create space between items
 });
 
@@ -38,7 +39,7 @@ const HoverCard = styled(Card)({
   borderRadius: "12px",
   "&:hover": {
     "& .MuiCardContent-root": {
-      opacity: 0,
+      opacity: 1,
     },
   },
 });
@@ -46,36 +47,48 @@ const HoverCard = styled(Card)({
 export function FeaturedCard({ handleImageLoad, imageLoaded, vehicle }) {
   const navigate = useNavigate();
   return (
-    <HoverCard onClick={() => navigate(`/vehicle/${vehicle.vehicleID}`)}>
-      <CardMedia
-        component="img"
-        height="250"
-        width="400"
-        image={vehicle.images[0].imagePath}
-        alt="Car Image"
-        onLoad={handleImageLoad}
-      />
-      <HoverCardContent className="HoverCardContent">
-        <Breadcrumbs separator={<span style={{ color: "#fff" }}>/</span>}>
-          <HoverTypography variant="body2" color="text.secondary">
-            {vehicle.fuelType}
-          </HoverTypography>
-          <HoverTypography variant="body2" color="text.secondary">
-            {vehicle.mileage} km
-          </HoverTypography>
-          <HoverTypography variant="body2" color="text.secondary">
-            {vehicle.transmissionType}
-          </HoverTypography>
-        </Breadcrumbs>
-
-        <HoverTypography variant="h6">{vehicle.name}</HoverTypography>
-        <HoverTypography variant="body2" color="text.secondary">
-          {vehicle.price.toLocaleString("en-US", {
-            style: "currency",
-            currency: "USD",
-          })}
-        </HoverTypography>
-      </HoverCardContent>
-    </HoverCard>
+    <Card>
+      <HoverCard onClick={() => navigate(`/vehicle/${vehicle.vehicleID}`)}>
+        <CardMedia
+          component="img"
+          height="250"
+          width="400"
+          image={vehicle.images[0].imagePath}
+          alt="Car Image"
+          onLoad={handleImageLoad}
+        />
+        <HoverCardContent className="HoverCardContent">
+          <Breadcrumbs separator={<span style={{ color: "#fff" }}>/</span>}>
+            <HoverTypography color="text.secondary">
+              {vehicle.fuelType}
+            </HoverTypography>
+            <HoverTypography color="text.secondary">
+              {vehicle.mileage} km
+            </HoverTypography>
+            <HoverTypography color="text.secondary">
+              {vehicle.transmissionType}
+            </HoverTypography>
+          </Breadcrumbs>
+        </HoverCardContent>
+      </HoverCard>
+      <CardContent>
+        <Stack direction="row" justifyContent="space-between">
+          <Typography variant="h6">
+            <span className="title-text">{vehicle.name}</span>
+          </Typography>
+          <Typography variant="h6">
+            <span>{vehicle.isUsed ? "Used" : "New"}</span>
+          </Typography>
+        </Stack>
+        <Typography variant="h6" color="text.secondary">
+          <span className="price-text">
+            {vehicle.price.toLocaleString("en-US", {
+              style: "currency",
+              currency: "USD",
+            })}
+          </span>
+        </Typography>
+      </CardContent>
+    </Card>
   );
 }

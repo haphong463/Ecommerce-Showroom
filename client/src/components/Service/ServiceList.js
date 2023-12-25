@@ -24,11 +24,11 @@ export const ServiceList = () => {
   const handleDelete = (id) => {
     const service = serviceData.find((item) => item.serviceId === id);
     console.log(service);
-    if (service && service.orders !== null) {
+    if (service && service.orderServices.length > 0) {
       // Check if the specific brand has associated vehicles
       Swal.fire({
         title: "Cannot delete!",
-        text: "This service has associated orders. Please delete the orders first.",
+        text: "This service has associated orders.",
         icon: "error",
       });
     } else {

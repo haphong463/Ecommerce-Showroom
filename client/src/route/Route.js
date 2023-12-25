@@ -27,6 +27,7 @@ import { AccountProvider } from "../context/AccountContext";
 import { Comparison } from "../containers/user/Comparison";
 import { ResetPassword } from "../containers/user/ResetPassword";
 import { Order } from "../containers/user/Order";
+import { ViewOrder } from "../containers/admin/ViewOrder";
 
 export const publicRoutes = [
   {
@@ -125,6 +126,11 @@ export const privateRoutes = [
         <VehicleDetailsAdmin />
       </VehicleProvider>
     ),
+    roles: ["Admin", "Employee"],
+  },
+  {
+    path: "/admin/order/:id",
+    component: <ViewOrder />,
     roles: ["Admin", "Employee"],
   },
   {

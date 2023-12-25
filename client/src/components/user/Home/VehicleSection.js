@@ -32,34 +32,34 @@ export function VehicleSection() {
   return (
     <>
       <Typography
-        variant="h3"
+        variant="h4"
         align="center"
+        className="title-specs"
+        gutterBottom
         sx={{
           fontSize: ["1.5rem", "2.3rem", "3rem"],
         }}
-        gutterBottom
-        className="title-specs"
       >
-        <span className="title-text">Typical types of vehicles</span>
+        <span className="title-text">#Typical types of vehicles</span>
       </Typography>
       <Box
         component="section"
         sx={{
           backgroundColor: "#f3f3f3",
-          padding: 15,
+          p: [5, 15],
         }}
       >
         <Grid
           container
           spacing={{
-            xs: 0.5,
+            xs: 2,
             sm: 4,
           }}
         >
           {!loading
             ? featuredCar.map((item, index) => {
                 return (
-                  <Grid key={index} item sm={6} xs={12} md={3}>
+                  <Grid key={index} item sm={6} xs={12} lg={3}>
                     <FeaturedCard vehicle={item} />
                   </Grid>
                 );

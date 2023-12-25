@@ -7,8 +7,10 @@ import {
   getCustomerByEmail,
   getCustomerById,
 } from "../components/Customer/CustomerLibrary";
+import { useMediaQuery } from "@mui/material";
 export const DataContext = createContext();
 export const DataProvider = ({ children }) => {
+  const isMobile = useMediaQuery("(max-width:900px)");
   const [itemCart, setItemCart] = useState(
     JSON.parse(localStorage.getItem("cart"))
       ? JSON.parse(localStorage.getItem("cart")).length
@@ -76,6 +78,7 @@ export const DataProvider = ({ children }) => {
     itemCart,
     setItemCart,
     user,
+    isMobile,
   };
   return <DataContext.Provider value={values}>{children}</DataContext.Provider>;
 };

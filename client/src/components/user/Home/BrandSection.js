@@ -70,48 +70,46 @@ const BrandSection = () => {
 
   console.log("re-render");
   return (
-    <Container maxWidth="lg">
-      <Box sx={{ my: 4 }} component="section">
-        <Typography
-          variant="h3"
-          align="center"
-          sx={{
-            fontSize: ["1.5rem", "2.3rem", "3rem"],
-          }}
-          gutterBottom
-          className="title-specs"
-        >
-          <span className="title-text">FEATURED BRANDS</span>
-        </Typography>
-        <Slider {...sliderSettings}>
-          {brand.map((product, index) => (
-            <Box key={product.brandId}>
-              <Card
-                className={`brand-card ${
-                  hoveredIndex === index ? "hovered" : ""
-                }`}
+    <Box sx={{ my: [10, 35] }} component="section">
+      <Typography
+        variant="h3"
+        align="center"
+        className="title-specs"
+        gutterBottom
+        sx={{
+          fontSize: ["1.5rem", "2.3rem", "3rem"],
+        }}
+      >
+        <span className="title-text">#BRANDS</span>
+      </Typography>
+      <Slider {...sliderSettings}>
+        {brand.map((product, index) => (
+          <Box key={product.brandId}>
+            <Card
+              className={`brand-card ${
+                hoveredIndex === index ? "hovered" : ""
+              }`}
+              sx={{
+                margin: "10px",
+                boxShadow: "none",
+              }}
+              onMouseEnter={() => handleHover(index)}
+              onMouseLeave={handleMouseLeave}
+            >
+              <CardMedia
                 sx={{
-                  margin: "10px",
-                  boxShadow: "none",
+                  objectFit: "contain",
+                  width: ["150px", "200px"],
+                  height: ["150px", "200px"],
                 }}
-                onMouseEnter={() => handleHover(index)}
-                onMouseLeave={handleMouseLeave}
-              >
-                <CardMedia
-                  height="100px"
-                  width="100px"
-                  sx={{
-                    objectFit: "contain",
-                  }}
-                  component="img"
-                  src={product.imagePath}
-                />
-              </Card>
-            </Box>
-          ))}
-        </Slider>
-      </Box>
-    </Container>
+                component="img"
+                src={product.imagePath}
+              />
+            </Card>
+          </Box>
+        ))}
+      </Slider>
+    </Box>
   );
 };
 

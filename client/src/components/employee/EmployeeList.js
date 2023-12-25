@@ -10,9 +10,10 @@ import { Avatar, Badge, Skeleton } from "@mui/material";
 import { DataContext } from "../../context/DataContext";
 import dayjs from "dayjs";
 import { columns, getCustomer } from "../Customer/CustomerLibrary";
+import { AccountContext } from "../../context/AccountContext";
 
 export const EmployeeList = () => {
-  const [data, setData] = useState([]);
+  const { dataEmployee, setDataEmployee } = useContext(AccountContext);
   const [loading, setLoading] = useState();
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -29,7 +30,7 @@ export const EmployeeList = () => {
     getCustomer().then((data) => {
       console.log(data);
       if (data) {
-        setData(data.filter((item) => item.role === "Employee"));
+        setDataEmployee(data.filter((item) => item.role === "Employee"));
       }
       setLoading(false);
     });
@@ -55,7 +56,7 @@ export const EmployeeList = () => {
           </TableHead>
           <TableBody>
             {!loading
-              ? data
+              ? dataEmployee
                   .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                   .map((row) => {
                     return (
@@ -97,7 +98,7 @@ export const EmployeeList = () => {
       <TablePagination
         rowsPerPageOptions={[5, 10, 15]}
         component="div"
-        count={data.length}
+        count={dataEmployee.length}
         rowsPerPage={rowsPerPage}
         page={page}
         onPageChange={handleChangePage}

@@ -135,11 +135,6 @@ const Header = ({ title, state, setState }) => {
           </Box>
 
           <div sx={{ display: "flex" }}>
-            <IconButton onClick={() => navigate("/cart")}>
-              <Badge badgeContent={itemCart} color="error">
-                <ShoppingBagIcon color="action" />
-              </Badge>
-            </IconButton>
             <IconButton
               onClick={handleOpenUserMenu}
               sx={{ p: 0, display: { xs: "none", md: "inline-block" } }}

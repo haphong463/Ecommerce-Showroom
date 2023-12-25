@@ -19,7 +19,7 @@ import { successToast } from "../Message";
 import { ServiceFormField } from "./ServiceFormField";
 
 const ServiceForm = () => {
-  const { onClose, setServiceData, openServiceForm, service  } =
+  const { onClose, setServiceData, serviceData, openServiceForm, service } =
     useContext(ServiceContext);
   const initialValues = {
     name: service?.name ?? "",
@@ -28,6 +28,10 @@ const ServiceForm = () => {
   };
   const validationSchema = generateValidationSchemaService();
   const submitAPI = (service, values) => {
+    if (serviceData.length === 8) {
+      return;
+    }
+
     if (!service) {
       postService(values).then((data) => {
         if (data !== null) {

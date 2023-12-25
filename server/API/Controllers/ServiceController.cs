@@ -68,7 +68,13 @@ namespace API.Controllers
                     Name = service.Name,
                     Description = service.Description,
                     Price = service.Price,
-
+                    //Orders = service.OrderServices.Select(o => new include_OrderDTO
+                    //{
+                    //    OrderId = o.OrderId,
+                    //    AccountId = o.Orders.AccountId,
+                    //    EmployeeId = (int)o.Orders.EmployeeId,
+                    //    TotalPrice = o.Orders.TotalPrice
+                    //}).ToList()
                 };
 
                 return Ok(new ApiResponse<ServiceBriefDTO>(serviceDTO, "Get Service successfully"));

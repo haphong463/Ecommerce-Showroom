@@ -15,12 +15,14 @@ import { DataContext } from "../../context/DataContext";
 import { columns, getOrder } from "./SaleOrderLibrary";
 import { SaleOrderContext } from "../../context/SaleOrderContext";
 import { RemoveRedEye } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 export const SaleOrderList = () => {
   const [loading, setLoading] = useState();
   const { data, setData } = useContext(SaleOrderContext);
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
+  const navigate = useNavigate();
   //   const handleDelete = (id) => {
   //     const brand = data.find((item) => item.brandId === id);
 
@@ -119,7 +121,9 @@ export const SaleOrderList = () => {
                               {column.id === "actions" ? (
                                 <IconButton
                                   aria-label="edit"
-                                  // onClick={() => handleEdit(row.brandId)}
+                                  onClick={() =>
+                                    navigate(`/admin/order/${row.orderId}`)
+                                  }
                                 >
                                   <RemoveRedEye />
                                 </IconButton>

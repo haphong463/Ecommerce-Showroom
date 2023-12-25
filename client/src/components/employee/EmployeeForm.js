@@ -6,6 +6,7 @@ import {
   Avatar,
   Box,
   Button,
+  CircularProgress,
   Container,
   Dialog,
   DialogActions,
@@ -57,6 +58,7 @@ const formFields = [
   { label: "Profile Image", name: "profileImage" },
 ];
 const EmployeeForm = () => {
+  const { setDataEmployee } = useContext(AccountContext);
   const {
     onClose,
     data,
@@ -67,15 +69,16 @@ const EmployeeForm = () => {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
   const [avatarImage, setAvatarImage] = useState(null); // State to manage the avatar image
-
+  const [loading, setLoading] = useState(false);
   const onSubmit = (data) => {
     console.log(data);
+    setLoading(true);
     const newDate = dayjs(new Date(data.dateOfBirth)).format("YYYY-MM-DD");
     const formData = new FormData();
     formData.append("email", data.email);
@@ -89,12 +92,14 @@ const EmployeeForm = () => {
     formData.append("role", "Employee");
 
     postCustomer(formData).then((result) => {
-      console.log(result);
       if (result) {
         successToast(
           "Sign up successful. Please check your email and verify employee's email address."
         );
+        setDataEmployee((prev) => [...prev, result]);
       }
+      setLoading(false);
+      onClose();
     });
   };
 
@@ -240,6 +245,10 @@ const EmployeeForm = () => {
                 fullWidth
                 variant="contained"
                 sx={{ mt: 3, mb: 2 }}
+                disabled={isSubmitting || loading}
+                endIcon={
+                  loading && <CircularProgress color="inherit" size="1rem" />
+                }
               >
                 Sign Up
               </Button>

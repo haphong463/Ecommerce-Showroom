@@ -23,7 +23,8 @@ export const ForgotPassword = ({ loadingSubmit, setLoadingSubmit }) => {
     postForgotPassword(data).then((result) => {
       if (result) {
         setGeneralMessage("Please check your email to reset your password.");
-      }else{}
+      } else {
+      }
       setLoadingSubmit(false);
     });
   };
@@ -53,8 +54,9 @@ export const ForgotPassword = ({ loadingSubmit, setLoadingSubmit }) => {
         color="primary"
         style={{ marginTop: "16px", display: "flex", justifyContent: "center" }}
         disabled={loadingSubmit}
+        endIcon={<ArrowForwardIcon />}
       >
-        <ArrowForwardIcon />
+        Send
       </Button>
     </form>
   );

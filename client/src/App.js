@@ -51,11 +51,7 @@ function App() {
   }, [token]);
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <div
-        style={{
-          overflow: "hidden",
-        }}
-      >
+      <div>
         <ThemeProvider theme={theme}>
           <Routes>
             {publicRoutes.map((item, index) => {

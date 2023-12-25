@@ -9,9 +9,12 @@ import {
   Paper,
   Typography,
   TablePagination,
+  IconButton,
 } from "@mui/material";
 import { DataContext } from "../../context/DataContext";
 import dayjs from "dayjs";
+import { RemoveRedEye } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
 const OrderTable = ({
   orders,
@@ -20,6 +23,7 @@ const OrderTable = ({
   handleChangePage,
   handleChangeRowsPerPage,
 }) => {
+  const navigate = useNavigate();
   return (
     <>
       <TableContainer component={Paper}>
@@ -29,6 +33,7 @@ const OrderTable = ({
               <TableCell>ID</TableCell>
               <TableCell align="center">Customer</TableCell>
               <TableCell align="center">Total Amount</TableCell>
+              <TableCell></TableCell>
               {/* Thêm các cột khác tùy thuộc vào thông tin bạn muốn hiển thị */}
             </TableRow>
           </TableHead>
@@ -44,6 +49,15 @@ const OrderTable = ({
                     {dayjs(order.orderDate).format("LLL")}
                   </TableCell>
                   <TableCell align="center">{order.totalPrice}</TableCell>
+                  <TableCell>
+                    <IconButton
+                      onClick={() =>
+                        navigate("/profile/order/" + order.orderId)
+                      }
+                    >
+                      <RemoveRedEye />
+                    </IconButton>
+                  </TableCell>
                   {/* Thêm các ô dữ liệu khác tùy thuộc vào thông tin bạn muốn hiển thị */}
                 </TableRow>
               ))}

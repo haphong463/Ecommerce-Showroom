@@ -124,7 +124,7 @@ namespace API.Controllers
                             {
                                 ImagePath = x.ImagePath
                             }).ToList()
-                            
+
                         }
                     }).ToList(),
                     OrderService = od.OrderServices.Select(odD => new OrderServiceDTO

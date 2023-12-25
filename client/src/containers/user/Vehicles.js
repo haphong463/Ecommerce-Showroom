@@ -27,6 +27,7 @@ import { VehicleContent } from "../../components/user/Vehicles/VehicleContent";
 
 export function Vehicles() {
   const isMobile = useMediaQuery("(max-width:800px)");
+  const [dataFetched, setDataFetched] = useState(false);
   const { vehicleData, setVehicleData } = useContext(VehicleContext);
   const { searchData, setSearchData } = useContext(DataContext);
   const navigate = useNavigate();
@@ -42,21 +43,30 @@ export function Vehicles() {
       : "";
   useEffect(() => {
     setLoading(true);
-
-    getVehicles().then((data) => {
-      if (data) {
-        let checkIsUsed;
-        if (location.pathname === "/vehicles") {
-          checkIsUsed = true;
-        } else if (location.pathname === "/vehiclesUsed") {
-          checkIsUsed = false;
+    let checkIsUsed;
+    if (location.pathname === "/vehicles") {
+      checkIsUsed = false;
+    } else if (location.pathname === "/vehiclesUsed") {
+      checkIsUsed = true;
+    }
+    if (vehicleData.length === 0) {
+      getVehicles().then((data) => {
+        if (data) {
+          const newCar = data.filter(
+            (vehicle) => vehicle.isUsed === checkIsUsed
+          );
+          setSearchData(newCar);
+          setVehicleData(data);
+          setLoading(false); // Set load
         }
-        const newCar = data.filter((vehicle) => vehicle.isUsed === checkIsUsed);
-        setSearchData(newCar);
-        setVehicleData(newCar);
-        setLoading(false); // Set load
-      }
-    });
+      });
+    } else {
+      const newCar = vehicleData.filter(
+        (vehicle) => vehicle.isUsed === checkIsUsed
+      );
+      setSearchData(newCar);
+      setLoading(false); // Set load
+    }
   }, [setVehicleData, setSearchData, location]);
 
   const handlePageChange = (event, value) => {

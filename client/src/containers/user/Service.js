@@ -47,8 +47,9 @@ export function Service() {
         <Paper sx={{ my: 10 }} elevation={0}>
           <Typography
             align="center"
+            variant="h3"
             sx={{
-              fontSize: ["1.5rem", "2rem"],
+              fontSize: ["1.5rem", "2.3rem", "3rem"],
             }}
             className="title-specs"
           >
@@ -87,7 +88,7 @@ export function Service() {
                               justifyContent: "center",
                               alignItems: "center",
                               flexDirection: "column",
-                              p: 3,
+                              p: 4,
                               mt: 2,
                               borderRadius: "12px",
                               border: "1px solid #333",
@@ -104,12 +105,13 @@ export function Service() {
                             <CardContent>
                               <Typography
                                 sx={{
-                                  fontSize: ["1rem", "1.3rem"],
+                                  whiteSpace: "nowrap", // Add this line
+                                  overflow: "hidden", // Add this line to hide overflow if needed
+                                  textOverflow: "ellipsis",
                                 }}
                                 variant="h6"
-                                className="title-text"
                               >
-                                {item.name}
+                                <span className="title-text">{item.name}</span>
                               </Typography>
                             </CardContent>
                           </Card>
@@ -157,7 +159,7 @@ export function Service() {
           <Typography
             align="center"
             sx={{
-              fontSize: ["1.5rem", "2rem"],
+              fontSize: ["1.5rem", "2.3rem", "3rem"],
             }}
             className="title-specs"
           >

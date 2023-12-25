@@ -52,20 +52,20 @@ export const FAQ = memo(() => {
   ];
 
   return (
-    <Box component="section" sx={{ my: 3 }}>
+    <Box component="section" sx={{ pb: 10 }}>
       <Paper sx={{ my: 10 }} elevation={0}>
         <Typography
           align="center"
-          variant="h4"
+          variant="h3"
           sx={{
             fontSize: ["1.5rem", "2.3rem", "3rem"],
           }}
           className="title-specs"
         >
-          <span className="title-text">Frequently Asked Questions</span>
+          <span className="title-text">#Frequently Asked Questions</span>
         </Typography>
         <Container>
-          {faqData.map((item) => (
+          {faqData.map((item, index) => (
             <Accordion
               key={item.id}
               expanded={expanded === item.id}
@@ -76,8 +76,8 @@ export const FAQ = memo(() => {
                 aria-controls={`${item.id}-content`}
                 id={`${item.id}-header`}
               >
-                <Typography sx={{ color: "text.secondary" }}>
-                  {item.question}
+                <Typography fontWeight={600} sx={{ color: "text.secondary" }}>
+                  {`${index + 1}. ${item.question}`}
                 </Typography>
               </AccordionSummary>
               <AccordionDetails>

@@ -48,8 +48,13 @@ namespace API.Helper
 
             CreateMap<Service, ServiceDTO>().ReverseMap();
             CreateMap<ServiceDTO, Service>().ReverseMap();
-            CreateMap<Service, ServiceBriefDTO>().ReverseMap();
-                
+            CreateMap<Service, ServiceBriefDTO>().ForMember(dest => dest.OrderServices, opt => opt.MapFrom(x => x.OrderServices != null ? x.OrderServices.Select(x => new ServiceBrief_OrderService_DTO
+            {
+                OrderId = x.OrderId,
+                OrderServiceId = x.OrderServiceId,
+                ServiceId = x.ServiceId
+            }).ToList() : new List<ServiceBrief_OrderService_DTO>())).ReverseMap();
+
 
             //CreateMap<Vehicle, VehicleDTO>().ReverseMap();
             //CreateMap<VehicleDTO, Vehicle>().ReverseMap();

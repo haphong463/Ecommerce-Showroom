@@ -2,6 +2,7 @@ import React, { createContext, useState } from "react";
 export const AccountContext = createContext();
 export const AccountProvider = ({ children }) => {
   const [data, setData] = useState([]);
+  const [dataEmployee, setDataEmployee] = useState([]);
   const [account, setAccount] = useState();
   const [openAccountForm, setOpenAccountForm] = useState(false);
 
@@ -21,6 +22,8 @@ export const AccountProvider = ({ children }) => {
     onClose,
     Account: account,
     setAccount,
+    dataEmployee,
+    setDataEmployee,
   };
   return (
     <AccountContext.Provider value={values}>{children}</AccountContext.Provider>

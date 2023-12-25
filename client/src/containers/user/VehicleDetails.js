@@ -11,7 +11,7 @@ import {
   Tooltip,
   Typography,
 } from "@mui/material";
-import { useNavigate, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import { getVehicleById } from "../../components/Vehicle/VehicleLibrary";
 import { VehicleContext } from "../../context/VehicleContext";
 import {
@@ -29,6 +29,7 @@ import {
   MonetizationOn as MonetizationOnIcon,
   CheckCircle as CheckCircleIcon,
   ArrowBack as ArrowBackIcon,
+  Phone,
 } from "@mui/icons-material";
 
 import dayjs from "dayjs";
@@ -38,6 +39,8 @@ import { DataContext } from "../../context/DataContext";
 import CustomSlider from "../../components/admin/VehicleDetails/ImageList";
 import { dangerMessage } from "../../components/Message";
 import { useTitle } from "../../UseTitle";
+import { DatePicker } from "@mui/x-date-pickers";
+import { postAppointment } from "../../components/Appointment/AppointmentLibrary";
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { vehicle, setVehicle } = useContext(VehicleContext);
@@ -85,7 +88,7 @@ export const VehicleDetails = () => {
     {
       icon: <PeopleAltIcon />,
       title: "Used/New",
-      value: vehicle.isUsed ? "New" : "Used",
+      value: vehicle.isUsed ? "Used" : "New",
     },
     {
       icon: <CheckCircleIcon />,
@@ -98,31 +101,11 @@ export const VehicleDetails = () => {
           : "",
     },
   ];
-  const handleAddToCart = () => {
-    const existingCart = JSON.parse(localStorage.getItem("cart")) || [];
-    const isVehicleInCart = existingCart.some(
-      (item) => item.vehicleId === vehicle.vehicleID
-    );
-    if (!isVehicleInCart) {
-      const updatedCart = [
-        ...existingCart,
-        {
-          vehicleId: vehicle.vehicleID,
-          name: vehicle.name,
-          imageUrl: vehicle.images[0].imagePath,
-          qty: 1,
-        },
-      ];
 
-      // Save the updated cart in localStorage
-      localStorage.setItem("cart", JSON.stringify(updatedCart));
-
-      // Optionally, you can provide feedback to the user
-      setItemCart(existingCart.length + 1);
-    } else {
-      // Optionally, you can provide feedback that the vehicle is already in the cart
-      dangerMessage("Vehicle is already in the cart!");
-    }
+  const handleAppointment = () => {
+    postAppointment().then((data) => {
+      console.log(data);
+    });
   };
 
   const refreshVehicleData = () => {
@@ -170,7 +153,7 @@ export const VehicleDetails = () => {
                     >
                       AutoCar
                     </Typography>
-                    <Typography variant="h4" gutterBottom>
+                    <Typography variant="h3" gutterBottom>
                       <span className="title-text">{vehicle.name}</span>
                     </Typography>
                     <Breadcrumbs separator="-">
@@ -182,7 +165,7 @@ export const VehicleDetails = () => {
                         {vehicle.transmissionType + " Transmission"}
                       </Typography>
                     </Breadcrumbs>
-                    <Typography variant="h6">
+                    <Typography variant="h5">
                       <span className="price-text">
                         {vehicle.price > 0
                           ? vehicle.price.toLocaleString("en-US", {
@@ -195,15 +178,20 @@ export const VehicleDetails = () => {
                   </Stack>
 
                   {/* Stack ở dưới cùng */}
-                  <Stack mt={2}>
-                    <Button
-                      variant="contained"
-                      color="info"
-                      fullWidth
-                      onClick={handleAddToCart}
-                    >
-                      Add to cart
-                    </Button>
+                  <Stack mt={2} spacing={1}>
+                    <Link to="tel:+123456789" underline="none">
+                      <Button
+                        startIcon={<Phone />}
+                        variant="contained"
+                        color="success"
+                        fullWidth
+                        style={{
+                          fontWeight: 600,
+                        }}
+                      >
+                        Call now 094-214-4124
+                      </Button>
+                    </Link>
                   </Stack>
                 </Stack>
               </Grid>

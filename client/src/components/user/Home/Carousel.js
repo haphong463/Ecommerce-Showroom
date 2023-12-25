@@ -24,6 +24,9 @@ export const CarouselComponent = ({ images, state, setState }) => {
         onChangeIndex={setActiveStep}
         navButtonsAlwaysVisible
         fullHeightHover
+        sx={{
+          height: ["40vh", "auto"],
+        }}
       >
         {images.map((step, index) => (
           <div key={step.label} style={{ position: "relative" }}>
@@ -34,7 +37,7 @@ export const CarouselComponent = ({ images, state, setState }) => {
               onLoad={() => handleImageLoad(index)}
               sx={{
                 width: "100%",
-                height: "auto",
+                height: ["40vh", "auto"],
                 objectFit: "cover",
                 filter: "brightness(40%)",
               }}
