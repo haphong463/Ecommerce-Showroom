@@ -18,8 +18,10 @@ const calculateSubTotalItem = (item) => {
   return item.quantity * item.price;
 };
 function ccyFormat(num) {
-  return `${num.toFixed(2)}`;
+  return num?.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
+const cellStyles = { fontSize: ["1rem", "1.3rem"] };
+
 export function OrderDetails(props) {
   console.log(props.order);
   const calculateTotal = () => {
@@ -87,35 +89,46 @@ export function OrderDetails(props) {
                       <Typography fontWeight={600} variant="body1">
                         {row.vehicles.modelId}
                       </Typography>
+                      <Typography fontWeight={600} variant="body1">
+                        {row.frameNumber}
+                      </Typography>
                     </Stack>
                   </Stack>
                 </TableCell>
-                <TableCell align="right">{row.quantity}</TableCell>
-                <TableCell align="right">{row.price}</TableCell>
-                <TableCell align="right">
+                <TableCell sx={cellStyles} align="right">
+                  {row.quantity}
+                </TableCell>
+                <TableCell sx={cellStyles} align="right">
+                  {ccyFormat(row.price)}
+                </TableCell>
+                <TableCell sx={cellStyles} align="right">
                   {ccyFormat(calculateSubTotalItem(row))}
                 </TableCell>
               </TableRow>
             ))}
             <TableRow>
               <TableCell rowSpan={3} />
-              <TableCell colSpan={2}>Subtotal</TableCell>
-              <TableCell align="right">
+              <TableCell sx={{ ...cellStyles, fontWeight: 700 }} colSpan={2}>
+                Subtotal
+              </TableCell>
+              <TableCell sx={cellStyles} align="right">
                 {ccyFormat(calculateTotal().subTotal)}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell>Tax</TableCell>
-              <TableCell align="right">{`${(TAX_RATE * 100).toFixed(
-                0
-              )} %`}</TableCell>
-              <TableCell align="right">
+              <TableCell sx={{ ...cellStyles, fontWeight: 700 }}>Tax</TableCell>
+              <TableCell sx={cellStyles} align="right">{`${(
+                TAX_RATE * 100
+              ).toFixed(0)} %`}</TableCell>
+              <TableCell sx={cellStyles} align="right">
                 {ccyFormat(calculateTotal().taxes)}
               </TableCell>
             </TableRow>
             <TableRow>
-              <TableCell colSpan={2}>Total</TableCell>
-              <TableCell align="right">
+              <TableCell sx={{ ...cellStyles, fontWeight: 700 }} colSpan={2}>
+                Total
+              </TableCell>
+              <TableCell sx={cellStyles} align="right">
                 {ccyFormat(calculateTotal().total)}
               </TableCell>
             </TableRow>

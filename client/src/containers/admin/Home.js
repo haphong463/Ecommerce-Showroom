@@ -1,9 +1,6 @@
-import React from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Sidebar } from "../../components/admin/Sidebar";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
   Box,
   Card,
   CardContent,
@@ -21,13 +18,41 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import { Analystic } from "../../components/admin/Analystic";
 import CountUp from "react-countup";
 import StorefrontRoundedIcon from "@mui/icons-material/StorefrontRounded";
+import { getOrder } from "../../components/SalesOrder/SaleOrderLibrary";
+import ChartUserVehicle from "../../components/admin/ChartUserVehicle";
+import { getPurchaseOrder } from "../../components/Order/PurchaseOrderLibrary";
+import { getCustomer } from "../../components/Customer/CustomerLibrary";
+import { SupportAgent } from "@mui/icons-material";
+import { useTitle } from "../../UseTitle";
+
 export const Home = () => {
-  const [expanded, setExpanded] = React.useState(false);
+  const [orders, setOrders] = useState([]);
+  const [purchaseOrder, setPurchaseOrder] = useState([]);
+  const [accounts, setAccounts] = useState([]);
 
-  const handleChange = (panel) => (event, isExpanded) => {
-    setExpanded(isExpanded ? panel : false);
-  };
+  const totalOrderPrice = useMemo(() => {
+    const result = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+    return result;
+  }, [orders]);
 
+  useEffect(() => {
+    getOrder().then((data) => {
+      if (data) {
+        setOrders(data);
+      }
+    });
+    getPurchaseOrder().then((data) => {
+      if (data) {
+        setPurchaseOrder(data);
+      }
+    });
+    getCustomer().then((data) => {
+      if (data) {
+        setAccounts(data);
+      }
+    });
+  }, []);
+  useTitle("Dashboard");
   return (
     <div className="bg-gray">
       <Navbar />
@@ -36,7 +61,14 @@ export const Home = () => {
       <Box sx={{ display: "flex" }}>
         <Sidebar />
         <Box component="main" sx={{ flexGrow: 1 }}>
-          <Paper>
+          <Paper
+            sx={{
+              p: 3,
+            }}
+          >
+            <Typography variant="h4">
+              <span className="title-text">Dashboard</span>
+            </Typography>
             <Grid container spacing={2}>
               <Grid item xs={8}>
                 <Stack spacing={2} direction="row">
@@ -54,7 +86,13 @@ export const Home = () => {
                         component="div"
                         sx={{ color: "#ffffff" }}
                       >
-                        <CountUp start={-500} end={500} duration={5} />
+                        $
+                        <CountUp
+                          start={-500}
+                          end={totalOrderPrice}
+                          duration={5}
+                          decimal={2}
+                        />
                       </Typography>
                       <Typography
                         gutterBottom
@@ -80,7 +118,7 @@ export const Home = () => {
                         component="div"
                         sx={{ color: "#ffffff" }}
                       >
-                        $900.00
+                        {orders.length}
                       </Typography>
                       <Typography
                         gutterBottom
@@ -107,21 +145,30 @@ export const Home = () => {
                         />
                       </Box>
                       <div className="paddingall">
-                        <span className="priceTitle">$203K</span>
+                        <span className="priceTitle">
+                          {purchaseOrder.length}
+                        </span>
                         <br />
-                        <span className="priceSubTitle">Total Income</span>
+                        <span className="priceSubTitle">
+                          Total purchase order
+                        </span>
                       </div>
                     </Stack>
                   </Card>
                   <Card>
                     <Stack spacing={2} direction="row">
                       <div className="iconstyleblack">
-                        <StorefrontIcon />
+                        <SupportAgent />
                       </div>
                       <div className="paddingall">
-                        <span className="priceTitle">$203K</span>
+                        <span className="priceTitle">
+                          {
+                            accounts.filter((item) => item.role === "Employee")
+                              .length
+                          }
+                        </span>
                         <br />
-                        <span className="priceSubTitle">Total Income</span>
+                        <span className="priceSubTitle">Total employee</span>
                       </div>
                     </Stack>
                   </Card>
@@ -131,103 +178,12 @@ export const Home = () => {
             <Box height={20} />
             <Grid container spacing={2}>
               <Grid item xs={4} sm={6} xl={8}>
-                <Card sx={{ height: 60 + "vh" }}>
-                  <CardContent>
-                    <Analystic />
-                  </CardContent>
-                </Card>
+                <Analystic orders={orders} />
               </Grid>
               <Grid item xs={8} sm={6} xl={4}>
-                <Card sx={{ height: 60 + "vh" }}>
-                  <CardContent>
-                    <span className="priceTitle">Notification</span>
-                    <Accordion
-                      expanded={expanded === "panel1"}
-                      onChange={handleChange("panel1")}
-                    >
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel1bh-content"
-                        id="panel1bh-header"
-                      >
-                        <Typography sx={{ color: "text.secondary" }}>
-                          I am an accordion
-                        </Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Typography>
-                          Nulla facilisi. Phasellus sollicitudin nulla et quam
-                          mattis feugiat. Aliquam eget maximus est, id dignissim
-                          quam.
-                        </Typography>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Accordion
-                      expanded={expanded === "panel2"}
-                      onChange={handleChange("panel2")}
-                    >
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel2bh-content"
-                        id="panel2bh-header"
-                      >
-                        <Typography sx={{ color: "text.secondary" }}>
-                          You are currently not an owner
-                        </Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Typography>
-                          Donec placerat, lectus sed mattis semper, neque lectus
-                          feugiat lectus, varius pulvinar diam eros in elit.
-                          Pellentesque convallis laoreet laoreet.
-                        </Typography>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Accordion
-                      expanded={expanded === "panel3"}
-                      onChange={handleChange("panel3")}
-                    >
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel3bh-content"
-                        id="panel3bh-header"
-                      >
-                        <Typography sx={{ color: "text.secondary" }}>
-                          Filtering has been entirely disabled for whole web
-                          server
-                        </Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Typography>
-                          Nunc vitae orci ultricies, auctor nunc in, volutpat
-                          nisl. Integer sit amet egestas eros, vitae egestas
-                          augue. Duis vel est augue.
-                        </Typography>
-                      </AccordionDetails>
-                    </Accordion>
-                    <Accordion
-                      expanded={expanded === "panel4"}
-                      onChange={handleChange("panel4")}
-                    >
-                      <AccordionSummary
-                        expandIcon={<ExpandMoreIcon />}
-                        aria-controls="panel4bh-content"
-                        id="panel4bh-header"
-                      >
-                        <Typography sx={{ width: "33%", flexShrink: 0 }}>
-                          Personal data
-                        </Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Typography>
-                          Nunc vitae orci ultricies, auctor nunc in, volutpat
-                          nisl. Integer sit amet egestas eros, vitae egestas
-                          augue. Duis vel est augue.
-                        </Typography>
-                      </AccordionDetails>
-                    </Accordion>
-                  </CardContent>
-                </Card>
+                <ChartUserVehicle
+                  accounts={accounts.filter((item) => item.role === "User")}
+                />
               </Grid>
             </Grid>
           </Paper>

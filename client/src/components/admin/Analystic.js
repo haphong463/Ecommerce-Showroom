@@ -8,8 +8,19 @@ import {
   PointElement,
   Title,
   Tooltip,
+  TimeScale,
+  TimeSeriesScale,
+  ArcElement,
 } from "chart.js";
-import { Bar, Line } from "react-chartjs-2";
+import "chartjs-adapter-date-fns";
+import { useEffect, useState } from "react";
+import { Bar, Doughnut, Line } from "react-chartjs-2";
+import { getOrder } from "../SalesOrder/SaleOrderLibrary";
+import { getCustomer } from "../Customer/CustomerLibrary";
+import { getVehicles } from "../Vehicle/VehicleLibrary";
+import { TextField } from "@mui/material";
+
+// Đăng ký các thành phần cần thiết
 Chart.register(
   CategoryScale,
   LinearScale,
@@ -18,7 +29,10 @@ Chart.register(
   Title,
   Tooltip,
   Legend,
-  BarElement
+  BarElement,
+  TimeScale, // Đăng ký time scale
+  TimeSeriesScale,
+  ArcElement // Đăng ký time series scale
 );
 
 export const options = {
@@ -32,40 +46,132 @@ export const options = {
       loop: true,
     },
   },
-};
-
-const labels = ["January", "February", "March", "April", "May", "June", "July"];
-
-const data = {
-  labels,
-  datasets: [
-    {
-      label: "Looping tension",
-      data: [65, 59, 80, 81, 26, 55, 40],
-      fill: false,
-      borderColor: "rgb(75, 192, 192)",
+  scales: {
+    x: {
+      type: "timeseries", // Sử dụng timeseries thay vì time
+      time: {
+        unit: "day",
+        displayFormats: {
+          day: "MMM dd", // Sử dụng "MMM dd" để định dạng ngày
+        },
+      },
     },
-    {
-      label: "Looping tension",
-      data: [12, 51, 23, 54, 215, 55, 34],
-      fill: false,
-      borderColor: "pink",
+  },
+};
+
+export const Analystic = ({ orders }) => {
+  const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+
+  const handleChangeSelectedYear = (event) => {
+    const year = parseInt(event.target.value, 10);
+    setSelectedYear(year);
+  };
+
+  const getOrderCountAndTotalPriceByMonthInYear = () => {
+    const orderCount = {};
+    const orderTotalPrice = {};
+    const allMonths = Array.from({ length: 12 }, (_, i) => i + 1);
+
+    allMonths.forEach((month) => {
+      orderCount[month] = 0;
+      orderTotalPrice[month] = 0;
+    });
+
+    orders.forEach((order) => {
+      if (order.orderDate) {
+        const orderYear = new Date(order.orderDate).getFullYear();
+        const orderMonth = new Date(order.orderDate).getMonth() + 1;
+
+        if (orderYear === selectedYear) {
+          orderCount[orderMonth] += 1;
+          orderTotalPrice[orderMonth] += order.totalPrice; // Assuming totalPrice property exists in your order object
+        }
+      }
+    });
+
+    return {
+      orderCount: Object.entries(orderCount),
+      orderTotalPrice: Object.entries(orderTotalPrice),
+    };
+  };
+
+  const { orderCount, orderTotalPrice } =
+    getOrderCountAndTotalPriceByMonthInYear();
+
+  const mixedChartDataByMonthInYear = {
+    labels: orderCount.map(([month]) => month),
+    datasets: [
+      {
+        label: "Order Count",
+        data: orderCount.map(([, count]) => count),
+        borderColor: "rgba(75, 192, 192, 1)",
+        borderWidth: 2,
+        type: "line",
+        yAxisID: "count",
+      },
+      {
+        label: "Total Order Price",
+        data: orderTotalPrice.map(([, totalPrice]) => totalPrice),
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgba(255, 99, 132, 1)",
+        borderWidth: 1,
+        type: "bar",
+        yAxisID: "price",
+      },
+    ],
+  };
+
+  const optionsForMixedChart = {
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        type: "category",
+      },
+      count: {
+        type: "linear",
+        position: "left",
+        title: {
+          display: true,
+          text: "Order Count",
+        },
+      },
+      price: {
+        type: "linear",
+        position: "right",
+        title: {
+          display: true,
+          text: "Total Order Price",
+        },
+      },
     },
-  ],
-};
+    elements: {
+      line: {
+        tension: 0.4, // Adjust this value for smoother or sharper lines
+      },
+    },
+  };
 
-export const Analystic = () => {
   return (
-    <div style={{ height: "50vh" }}>
-      <Line options={options} data={data} />
-    </div>
-  );
-};
-
-export const ProductChart = () => {
-  return (
-    <div style={{ height: "50vh" }}>
-      <Bar data={data} options={options} />
+    <div>
+      <div>
+        <TextField
+          label="Year"
+          type="number"
+          id="selectedYear"
+          value={selectedYear}
+          onChange={handleChangeSelectedYear}
+        />
+      </div>
+      <div>
+        <div style={{ width: "100%" }}>
+          <div style={{ height: "50vh" }}>
+            <Bar
+              options={optionsForMixedChart}
+              data={mixedChartDataByMonthInYear}
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

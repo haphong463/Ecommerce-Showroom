@@ -14,10 +14,12 @@ import { ServiceContext } from "../../context/ServiceContext";
 import { ServiceList } from "../../components/Service/ServiceList";
 import { DataContext } from "../../context/DataContext";
 import ServiceForm from "../../components/Service/ServiceForm";
+import { useTitle } from "../../UseTitle";
 
 export const Service = () => {
   const { handleClickOpen } = useContext(ServiceContext);
   const { loading } = useContext(DataContext);
+  useTitle("Services");
   return (
     <>
       <Navbar />

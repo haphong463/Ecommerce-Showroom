@@ -16,6 +16,7 @@ import {
   TextField,
 } from "@mui/material";
 import { Field, Form, Formik } from "formik";
+import { useTitle } from "../../UseTitle";
 
 // Define the validation schema using yup
 const schema = yup.object().shape({
@@ -54,6 +55,7 @@ export const ResetPassword = () => {
       }
     });
   }, [token]);
+  useTitle("Reset Password");
   return (
     <LayoutUser>
       <Container

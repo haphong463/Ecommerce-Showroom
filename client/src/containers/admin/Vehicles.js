@@ -6,6 +6,7 @@ import AddIcon from "@mui/icons-material/Add";
 import VehicleForm from "../../components/Vehicle/VehicleForm";
 import { VehicleList } from "../../components/Vehicle/VehicleList";
 import { VehicleContext } from "../../context/VehicleContext";
+import { useTitle } from "../../UseTitle";
 
 export const Vehicles = () => {
   const [open, setOpen] = React.useState(false);
@@ -18,6 +19,7 @@ export const Vehicles = () => {
     setEntry();
     setOpen(false);
   };
+  useTitle("Vehicles");
   return (
     <>
       <Navbar />

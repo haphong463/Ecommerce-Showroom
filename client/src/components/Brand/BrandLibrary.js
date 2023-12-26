@@ -44,7 +44,7 @@ export const generateValidationSchemaBrand = (brand) =>
           .nullable()
           .test(
             "fileFormat",
-            "Chỉ chấp nhận các file có định dạng PNG, JPG hoặc JPEG",
+            "Only accept files in PNG, JPG, or JPEG format.",
             (value) =>
               value === null ||
               ["image/png", "image/jpeg", "image/jpg"].includes(value.type)
@@ -54,7 +54,7 @@ export const generateValidationSchemaBrand = (brand) =>
           .required("Image is required")
           .test(
             "fileFormat",
-            "Chỉ chấp nhận các file có định dạng PNG, JPG hoặc JPEG",
+            "Only accept files in PNG, JPG, or JPEG format.",
             (value) =>
               ["image/png", "image/jpeg", "image/jpg"].includes(value.type)
           ),

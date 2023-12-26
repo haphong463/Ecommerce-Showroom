@@ -37,6 +37,10 @@ const routes = [
     route: "/service",
     primary: "Services",
   },
+  {
+    route: "/about",
+    primary: "About Us",
+  },
 ];
 const settings = [
   {

@@ -10,6 +10,7 @@ import { useParams } from "react-router-dom";
 import { OrderDetails } from "../../components/OrderDetails";
 import { getOrderById } from "../../components/SalesOrder/SaleOrderLibrary";
 import dayjs from "dayjs";
+import { useTitle } from "../../UseTitle";
 
 export const ViewOrder = () => {
   const [order, setOrder] = useState(null);
@@ -25,6 +26,7 @@ export const ViewOrder = () => {
       }
     });
   }, []);
+  useTitle(`Order NO.${id}`);
   return (
     <>
       <Navbar />

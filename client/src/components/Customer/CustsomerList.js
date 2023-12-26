@@ -58,7 +58,7 @@ export const CustomerList = () => {
     getCustomer().then((data) => {
       console.log(data);
       if (data) {
-        setData(data);
+        setData(data.filter((item) => item.role === "User"));
         setLoading(false);
       }
     });

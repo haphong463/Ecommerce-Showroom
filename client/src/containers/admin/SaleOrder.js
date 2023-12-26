@@ -7,9 +7,11 @@ import { OrderContext } from "../../context/OrderContext";
 import OrderForm from "../../components/Order/PurchaseOrderForm";
 import { OrderList } from "../../components/Order/PurchaseOrderList";
 import { SaleOrderList } from "../../components/SalesOrder/SaleOrderList";
+import { useTitle } from "../../UseTitle";
 
 export const SaleOrder = () => {
   const [orderList, setOrderList] = useState([]);
+  useTitle("Sale Orders");
   return (
     <>
       <Navbar />

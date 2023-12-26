@@ -22,6 +22,16 @@ namespace API.Controllers
             _dbContext = dbContext;
             _mapper = mapper;
         }
+
+        [HttpGet("order_details")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<OrderDetails>>>> GetOrderDetail()
+        {
+            var orders = await _dbContext.OrderDetails.Include(os => os.Vehicles)
+                .ToListAsync();
+            var orderResult = _mapper.Map<List<OrderDetail_VehicleDTO>>(orders);
+
+            return Ok(new ApiResponse<IEnumerable<OrderDetail_VehicleDTO>>(orderResult, "Get all Orders successfully"));
+        }
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<OrderBriefDTO>>>> GetOrders()
         {
@@ -52,6 +62,7 @@ namespace API.Controllers
                     VehicleId = odD.VehicleId,
                     Quantity = odD.Quantity,
                     Price = odD.Price,
+                    FrameNumber = odD.FrameNumber,
                     Vehicles = new include_VehicleDTO
                     {
                         Name = odD.Vehicles.Name,
@@ -113,6 +124,7 @@ namespace API.Controllers
                         VehicleId = odD.VehicleId,
                         Quantity = odD.Quantity,
                         Price = odD.Price,
+                        FrameNumber = odD.FrameNumber,
                         Vehicles = new include_VehicleDTO
                         {
                             Name = odD.Vehicles.Name,
@@ -254,9 +266,16 @@ namespace API.Controllers
                 {
                     foreach (var item in orderDetails)
                     {
+                        var vehicle = await _dbContext.Vehicles.FindAsync(item.VehicleId);
+                        vehicle.Quantity -= item.Quantity;
+                        if(vehicle.Quantity == 0)
+                        {
+                            vehicle.Status = (VehicleStatus)1;
+                        }
                         var newOrderDetails = new OrderDetails
                         {
                             OrderId = newOrder.OrderId, // Sử dụng ID của Order vừa thêm vào
+                            FrameNumber = item.FrameNumber,
                             VehicleId = item.VehicleId,
                             Quantity = item.Quantity,
                             Price = item.Price
@@ -306,6 +325,7 @@ namespace API.Controllers
                     <strong>Vehicle ID:</strong> {detail.VehicleId}, 
                     <strong>Quantity:</strong> {detail.Quantity}, 
                     <strong>Price:</strong> {detail.Price}
+<strong>Frame Number:</strong> {detail.FrameNumber}
                 </li>";
                 }
 

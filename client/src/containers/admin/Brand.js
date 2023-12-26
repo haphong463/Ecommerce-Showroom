@@ -1,20 +1,16 @@
 import React, { useContext } from "react";
 import Navbar from "../../components/admin/Navbar";
-import {
-  Box,
-  Fab,
-  Paper,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { Box, Fab, Paper, Stack, Typography } from "@mui/material";
 import { Sidebar } from "../../components/admin/Sidebar";
 import BrandForm from "../../components/Brand/BrandForm";
 import { BrandList } from "../../components/Brand/BrandList";
 import { BrandContext } from "../../context/BrandContext";
 import AddIcon from "@mui/icons-material/Add";
+import { useTitle } from "../../UseTitle";
 
 export const Brand = () => {
   const { onClose, handleClickOpen, openBrandForm } = useContext(BrandContext);
+  useTitle("Brand");
   return (
     <>
       <Navbar />
@@ -25,7 +21,6 @@ export const Brand = () => {
           <BrandForm open={openBrandForm} handleClose={onClose} />
         </Box>
         <Paper sx={{ width: "100%", p: 3, overflow: "hidden" }}>
-          
           <Stack
             direction="row"
             justifyContent="space-between"

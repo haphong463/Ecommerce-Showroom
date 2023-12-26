@@ -14,6 +14,8 @@ const handleRequest = async (method, endpoint, data = null) => {
     return null;
   }
 };
+export const getOrderDetails = async () =>
+  await handleRequest("get", "/order_details");
 
 export const getOrder = async () => await handleRequest("get", "");
 

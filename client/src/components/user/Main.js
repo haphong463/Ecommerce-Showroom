@@ -5,14 +5,16 @@ import Header from "../../components/user/Header";
 import { CarouselComponent } from "./Home/Carousel";
 const images = [
   {
-    label: "San Francisco – Oakland Bay Bridge, United States 1",
+    label: "Uncover Driving Bliss",
     imgPath:
       "https://images.unsplash.com/photo-1449965408869-eaa3f722e40d?q=80&w=1920&h=940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    desc: "Embark on a journey of pure joy as you uncover the true essence of driving bliss. Let every moment behind the wheel be a symphony of freedom and exhilaration, surrounded by the beauty of the open road.",
   },
   {
-    label: "San Francisco – Oakland Bay Bridge, United States 2",
+    label: "Unveiling Automotive Excellence",
     imgPath:
       "https://images.unsplash.com/photo-1643142314913-0cf633d9bbb5?q=80&w=1920&h=940&auto=format&fit=crop&ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D",
+    desc: "Witness a revelation of automotive excellence like never before. From sleek designs to cutting-edge technology, each detail is a testament to the pursuit of perfection.",
   },
 ];
 export function Main({ title, description, labelImg, img, home }) {
@@ -67,11 +69,10 @@ export function Main({ title, description, labelImg, img, home }) {
         >
           <Typography
             variant="h1"
-            component="span"
             sx={{
               mb: 2,
               fontSize: { xs: "2rem", sm: "2.5rem", md: "4rem" },
-              fontWeight: "700",
+              fontWeight: 700,
               letterSpacing: 5,
               textTransform: "uppercase",
             }}

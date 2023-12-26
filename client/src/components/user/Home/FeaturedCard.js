@@ -73,8 +73,18 @@ export function FeaturedCard({ handleImageLoad, imageLoaded, vehicle }) {
       </HoverCard>
       <CardContent>
         <Stack direction="row" justifyContent="space-between">
-          <Typography variant="h6">
-            <span className="title-text">{vehicle.name}</span>
+          <Typography
+            variant="h6"
+            sx={{
+              mt: 0,
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            <span className="title-text">
+              {vehicle.brand.name} {vehicle.name}
+            </span>
           </Typography>
           <Typography variant="h6">
             <span>{vehicle.isUsed ? "Used" : "New"}</span>

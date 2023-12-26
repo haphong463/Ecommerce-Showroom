@@ -32,6 +32,17 @@ import { getVehicles } from "../Vehicle/VehicleLibrary";
 import { getCustomer } from "../Customer/CustomerLibrary";
 import { DataContext } from "../../context/DataContext";
 import { getEmployeeById } from "../Employee/EmployeeLibrary";
+const ITEM_HEIGHT = 48;
+const ITEM_PADDING_TOP = 8;
+
+const MenuProps = {
+  PaperProps: {
+    style: {
+      maxHeight: ITEM_HEIGHT * 4.5 + ITEM_PADDING_TOP,
+      width: 250,
+    },
+  },
+};
 const OrderForm = ({ vehicleList }) => {
   const { onClose, setOrderData, orderData, openOrderForm, order } =
     useContext(OrderContext);
@@ -152,6 +163,7 @@ const OrderForm = ({ vehicleList }) => {
                       label="Model Number"
                       defaultValue="Select model number"
                       onChange={(e) => handleChangeInfo(e, formikProps)}
+                      MenuProps={MenuProps}
                     >
                       <MenuItem disabled value="Select model number">
                         Select model number
@@ -159,14 +171,13 @@ const OrderForm = ({ vehicleList }) => {
                       {vehicleList.map((item) => {
                         return (
                           <MenuItem key={item.vehicleID} value={item.vehicleID}>
-                            {item.modelId}
+                            {item.modelId} | {item.name}
                           </MenuItem>
                         );
                       })}
                     </Select>
                   </FormControl>
                 </Grid>
-
                 <Grid item xs={12} md={6}>
                   <TextField
                     name="brandId"

@@ -16,6 +16,7 @@ import { Alert, Stack } from "@mui/material";
 import axios from "axios";
 import { DataContext } from "../../context/DataContext";
 import { loginAuth } from "../../components/Auth";
+import { useTitle } from "../../UseTitle";
 
 const validationSchema = yup.object({
   email: yup
@@ -52,7 +53,7 @@ export function Login() {
     const isCapsLockOn = e.getModifierState("CapsLock");
     setCapsLockEnabled(isCapsLockOn);
   };
-  
+  useTitle("Login");
   return (
     <Grid container component="main" sx={{ height: "100vh" }}>
       <CssBaseline />

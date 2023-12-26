@@ -6,11 +6,12 @@ import { EmployeeList } from "../../components/Employee/EmployeeList";
 import AddIcon from "@mui/icons-material/Add";
 import { AccountContext } from "../../context/AccountContext";
 import EmployeeForm from "../../components/Employee/EmployeeForm";
+import { useTitle } from "../../UseTitle";
 
 export const Employee = () => {
   const { onClose, handleClickOpen, openAccountForm } =
     useContext(AccountContext);
-
+  useTitle("Employees");
   return (
     <>
       <Navbar />

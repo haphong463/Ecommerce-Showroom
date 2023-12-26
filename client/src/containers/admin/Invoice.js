@@ -9,6 +9,7 @@ import SaveIcon from "@mui/icons-material/Save";
 import BorderColorIcon from "@mui/icons-material/BorderColor";
 import { dangerMessage } from "../../components/Message";
 import { postOrder } from "../../components/SalesOrder/SaleOrderLibrary";
+import { useTitle } from "../../UseTitle";
 
 export const Invoice = () => {
   const [isAddRowVisible, setIsAddRowVisible] = useState(false);
@@ -47,6 +48,7 @@ export const Invoice = () => {
     setIsEditMode(!isEditMode);
   };
   console.log(dataToPost);
+  useTitle("Invoice");
   return (
     <>
       <Navbar />

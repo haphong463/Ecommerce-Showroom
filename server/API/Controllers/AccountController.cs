@@ -68,8 +68,9 @@ namespace API.Controllers
             public string? AvatarUrl { get; set; }
             public string Gender { get; set; }
             public DateTime DateOfBirth { get; set; }
+            public string? Role { get; set; }
             public string Address { get; set; }
-            public List<include_OrderDTO> Order { get; set; }
+            public List<include_OrderDTO>? Order { get; set; }
         }
 
 
@@ -96,6 +97,7 @@ namespace API.Controllers
                         Gender = account.Gender,
                         DateOfBirth = account.DateOfBirth,
                         Address = account.Address,
+                        Role = account.Role,
                         Order = account.Order.Select(x => new include_OrderDTO
                         {
                             OrderId = x.OrderId,

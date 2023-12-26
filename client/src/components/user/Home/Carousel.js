@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography, Button, Divider } from "@mui/material";
 import KeyboardArrowLeft from "@mui/icons-material/KeyboardArrowLeft";
 import KeyboardArrowRight from "@mui/icons-material/KeyboardArrowRight";
 import Carousel from "react-material-ui-carousel";
@@ -46,12 +46,12 @@ export const CarouselComponent = ({ images, state, setState }) => {
               <Box
                 sx={{
                   position: "absolute",
-                  top: ["60%", "60%", "60%", "50%"],
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
+                  top: "50%",
+                  left: "10%", // Điều chỉnh giá trị left theo mong muốn
+                  transform: "translateY(-50%)", // Giữ tiêu đề ở giữa theo chiều dọc
                   color: "#fff",
-                  textAlign: "center",
-                  width: "100%",
+                  textAlign: ["left", "left", "left", "left"],
+                  width: "60%",
                 }}
               >
                 <Typography
@@ -64,22 +64,33 @@ export const CarouselComponent = ({ images, state, setState }) => {
                       md: "2rem",
                       lg: "2.5rem",
                     },
+                    fontWeight: 700,
+                    letterSpacing: 5,
+                    textTransform: "uppercase",
+                    color: "#fa921f",
                   }}
                   component="div"
                 >
                   {step.label}
                 </Typography>
-                <Button
-                  variant="contained"
+                <Divider
+                  sx={{
+                    border: "4px solid yellow",
+                  }}
+                />
+                <Typography
+                  variant="body2"
                   sx={{
                     fontSize: {
-                      md: "1.5rem",
-                      xs: "0.5rem",
+                      xs: "1rem",
+                      md: "1.4rem",
+                      lg: "1.8rem",
                     },
                   }}
+                  component="div"
                 >
-                  View More
-                </Button>
+                  {step.desc}
+                </Typography>
               </Box>
             )}
           </div>

@@ -43,22 +43,23 @@ export const putVehicleQuantity = async (id, quantity, purchaseOrderId) =>
 export const columns = [
   { id: "name", label: "Name", minWidth: 170 },
   { id: "brand", label: "Brand", minWidth: 100 },
+  { id: "modelId", label: "Model ID", minWidth: 100 },
   { id: "color", label: "Color", minWidth: 170 },
   { id: "used", label: "Used/New", minWidth: 170 },
   { id: "actions", label: "Actions", minWidth: 170, align: "right" },
 ];
 export const fuelType = [
-  { value: "Diesel", label: "Diesel Transmission" },
-  { value: "Gasoline", label: "Gasoline Transmission" },
-  { value: "Electric", label: "Electric Transmission" },
-  { value: "Hybrid", label: "Hybrid Transmission" },
+  { value: "Diesel", label: "Diesel " },
+  { value: "Gasoline", label: "Gasoline" },
+  { value: "Electric", label: "Electric" },
+  { value: "Hybrid", label: "Hybrid" },
 ];
 
 export const transmissionType = [
-  { value: "Manual", label: "Manual" },
-  { value: "Automatic", label: "Automatic" },
-  { value: "CVT", label: "CVT" },
-  { value: "DCT", label: "DCT" },
+  { value: "Manual", label: "Manual Transmission" },
+  { value: "Automatic", label: "Automatic Transmission" },
+  { value: "CVT", label: "CVT Transmission" },
+  { value: "DCT", label: "DCT Transmission" },
 ];
 export const status = [
   { value: "0", label: "Available" },
@@ -91,8 +92,38 @@ export const generateValidationSchema = (isEditing) =>
     fuelType: yup.string().required("Fuel Type is required"),
     numberOfSeats: yup.number().required("Number of Seats is required"),
     files: isEditing
-      ? yup.array().nullable()
-      : yup.array().min(1, "Please upload at least one image."),
+      ? yup
+          .array()
+          .nullable()
+          .test(
+            "fileFormat",
+            "Only accept files in PNG, JPG, or JPEG format.",
+            (value) => {
+              if (!value || value.length === 0) {
+                return true;
+              }
+              return value.every((file) =>
+                ["image/png", "image/jpeg", "image/jpg"].includes(file.type)
+              );
+            }
+          )
+          .max(7, "Only allowed to upload 7 images.")
+      : yup
+          .array()
+          .min(1, "Please upload at least one image.")
+          .test(
+            "fileFormat",
+            "Only accept files in PNG, JPG, or JPEG format.",
+            (value) => {
+              if (!value || value.length === 0) {
+                return false;
+              }
+              return value.every((file) =>
+                ["image/png", "image/jpeg", "image/jpg"].includes(file.type)
+              );
+            }
+          )
+          .max(7, "Only allowed to upload 7 images."),
   });
 
 export const formFields = [

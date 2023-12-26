@@ -7,6 +7,8 @@ import {
   Container,
   Divider,
   Grid,
+  ImageList,
+  ImageListItem,
   Stack,
   Tooltip,
   Typography,
@@ -41,6 +43,23 @@ import { dangerMessage } from "../../components/Message";
 import { useTitle } from "../../UseTitle";
 import { DatePicker } from "@mui/x-date-pickers";
 import { postAppointment } from "../../components/Appointment/AppointmentLibrary";
+import styled from "@emotion/styled";
+const StyledImageListItem = styled(ImageListItem)({
+  position: "relative",
+  overflow: "hidden",
+  "&:hover img": {
+    filter: "brightness(1.2)",
+  },
+  transition: "filter 0.3s ease-in-out",
+});
+
+const StyledImage = styled("img")({
+  width: "100%",
+  height: "100%",
+  objectFit: "cover",
+  filter: "brightness(0.8)",
+  transition: "filter 0.3s ease-in-out",
+});
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { vehicle, setVehicle } = useContext(VehicleContext);
@@ -199,6 +218,24 @@ export const VehicleDetails = () => {
               {/* Information Grid */}
               <Grid item xs={12}>
                 <VehicleSpec infoArray={infoArray} />
+              </Grid>
+              <Grid item xs={12}>
+                <ImageList
+                  variant="quilted"
+                  cols={vehicle.images.length > 5 ? 3 : 2}
+                  gap={8}
+                >
+                  {vehicle.images.map((item) => (
+                    <StyledImageListItem key={item.imagePath}>
+                      <StyledImage
+                        srcSet={`${item.imagePath}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                        src={`${item.imagePath}?w=248&fit=crop&auto=format`}
+                        alt={item.title}
+                        loading="lazy"
+                      />
+                    </StyledImageListItem>
+                  ))}
+                </ImageList>
               </Grid>
               <Grid item xs={12}>
                 <RelatedVehicles brandId={vehicle.brand.brandId} />

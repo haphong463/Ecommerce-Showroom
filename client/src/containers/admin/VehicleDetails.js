@@ -32,6 +32,7 @@ import CustomSlider from "../../components/admin/VehicleDetails/ImageList";
 import VehicleInformation from "../../components/admin/VehicleDetails/VehicleInformation";
 import { dangerMessage } from "../../components/Message";
 import Swal from "sweetalert2";
+import { useTitle } from "../../UseTitle";
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { setEntry, vehicle, setVehicle, setVehicleData } =
@@ -116,11 +117,6 @@ export const VehicleDetails = () => {
       value: vehicle.isUsed ? "Used" : "New",
     },
     {
-      icon: <EventAvailableIcon />,
-      title: "Purchase Date",
-      value: dayjs(vehicle.purchaseDate).format("MMMM, DD YYYY"),
-    },
-    {
       icon: <MonetizationOnIcon />,
       title: "Price",
       value: `${vehicle.price?.toLocaleString("en-US", {
@@ -153,6 +149,7 @@ export const VehicleDetails = () => {
   useEffect(() => {
     refreshVehicleData();
   }, [id]);
+  useTitle(vehicle.name);
   return (
     <>
       <Navbar />

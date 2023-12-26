@@ -72,6 +72,7 @@ export function ProfileInformation({ information, setInformation, loading }) {
             formData.append("phone", values.phone);
             formData.append("file", values.file);
             formData.append("email", token.Email);
+            formData.append("role", "User");
 
             putCustomer(formData, Number(token.Id)).then((data) => {
               if (data) {

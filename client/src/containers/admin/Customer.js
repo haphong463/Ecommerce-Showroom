@@ -3,8 +3,10 @@ import Navbar from "../../components/admin/Navbar";
 import { Box, Paper, Stack, Typography } from "@mui/material";
 import { Sidebar } from "../../components/admin/Sidebar";
 import { CustomerList } from "../../components/Customer/CustsomerList";
+import { useTitle } from "../../UseTitle";
 
 export const Customer = () => {
+  useTitle("Customers");
   return (
     <>
       <Navbar />

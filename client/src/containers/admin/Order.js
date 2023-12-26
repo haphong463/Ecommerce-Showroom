@@ -8,6 +8,7 @@ import OrderForm from "../../components/Order/PurchaseOrderForm";
 import { OrderList } from "../../components/Order/PurchaseOrderList";
 import { DataContext } from "../../context/DataContext";
 import { getVehicles } from "../../components/Vehicle/VehicleLibrary";
+import { useTitle } from "../../UseTitle";
 
 export const Order = () => {
   const { handleClickOpen, openOrderForm, onClose } = useContext(OrderContext);
@@ -22,6 +23,7 @@ export const Order = () => {
       }
     });
   }, []);
+  useTitle("Purchase Order");
   return (
     <>
       <Navbar />

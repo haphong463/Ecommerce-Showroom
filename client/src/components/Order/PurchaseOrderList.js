@@ -43,6 +43,7 @@ import { putVehicleQuantity } from "../Vehicle/VehicleLibrary";
 export const OrderList = ({ orderList, vehicleList }) => {
   const { orderData, setOrderData, setOrder, handleClickOpen } =
     useContext(OrderContext);
+  const [name, setName] = useState("");
   const { token } = useContext(DataContext);
   const [loading, setLoading] = useState();
   const [getRelated, setGetRelated] = useState([]);
@@ -55,13 +56,19 @@ export const OrderList = ({ orderList, vehicleList }) => {
   const [frameDetail, setFrameDetail] = useState([]);
 
   // ---------------------------------------------------------------- handleConfirmClick ----------------------------------------------------------------
-  const handleConfirmClick = (vehicleId, quantity, purchaseOrderId) => {
+  const handleConfirmClick = (
+    vehicleId,
+    quantity,
+    purchaseOrderId,
+    modelId
+  ) => {
     const fields = [];
     for (let i = 0; i < quantity; i++) {
       fields.push("");
     }
     setDialogFields(fields);
     setOpenDialog(true);
+    setName(modelId);
     setDataToPost((prev) => ({ ...prev, vehicleId, purchaseOrderId }));
   };
   // ---------------------------------------------------------------- handleReceivingOrder ----------------------------------------------------------------
@@ -213,7 +220,15 @@ export const OrderList = ({ orderList, vehicleList }) => {
             order.quantity,
             order.orderCompanyId
           ).then((data) => {
-            console.log(data);
+            if (data) {
+              setOrderData((prev) =>
+                prev.map((item) =>
+                  item.orderCompanyId === order.orderCompanyId
+                    ? { ...item, orderStatus: 3 }
+                    : item
+                )
+              );
+            }
           });
         }
 
@@ -372,7 +387,8 @@ export const OrderList = ({ orderList, vehicleList }) => {
                                     handleConfirmClick(
                                       row.vehicleId,
                                       row.quantity,
-                                      row.orderCompanyId
+                                      row.orderCompanyId,
+                                      row.vehicle.modelId
                                     )
                                   }
                                 >
@@ -417,17 +433,18 @@ export const OrderList = ({ orderList, vehicleList }) => {
                               >
                                 <RemoveRedEye />
                               </Button>
-                              {row.orderStatus !== 3 && (
-                                <Tooltip title="Click to create a goods receipt">
-                                  <Button
-                                    onClick={() => generatePDF(row)}
-                                    variant="contained"
-                                    startIcon={<Print />}
-                                  >
-                                    PDF
-                                  </Button>
-                                </Tooltip>
-                              )}
+                              <Tooltip title="Click to create a goods receipt">
+                                <Button
+                                  onClick={() => generatePDF(row)}
+                                  variant="contained"
+                                  color={
+                                    row.orderStatus === 3 ? "success" : "info"
+                                  }
+                                  startIcon={<Print />}
+                                >
+                                  PDF
+                                </Button>
+                              </Tooltip>
                             </Stack>
                           ) : row.orderStatus === 2 ? (
                             <Typography variant="body2">Cancelled</Typography>
@@ -469,7 +486,7 @@ export const OrderList = ({ orderList, vehicleList }) => {
       />
       <Dialog open={openDialog} onClose={handleDialogClose}>
         <DialogContent>
-          <Typography variant="h6">Enter chassis number</Typography>
+          <Typography variant="h6">Enter chassis number for {name}</Typography>
           <Stack direction="row" spacing={2}>
             {dialogFields.map((field, index) => (
               <TextField

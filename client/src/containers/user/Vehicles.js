@@ -1,33 +1,17 @@
 import React, { useContext, useEffect, useState } from "react";
-import {
-  Box,
-  Grid,
-  Container,
-  useMediaQuery,
-  Stack,
-  IconButton,
-  Tooltip,
-  Button,
-  Typography,
-} from "@mui/material";
-import FormatListBulletedIcon from "@mui/icons-material/FormatListBulleted";
-import WindowIcon from "@mui/icons-material/Window";
-import CompareArrowsIcon from "@mui/icons-material/CompareArrows";
+import { Box, Container, useMediaQuery } from "@mui/material";
+
 import { VehicleContext } from "../../context/VehicleContext";
 import { getVehicles } from "../../components/Vehicle/VehicleLibrary";
 import { LayoutUser } from "../../layout/LayoutUser";
-import { Filter } from "../../components/user/Vehicles/Filter";
 import { useLocation, useNavigate } from "react-router-dom";
 import { DataContext } from "../../context/DataContext";
-import { WaitVehicles } from "../../components/user/Vehicles/WaitVehicles";
-import { VehicleItem } from "../../components/user/Vehicles/VehicleItem";
-import { PaginationVehicles } from "../../components/user/Vehicles/PaginationVehicles";
+
 import { useTitle } from "../../UseTitle";
 import { VehicleContent } from "../../components/user/Vehicles/VehicleContent";
 
 export function Vehicles() {
   const isMobile = useMediaQuery("(max-width:800px)");
-  const [dataFetched, setDataFetched] = useState(false);
   const { vehicleData, setVehicleData } = useContext(VehicleContext);
   const { searchData, setSearchData } = useContext(DataContext);
   const navigate = useNavigate();

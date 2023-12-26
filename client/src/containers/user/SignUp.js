@@ -17,6 +17,7 @@ import CloudUploadIcon from "@mui/icons-material/CloudUpload";
 import dayjs from "dayjs";
 import { Link, Navigate, useNavigate } from "react-router-dom";
 import {
+  CircularProgress,
   Container,
   FormControl,
   InputLabel,
@@ -64,16 +65,19 @@ export function SignUp() {
   const {
     register,
     handleSubmit,
-    formState: { errors },
+    formState: { errors, isSubmitting },
     setValue,
   } = useForm({
     resolver: yupResolver(schema),
   });
+  const [loading, setLoading] = useState(false);
+
   const navigate = useNavigate();
   const [avatarImage, setAvatarImage] = useState(null); // State to manage the avatar image
   const { token } = useContext(DataContext);
   const onSubmit = (data) => {
     console.log(data);
+    setLoading(true);
     const newDate = dayjs(new Date(data.dateOfBirth)).format("YYYY-MM-DD");
     const formData = new FormData();
     formData.append("email", data.email);
@@ -91,6 +95,7 @@ export function SignUp() {
         successToast(
           "Sign up successful. Please check your email and verify your email address."
         );
+        setLoading(false);
 
         navigate("/login");
       }
@@ -282,6 +287,12 @@ export function SignUp() {
                     fullWidth
                     variant="contained"
                     sx={{ mt: 3, mb: 2 }}
+                    disabled={isSubmitting || loading}
+                    endIcon={
+                      loading && (
+                        <CircularProgress color="inherit" size="1rem" />
+                      )
+                    }
                   >
                     Sign Up
                   </Button>

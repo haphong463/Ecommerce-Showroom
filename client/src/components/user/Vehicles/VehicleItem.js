@@ -120,12 +120,20 @@ export function VehicleItem({
                   </IconButton>
                 </Tooltip>
               </Stack>
-              <Typography variant="h6" sx={{ mt: 0 }}>
-                {vehicle.name}
+              <Typography
+                variant="h6"
+                sx={{
+                  mt: 0,
+                  whiteSpace: "nowrap",
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                }}
+              >
+                {vehicle.brand.name} {vehicle.name}
               </Typography>
               <Stack sx={{ mt: 1 }} direction="row" spacing={2}>
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                  <SpeedIcon /> {vehicle.mileage} km
+                  <SpeedIcon /> {vehicle.mileage.toLocaleString()} km
                 </Typography>
                 <Typography variant="body2" sx={{ color: "text.secondary" }}>
                   <SettingsIcon />

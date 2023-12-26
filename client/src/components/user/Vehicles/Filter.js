@@ -5,6 +5,7 @@ import {
   FormControl,
   InputLabel,
   MenuItem,
+  Paper,
   Select,
   Stack,
   Typography,
@@ -104,7 +105,12 @@ export const Filter = ({ vehicles }) => {
   }, []);
   // console.log(vehicles, status);
   return (
-    <>
+    <Paper
+      elevation={3}
+      sx={{
+        padding: 4,
+      }}
+    >
       <Stack spacing={2}>
         <Typography variant="h6" align="center" className="title-text">
           Filter
@@ -193,6 +199,6 @@ export const Filter = ({ vehicles }) => {
           </Select>
         </FormControl>
       </Stack>
-    </>
+    </Paper>
   );
 };

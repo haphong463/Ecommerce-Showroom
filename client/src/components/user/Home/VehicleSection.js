@@ -1,19 +1,14 @@
 import {
-  Avatar,
   Box,
-  Button,
   Card,
   CardContent,
-  Container,
   Grid,
   Paper,
   Skeleton,
   Typography,
 } from "@mui/material";
-import ConstructionIcon from "@mui/icons-material/Construction";
-import CleaningServicesIcon from "@mui/icons-material/CleaningServices";
-import { deepOrange } from "@mui/material/colors";
-import { useContext, useEffect, useState } from "react";
+
+import { useEffect, useState } from "react";
 import { getFeaturedCar } from "../../Vehicle/VehicleLibrary";
 import { FeaturedCard } from "./FeaturedCard";
 export function VehicleSection() {
@@ -23,12 +18,15 @@ export function VehicleSection() {
     setLoading(true);
     getFeaturedCar().then((data) => {
       console.log(data);
-      if (data) {
-        setFeaturedCar(data);
+      if (data && data.length > 0) {
+        // Use slice to get the first 4 elements
+        const slicedData = data.slice(0, 4);
+        setFeaturedCar(slicedData);
         setLoading(false);
       }
     });
   }, []);
+
   return (
     <>
       <Typography

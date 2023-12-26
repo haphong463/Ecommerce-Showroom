@@ -1,4 +1,3 @@
-import { Settings } from "../containers/admin/Settings";
 import { Home } from "../containers/admin/Home";
 import { Home as HomeUser } from "../containers/user/Home";
 import { Vehicles as VehicleUser } from "../containers/user/Vehicles";
@@ -28,6 +27,7 @@ import { Comparison } from "../containers/user/Comparison";
 import { ResetPassword } from "../containers/user/ResetPassword";
 import { Order } from "../containers/user/Order";
 import { ViewOrder } from "../containers/admin/ViewOrder";
+import { About } from "../containers/user/About";
 
 export const publicRoutes = [
   {
@@ -68,6 +68,10 @@ export const publicRoutes = [
     ),
   },
   {
+    path: "/about",
+    component: <About />,
+  },
+  {
     path: "/profile/order/:orderId",
     component: <Order />,
   },
@@ -91,11 +95,7 @@ export const publicRoutes = [
 
 export const privateRoutes = [
   { path: "/admin/", component: <Home />, roles: ["Admin", "Employee"] },
-  {
-    path: "/admin/settings",
-    component: <Settings />,
-    roles: ["Admin", "Employee"],
-  },
+
   {
     path: "/admin/car",
     component: (

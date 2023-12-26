@@ -98,7 +98,7 @@ const CustomSlider = ({ vehicleImages }) => {
                 style={{
                   width: "100%",
                   height: "50px",
-                  objectFit: "contain",
+                  objectFit: "cover",
                   border: "1px solid #cbcbcb",
                 }}
               />

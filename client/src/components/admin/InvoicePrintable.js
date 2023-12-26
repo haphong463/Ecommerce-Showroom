@@ -32,6 +32,8 @@ import { getService } from "../Service/ServiceLibrary";
 import { InvoiceAddress } from "./InvoiceAddress";
 import { getEmployeeById } from "../Employee/EmployeeLibrary";
 import { HeaderPrint } from "./HeaderPrint";
+import { getFrame } from "../Frame/FrameLibary";
+import { getOrder, getOrderDetails } from "../SalesOrder/SaleOrderLibrary";
 const TAX_RATE = 0.07;
 const ITEM_HEIGHT = 48;
 const ITEM_PADDING_TOP = 8;
@@ -48,8 +50,6 @@ function ccyFormat(num) {
   return num?.toLocaleString("en-US", { style: "currency", currency: "USD" });
 }
 
-
-
 export const InvoicePrintable = forwardRef(
   (
     { isAddRowVisible, listItem, setListItem, dataToPost, setDataToPost },
@@ -61,10 +61,15 @@ export const InvoicePrintable = forwardRef(
     const [listService, setListService] = useState([]);
     const [service, setService] = useState([]);
     const [vehicleList, setVehicleList] = useState([]);
+    const [orderDetails, setOrderDetails] = useState([]);
+    const [availableFrameNumbers, setAvailableFrameNumbers] = useState([]);
+
+    const [frameData, setFrameData] = useState([]);
     const [newRow, setNewRow] = useState({
       name: "",
       quantity: 0,
       unitPrice: 0,
+      frameNumber: "",
     });
 
     // ------------------------------------------------- checkQuantity -------------------------------------------------
@@ -103,36 +108,45 @@ export const InvoicePrintable = forwardRef(
 
     // ------------------------------------------------- extractDataForPost -------------------------------------------------
     const extractDataForPost = (list) => {
-      return list.map((item) => ({
-        vehicleId: item.vehicleID,
-        quantity: item.quantity,
-        price: item.unitPrice,
-      }));
+      return list.map((item) => {
+        return {
+          vehicleId: item.vehicleID,
+          quantity: 1,
+          price: item.unitPrice,
+          frameNumber: item.frameNumber,
+        };
+      });
     };
 
     // ------------------------------------------------- addRow -------------------------------------------------
     const addRow = () => {
-      if (!newRow.name || newRow.quantity <= 0) {
-        dangerMessage("Please fill in all required fields.");
+      if (!newRow.name) {
+        dangerMessage("Please select a vehicle.");
         return;
       }
-      if (listItem.some((item) => item.vehicleID === newRow.vehicleID)) {
+      if (!newRow.frameNumber) {
+        dangerMessage("Please select a frame number for " + newRow.name + ".");
+        return;
+      }
+      if (
+        listItem.some(
+          (item) =>
+            item.vehicleID === newRow.vehicleID &&
+            item.frameNumber === newRow.frameNumber
+        )
+      ) {
         dangerMessage("Item already exists.");
         return;
       }
-      if (!checkQuantity(newRow.quantity, newRow.vehicleID)) {
-        dangerMessage(`Car(${newRow.vehicleID}) out of stock.`);
-        return;
-      }
-      
-      setListItem([...listItem, newRow]);
+
+      setListItem([...listItem, newRow]); // Add the newRow to the list directly
       setDataToPost((prev) => ({
         ...prev,
-        orderDetails: extractDataForPost([...listItem, newRow]),
+        orderDetails: extractDataForPost([...listItem, newRow], frameData),
       }));
-      setNewRow({ name: "", quantity: "", unitPrice: "" });
+      setNewRow({ name: "", quantity: 0, unitPrice: 0, frameNumber: "" });
+      setAvailableFrameNumbers([]);
     };
-
     // ------------------------------------------------- handleRemoveRow -------------------------------------------------
 
     const handleRemoveRow = (indexRow) => {
@@ -155,10 +169,64 @@ export const InvoicePrintable = forwardRef(
 
       return { subTotal, taxes, total };
     };
+    const handleVehicleChange = (event) => {
+      const selectedVehicleId = event.target.value;
+      const selectedOption = options.find(
+        (option) => option.value === selectedVehicleId
+      );
+
+      // Update newRow state with the selected vehicle details
+      setNewRow({
+        ...newRow,
+        name: selectedOption ? selectedOption.label : "",
+        vehicleID: selectedVehicleId,
+        unitPrice: selectedOption ? selectedOption.price : 0,
+        isUsed: selectedOption ? selectedOption.isUsed : false,
+        model: selectedOption ? selectedOption.model : "",
+        quantity: 1,
+      });
+
+      // Set available frame numbers based on the selected VehicleId
+
+      // Filter out frame numbers that are already in listItem
+      // Get frame numbers in orderDetails
+      // Get frame numbers in orderDetails
+      const orderDetailsFrameNumbers = orderDetails.map(
+        (item) => item.frameNumber
+      );
+
+      // Set available frame numbers based on the selected VehicleId
+      const vehicleFrameData = frameData.filter(
+        (item) => item.vehicleId === selectedVehicleId
+      );
+
+      // Filter out frame numbers that are in orderDetails or listItem from availableFrameNumbers
+      const availableFrameNumbers = [];
+      const seenFrameNumbers = new Set([
+        ...listItem.map((item) => item.frameNumber),
+        ...orderDetailsFrameNumbers,
+      ]);
+
+      for (const item of vehicleFrameData) {
+        if (!seenFrameNumbers.has(item.frameNumber)) {
+          availableFrameNumbers.push(item.frameNumber);
+          seenFrameNumbers.add(item.frameNumber);
+        }
+      }
+
+      setAvailableFrameNumbers(availableFrameNumbers);
+    };
 
     // ------------------------------------------------- useEffect getVehicles, getCustomer, getService -------------------------------------------------
     console.log(dataToPost);
+    console.log("order details: ", orderDetails);
     useEffect(() => {
+      getFrame().then((data) => {
+        setFrameData(data.data);
+      });
+      getOrderDetails().then((data) => {
+        setOrderDetails(data);
+      });
       getVehicles().then((data) => {
         if (data) {
           setVehicleList(data);
@@ -241,7 +309,7 @@ export const InvoicePrintable = forwardRef(
             <TableHead>
               <TableRow>
                 <TableCell sx={{ fontWeight: 600 }}>No.</TableCell>
-                <TableCell sx={{ fontWeight: 600 }}>Name</TableCell>
+                <TableCell sx={{ fontWeight: 600 }}>Detail</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Model</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Condition</TableCell>
                 <TableCell sx={{ fontWeight: 600 }}>Qty.</TableCell>
@@ -257,18 +325,26 @@ export const InvoicePrintable = forwardRef(
                 return (
                   <TableRow key={index}>
                     <TableCell>{index + 1}</TableCell>
-                    <TableCell>{detail.name}</TableCell>
+                    <TableCell>
+                      {detail.name} | {detail.frameNumber}
+                    </TableCell>
                     <TableCell>{detail.model}</TableCell>
                     <TableCell>{detail.isUsed ? "New" : "Used"}</TableCell>
-                    <TableCell>{detail.quantity}</TableCell>
+                    <TableCell>1</TableCell>
                     <TableCell>{ccyFormat(detail.unitPrice)}</TableCell>
                     <TableCell align="right">
-                      {ccyFormat(calculateSubTotalItem(detail))}
-                      {isAddRowVisible && (
-                        <Button onClick={() => handleRemoveRow(index)}>
-                          -
-                        </Button>
-                      )}
+                      <Stack
+                        direction="row"
+                        justifyContent="flex-end"
+                        alignItems="center"
+                      >
+                        {ccyFormat(detail.unitPrice)}
+                        {isAddRowVisible && (
+                          <Button onClick={() => handleRemoveRow(index)}>
+                            -
+                          </Button>
+                        )}
+                      </Stack>
                     </TableCell>
                   </TableRow>
                 );
@@ -288,28 +364,12 @@ export const InvoicePrintable = forwardRef(
                         <Select
                           labelId="vehicle-label"
                           id="vehicle-select"
-                          value={newRow.vehicleID ? newRow.vehicleID : "*"}
-                          onChange={(e) => {
-                            const selectedOption = options.find(
-                              (option) => option.value === e.target.value
-                            );
-                            setNewRow({
-                              ...newRow,
-                              name: selectedOption ? selectedOption.label : "",
-                              vehicleID: e.target.value,
-                              unitPrice: selectedOption
-                                ? selectedOption.price
-                                : 0,
-                              isUsed: selectedOption
-                                ? selectedOption.isUsed
-                                : false,
-                              model: selectedOption ? selectedOption.model : "",
-                            });
-                          }}
+                          value={newRow.vehicleID ? newRow.vehicleID : ""}
+                          onChange={(e) => handleVehicleChange(e)}
                           label="Vehicle"
                           MenuProps={MenuProps}
                         >
-                          <MenuItem value="*" disabled>
+                          <MenuItem value="" disabled>
                             Select vehicle
                           </MenuItem>
                           {options.map((option, index) => (
@@ -321,19 +381,33 @@ export const InvoicePrintable = forwardRef(
                       </FormControl>
                     </TableCell>
                     <TableCell>
-                      <TextField
-                        type="number"
-                        label="Qty."
-                        value={newRow.quantity}
-                        onChange={(e) =>
-                          setNewRow({
-                            ...newRow,
-                            quantity: parseInt(e.target.value, 10) || 0,
-                          })
-                        }
-                      />
+                      {availableFrameNumbers.length > 0 && (
+                        <Select
+                          labelId="vehicle-label"
+                          id="vehicle-select"
+                          value={newRow.frameNumber ? newRow.frameNumber : ""}
+                          onChange={(e) =>
+                            setNewRow({
+                              ...newRow,
+                              frameNumber: e.target.value,
+                            })
+                          }
+                          fullWidth
+                          label="Frame Number"
+                          defaultValue="Select frame number"
+                          MenuProps={MenuProps}
+                        >
+                          <MenuItem value="Select frame number" disabled>
+                            Select frame number
+                          </MenuItem>
+                          {availableFrameNumbers.map((frameNumber) => (
+                            <MenuItem key={frameNumber} value={frameNumber}>
+                              {frameNumber}
+                            </MenuItem>
+                          ))}
+                        </Select>
+                      )}
                     </TableCell>
-
                     <TableCell>
                       <TextField
                         type="number"
@@ -342,12 +416,12 @@ export const InvoicePrintable = forwardRef(
                         disabled
                       />
                     </TableCell>
-                    <TableCell colSpan={2} align="right">
+                    <TableCell colSpan={3} align="right">
                       {ccyFormat(calculateSubTotalItem(newRow))}
                     </TableCell>
                   </TableRow>
                   <TableRow>
-                    <TableCell align="center" colSpan={4}>
+                    <TableCell align="center" colSpan={7}>
                       <Button
                         variant="contained"
                         color="primary"
