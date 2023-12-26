@@ -63,7 +63,7 @@ export const Profile = () => {
                   >
                     <Tab label="Information" value="1" />
                     <Tab label="Privacy" value="2" />
-                    <Tab label="Item Three" value="3" />
+                    <Tab label="Orders" value="3" />
                   </TabList>
                 </Box>
                 <ProfileInformation
