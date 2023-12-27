@@ -24,15 +24,19 @@ import {
   MenuItem,
   Select,
 } from "@mui/material";
-import { postCustomer } from "../../components/Customer/CustomerLibrary";
+import {
+  getCustomer,
+  postCustomer,
+} from "../../components/Customer/CustomerLibrary";
 import { successToast } from "../../components/Message";
 import { DataContext } from "../../context/DataContext";
 import { useContext } from "react";
 import { useTitle } from "../../UseTitle";
+import { useEffect } from "react";
 const schema = yup.object().shape({
   name: yup
     .string()
-    .required("First name is required")
+    .required("Name is required")
     .min(10, "Name must be at least 10 characters"),
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup
@@ -67,16 +71,26 @@ export function SignUp() {
     handleSubmit,
     formState: { errors, isSubmitting },
     setValue,
+    setError,
   } = useForm({
     resolver: yupResolver(schema),
   });
   const [loading, setLoading] = useState(false);
+  const [account, setAccount] = useState([]);
 
   const navigate = useNavigate();
   const [avatarImage, setAvatarImage] = useState(null); // State to manage the avatar image
   const { token } = useContext(DataContext);
   const onSubmit = (data) => {
     console.log(data);
+    const checkEmail = account.find((item) => item.email === data.email);
+    if (checkEmail) {
+      setError("email", {
+        type: "manual",
+        message: "Email already exists.",
+      });
+      return;
+    }
     setLoading(true);
     const newDate = dayjs(new Date(data.dateOfBirth)).format("YYYY-MM-DD");
     const formData = new FormData();
@@ -115,7 +129,14 @@ export function SignUp() {
       reader.readAsDataURL(file);
     }
   };
-  useTitle("Sign in");
+  useTitle("Sign up");
+  useEffect(() => {
+    getCustomer().then((data) => {
+      if (data) {
+        setAccount(data);
+      }
+    });
+  }, []);
 
   if (token) {
     return <Navigate to="/" />;
@@ -235,6 +256,7 @@ export function SignUp() {
                           <DatePicker
                             label="Date of Birth"
                             defaultValue={dayjs()}
+                            disablePast
                             sx={{
                               width: "100%",
                             }}

@@ -24,12 +24,15 @@ import { getPurchaseOrder } from "../../components/Order/PurchaseOrderLibrary";
 import { getCustomer } from "../../components/Customer/CustomerLibrary";
 import { SupportAgent } from "@mui/icons-material";
 import { useTitle } from "../../UseTitle";
+import { getVehicles } from "../../components/Vehicle/VehicleLibrary";
 
 export const Home = () => {
   const [orders, setOrders] = useState([]);
   const [purchaseOrder, setPurchaseOrder] = useState([]);
   const [accounts, setAccounts] = useState([]);
+  const [vehicles, setVehicles] = useState([]);
 
+  useEffect(() => {}, []);
   const totalOrderPrice = useMemo(() => {
     const result = orders.reduce((sum, order) => sum + order.totalPrice, 0);
     return result;
@@ -51,8 +54,28 @@ export const Home = () => {
         setAccounts(data);
       }
     });
+    // Fetch vehicle data
+    getVehicles().then((vehicleData) => {
+      setVehicles(vehicleData);
+    });
   }, []);
   useTitle("Dashboard");
+  const totalEarnings = useMemo(() => {
+    const result = orders.reduce((sum, order) => sum + order.totalPrice, 0);
+    return result;
+  }, [orders]);
+
+  const totalSpending = useMemo(() => {
+    const result = purchaseOrder.reduce((sum, purchaseOrder) => {
+      const vehicle = vehicles.find(
+        (v) => v.vehicleID === purchaseOrder.vehicleId
+      );
+      const purchasePrice = vehicle ? vehicle.purchasePrice : 0;
+      return sum + purchasePrice * purchaseOrder.quantity;
+    }, 0);
+    return result;
+  }, [purchaseOrder, vehicles]);
+  console.log(totalSpending);
   return (
     <div className="bg-gray">
       <Navbar />
@@ -118,7 +141,13 @@ export const Home = () => {
                         component="div"
                         sx={{ color: "#ffffff" }}
                       >
-                        {orders.length}
+                        $
+                        <CountUp
+                          start={-500}
+                          end={totalSpending}
+                          duration={5}
+                          decimal={2}
+                        />
                       </Typography>
                       <Typography
                         gutterBottom
@@ -126,7 +155,7 @@ export const Home = () => {
                         component="div"
                         sx={{ color: "#ccd1d1" }}
                       >
-                        Total Orders
+                        Total Spending
                       </Typography>
                     </CardContent>
                   </Card>
@@ -178,11 +207,17 @@ export const Home = () => {
             <Box height={20} />
             <Grid container spacing={2}>
               <Grid item xs={4} sm={6} xl={8}>
-                <Analystic orders={orders} />
+                <Analystic
+                  purchaseOrders={purchaseOrder}
+                  vehicles={vehicles}
+                  orders={orders}
+                />
               </Grid>
               <Grid item xs={8} sm={6} xl={4}>
                 <ChartUserVehicle
+                  vehicles={vehicles}
                   accounts={accounts.filter((item) => item.role === "User")}
+                  orders={orders}
                 />
               </Grid>
             </Grid>

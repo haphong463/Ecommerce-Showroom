@@ -19,6 +19,7 @@ import { getOrder } from "../SalesOrder/SaleOrderLibrary";
 import { getCustomer } from "../Customer/CustomerLibrary";
 import { getVehicles } from "../Vehicle/VehicleLibrary";
 import { TextField } from "@mui/material";
+import { getPurchaseOrder } from "../Order/PurchaseOrderLibrary";
 
 // Đăng ký các thành phần cần thiết
 Chart.register(
@@ -59,7 +60,7 @@ export const options = {
   },
 };
 
-export const Analystic = ({ orders }) => {
+export const Analystic = ({ orders, vehicles, purchaseOrders }) => {
   const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
 
   const handleChangeSelectedYear = (event) => {
@@ -151,6 +152,95 @@ export const Analystic = ({ orders }) => {
     },
   };
 
+  const getPurchaseOrderCountAndTotalPriceByMonthInYear = () => {
+    const purchaseOrderCount = {};
+    const purchaseOrderTotalPrice = {};
+    const allMonths = Array.from({ length: 12 }, (_, i) => i + 1);
+
+    allMonths.forEach((month) => {
+      purchaseOrderCount[month] = 0;
+      purchaseOrderTotalPrice[month] = 0;
+    });
+
+    purchaseOrders.forEach((order) => {
+      console.log(order);
+      if (order.orderDate) {
+        const orderYear = new Date(order.orderDate).getFullYear();
+        const orderMonth = new Date(order.orderDate).getMonth() + 1;
+
+        if (orderYear === selectedYear) {
+          purchaseOrderCount[orderMonth] += 1;
+
+          // Calculate total purchase order price by multiplying purchasePrice with quantity
+          const vehicle = vehicles.find((v) => v.vehicleID === order.vehicleId);
+          console.log(vehicle);
+          const purchasePrice = vehicle ? vehicle.purchasePrice : 0;
+          purchaseOrderTotalPrice[orderMonth] += purchasePrice * order.quantity;
+        }
+      }
+    });
+
+    return {
+      purchaseOrderCount: Object.entries(purchaseOrderCount),
+      purchaseOrderTotalPrice: Object.entries(purchaseOrderTotalPrice),
+    };
+  };
+
+  const { purchaseOrderCount, purchaseOrderTotalPrice } =
+    getPurchaseOrderCountAndTotalPriceByMonthInYear();
+
+  const mixedChartDataForPurchaseOrder = {
+    labels: purchaseOrderCount.map(([month]) => month),
+    datasets: [
+      {
+        label: "Purchase Order Count",
+        data: purchaseOrderCount.map(([, count]) => count),
+        borderColor: "red",
+        borderWidth: 2,
+        type: "line",
+        yAxisID: "count",
+      },
+      {
+        label: "Total Purchase Order Price",
+        data: purchaseOrderTotalPrice.map(([, totalPrice]) => totalPrice),
+        backgroundColor: "rgba(255, 99, 132, 0.2)",
+        borderColor: "rgba(255, 99, 132, 1)",
+        borderWidth: 1,
+        type: "bar",
+        yAxisID: "price",
+      },
+    ],
+  };
+  console.log(purchaseOrderTotalPrice.map(([, totalPrice]) => totalPrice));
+  const optionsForMixedChartForPurchaseOrder = {
+    maintainAspectRatio: false,
+    scales: {
+      x: {
+        type: "category",
+      },
+      count: {
+        type: "linear",
+        position: "left",
+        title: {
+          display: true,
+          text: "Purchase Order Count",
+        },
+      },
+      price: {
+        type: "linear",
+        position: "right",
+        title: {
+          display: true,
+          text: "Total Purchase Order Price",
+        },
+      },
+    },
+    elements: {
+      line: {
+        tension: 0.4, // Adjust this value for smoother or sharper lines
+      },
+    },
+  };
   return (
     <div>
       <div>
@@ -168,6 +258,16 @@ export const Analystic = ({ orders }) => {
             <Bar
               options={optionsForMixedChart}
               data={mixedChartDataByMonthInYear}
+            />
+          </div>
+        </div>
+      </div>
+      <div>
+        <div style={{ width: "100%" }}>
+          <div style={{ height: "50vh" }}>
+            <Bar
+              options={optionsForMixedChartForPurchaseOrder}
+              data={mixedChartDataForPurchaseOrder}
             />
           </div>
         </div>

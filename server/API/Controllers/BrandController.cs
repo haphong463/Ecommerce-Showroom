@@ -3,6 +3,7 @@ using API.DTO;
 using API.Helper;
 using API.Models;
 using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -25,7 +26,7 @@ namespace API.Controllers
         [HttpGet]
         public async Task<ActionResult<ApiResponse<IEnumerable<BrandDTO>>>> GetBrands()
         {
-            var brands = await _dbContext.Brands.Include(x=>x.Vehicles).ToListAsync();
+            var brands = await _dbContext.Brands.Include(x => x.Vehicles).ToListAsync();
             var brandDtos = _mapper.Map<List<BrandDTO>>(brands);
             return Ok(new ApiResponse<IEnumerable<BrandDTO>>(brandDtos, "Get all brands successfully"));
         }
@@ -33,7 +34,7 @@ namespace API.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<ApiResponse<BrandDTO>>> GetBrandById(int id)
         {
-            var brand = await _dbContext.Brands.Include(x => x.Vehicles).SingleOrDefaultAsync(x=>x.BrandId == id);
+            var brand = await _dbContext.Brands.Include(x => x.Vehicles).SingleOrDefaultAsync(x => x.BrandId == id);
 
             if (brand == null)
             {
@@ -43,6 +44,7 @@ namespace API.Controllers
             return Ok(new ApiResponse<BrandDTO>(brandDto, "Get Brand successfully"));
         }
         [HttpPost]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<ActionResult<ApiResponse<BrandDTO>>> PostBrand([FromForm] Brand brand, IFormFile file)
         {
             if (!ModelState.IsValid)
@@ -64,6 +66,7 @@ namespace API.Controllers
                 return ApiResponse<BrandDTO>.Exception(ex);
             }
         }
+        [Authorize(Roles = "Admin, Employee")]
         [HttpPut("{id}")]
         public async Task<ActionResult<ApiResponse<BrandDTO>>> UpdateBrand(int id, [FromForm] Brand brandUpdate, IFormFile? file)
         {
@@ -105,7 +108,7 @@ namespace API.Controllers
                 return ApiResponse<BrandDTO>.Exception(ex);
             }
         }
-
+        [Authorize(Roles = "Admin, Employee")]
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteBrand(int id)
         {

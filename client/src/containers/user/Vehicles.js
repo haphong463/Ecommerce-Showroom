@@ -25,6 +25,7 @@ export function Vehicles() {
       : location.pathname === "/vehiclesUsed"
       ? "Used Car"
       : "";
+  console.log(vehicleData);
   useEffect(() => {
     setLoading(true);
     let checkIsUsed;
@@ -32,26 +33,15 @@ export function Vehicles() {
       checkIsUsed = false;
     } else if (location.pathname === "/vehiclesUsed") {
       checkIsUsed = true;
+      setCurrentPage(1);
     }
-    if (vehicleData.length === 0) {
-      getVehicles().then((data) => {
-        if (data) {
-          const newCar = data.filter(
-            (vehicle) => vehicle.isUsed === checkIsUsed
-          );
-          setSearchData(newCar);
-          setVehicleData(data);
-          setLoading(false); // Set load
-        }
-      });
-    } else {
-      const newCar = vehicleData.filter(
-        (vehicle) => vehicle.isUsed === checkIsUsed
-      );
-      setSearchData(newCar);
-      setLoading(false); // Set load
-    }
-  }, [setVehicleData, setSearchData, location]);
+    getVehicles().then((data) => {
+      console.log(data);
+      setVehicleData(data.filter((item) => item.isUsed === checkIsUsed));
+      setSearchData(data.filter((item) => item.isUsed === checkIsUsed));
+      setLoading(false);
+    });
+  }, [location]);
 
   const handlePageChange = (event, value) => {
     setCurrentPage(value);

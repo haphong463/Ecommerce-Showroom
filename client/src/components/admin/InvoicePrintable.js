@@ -233,9 +233,10 @@ export const InvoicePrintable = forwardRef(
           const uniqueOptions = data.map((item) => ({
             label: item.name,
             value: item.vehicleID,
-            price: item.purchasePrice,
+            price: item.price,
             isUsed: item.isUsed,
             model: item.modelId,
+            quantity: item.quantity,
           }));
 
           setOptions(uniqueOptions);
@@ -374,7 +375,9 @@ export const InvoicePrintable = forwardRef(
                           </MenuItem>
                           {options.map((option, index) => (
                             <MenuItem key={option.value} value={option.value}>
-                              {index + 1 + ". " + option.label}
+                              {`${index + 1}. ${option.label} (${
+                                option.quantity
+                              })`}
                             </MenuItem>
                           ))}
                         </Select>

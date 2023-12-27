@@ -20,6 +20,7 @@ export const getVehicles = async () => await handleRequest("get", "");
 
 export const getFeaturedCar = async () =>
   await handleRequest("get", "/FeatureVehicles");
+export const getImages = async () => await handleRequest("get", "/images");
 
 export const postVehicle = async (vehicle) =>
   await handleRequest("post", "", vehicle);

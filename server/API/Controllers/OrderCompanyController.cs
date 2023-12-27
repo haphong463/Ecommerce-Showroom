@@ -49,6 +49,7 @@ namespace API.Controllers
                             AccountId = o.Employee.AccountId,
                             Name = o.Employee.Name,
                         },
+                        OrderDate = o.OrderDate,
                         VehicleId = o.VehicleId,
                         Vehicle = new include_VehicleDTO
                         {
@@ -101,6 +102,7 @@ namespace API.Controllers
                             EmployeeId = o.EmployeeId,
                             AccountId = o.Employee.AccountId
                         },
+                        OrderDate = o.OrderDate,
                         VehicleId = o.VehicleId,
                         Vehicle = new include_VehicleDTO
                         {

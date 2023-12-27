@@ -29,7 +29,7 @@ export function VehicleContent(props) {
       <Grid item md={3} xs={12}>
         {/* FILTER VEHICLES: dùng để filter vehicle theo tên, brand */}
 
-        <Filter vehicles={props.vehicleData} />
+        <Filter />
 
         {/* END FILTER VEHICLES */}
       </Grid>
@@ -41,6 +41,7 @@ export function VehicleContent(props) {
                 color="inherit"
                 onClick={() => props.navigate("/comparison")}
                 startIcon={<CompareArrows />}
+                variant="contained"
               >
                 Compare ({countItemCompare})
               </Button>

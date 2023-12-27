@@ -31,7 +31,7 @@ const OrderTable = ({
           <TableHead>
             <TableRow>
               <TableCell>ID</TableCell>
-              <TableCell align="center">Customer</TableCell>
+              <TableCell align="center">Order Date</TableCell>
               <TableCell align="center">Total Amount</TableCell>
               <TableCell></TableCell>
               {/* Thêm các cột khác tùy thuộc vào thông tin bạn muốn hiển thị */}
@@ -48,7 +48,12 @@ const OrderTable = ({
                   <TableCell align="center">
                     {dayjs(order.orderDate).format("LLL")}
                   </TableCell>
-                  <TableCell align="center">{order.totalPrice}</TableCell>
+                  <TableCell align="center">
+                    {order.totalPrice.toLocaleString("en-US", {
+                      style: "currency",
+                      currency: "USD",
+                    })}
+                  </TableCell>
                   <TableCell>
                     <IconButton
                       onClick={() =>

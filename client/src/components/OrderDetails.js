@@ -135,6 +135,17 @@ export function OrderDetails(props) {
           </TableBody>
         </Table>
       </TableContainer>
+      <Stack direction="row" spacing={1}>
+        <Typography fontWeight="600">Accompanied service:</Typography>
+        <Stack direction="row">
+          {props.order?.orderService
+            ?.map((itemService) => {
+              console.log(itemService);
+              return itemService.services.name;
+            })
+            .join(", ")}
+        </Stack>
+      </Stack>
     </>
   );
 }

@@ -17,6 +17,7 @@ import {
 } from "chart.js";
 import { getCustomer } from "../Customer/CustomerLibrary";
 import { getVehicles } from "../Vehicle/VehicleLibrary";
+
 Chart.register(
   CategoryScale,
   LinearScale,
@@ -26,30 +27,40 @@ Chart.register(
   Tooltip,
   Legend,
   BarElement,
-  TimeScale, // Đăng ký time scale
+  TimeScale,
   TimeSeriesScale,
-  ArcElement // Đăng ký time series scale
+  ArcElement
 );
 
-const ChartUserVehicle = memo(({ accounts }) => {
-  const [vehicles, setVehicles] = useState([]);
+const generateRandomColor = () => {
+  const letters = "0123456789ABCDEF";
+  let color = "#";
+  for (let i = 0; i < 6; i++) {
+    color += letters[Math.floor(Math.random() * 16)];
+  }
+  return color;
+};
 
-  useEffect(() => {
-    // Fetch vehicle data
-    getVehicles().then((vehicleData) => {
-      setVehicles(vehicleData);
-    });
-  }, []);
+const ChartUserVehicle = memo(({ accounts, vehicles, orders }) => {
   const totalUsers = accounts.length; // Assuming each account represents a user
   const totalProducts = vehicles.length; // Assuming each vehicle represents a product
+  const totalOrders = orders.length;
 
   const pieChartData = {
-    labels: ["User Count", "Vehicle Count"],
+    labels: ["User", "Vehicle", "Order"],
     datasets: [
       {
-        data: [totalUsers, totalProducts],
-        backgroundColor: ["rgba(75, 192, 192, 0.2)", "rgba(255, 99, 132, 0.2)"],
-        borderColor: ["rgba(75, 192, 192, 1)", "rgba(255, 99, 132, 1)"],
+        data: [totalUsers, totalProducts, totalOrders],
+        backgroundColor: [
+          generateRandomColor(),
+          generateRandomColor(),
+          generateRandomColor(),
+        ],
+        borderColor: [
+          generateRandomColor(),
+          generateRandomColor(),
+          generateRandomColor(),
+        ],
         borderWidth: 1,
       },
     ],

@@ -80,6 +80,7 @@ namespace API.Data
             //  .OnDelete(DeleteBehavior.Restrict);
         }
         public DbSet<Account> Accounts { get; set; }
+        public DbSet<Images> Images { get; set; }
         public DbSet<Brand> Brands { get; set; }
         public DbSet<Vehicle> Vehicles { get; set; }
         public DbSet<Employee> Employees { get; set; }

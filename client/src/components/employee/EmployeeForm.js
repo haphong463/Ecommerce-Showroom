@@ -31,7 +31,11 @@ import { postCustomer, putCustomer } from "../Customer/CustomerLibrary";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 const schema = yup.object().shape({
-  name: yup.string().required("First name is required"),
+  name: yup
+    .string()
+    .required("Name is required")
+    .min(10, "Name must be at least 10 characters"),
+
   email: yup.string().email("Invalid email").required("Email is required"),
   password: yup
     .string()
@@ -197,6 +201,7 @@ const EmployeeForm = () => {
                           width: "100%",
                         }}
                         {...register(name)}
+                        disablePast
                         onChange={(e) => {
                           setValue(name, e);
                         }}

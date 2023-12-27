@@ -5,12 +5,10 @@ import {
   Breadcrumbs,
   Button,
   Container,
-  Divider,
   Grid,
   ImageList,
   ImageListItem,
   Stack,
-  Tooltip,
   Typography,
 } from "@mui/material";
 import { Link, useNavigate, useParams } from "react-router-dom";
@@ -27,21 +25,15 @@ import {
   EmojiTransportation as EmojiTransportationIcon,
   SettingsInputComponent as SettingsInputComponentIcon,
   PeopleAlt as PeopleAltIcon,
-  EventAvailable as EventAvailableIcon,
-  MonetizationOn as MonetizationOnIcon,
   CheckCircle as CheckCircleIcon,
-  ArrowBack as ArrowBackIcon,
   Phone,
 } from "@mui/icons-material";
 
-import dayjs from "dayjs";
 import RelatedVehicles from "../../components/user/Vehicles/RelatedVehicles";
 import { VehicleSpec } from "../../components/user/Vehicles/VehicleSpec";
 import { DataContext } from "../../context/DataContext";
 import CustomSlider from "../../components/admin/VehicleDetails/ImageList";
-import { dangerMessage } from "../../components/Message";
 import { useTitle } from "../../UseTitle";
-import { DatePicker } from "@mui/x-date-pickers";
 import { postAppointment } from "../../components/Appointment/AppointmentLibrary";
 import styled from "@emotion/styled";
 const StyledImageListItem = styled(ImageListItem)({
@@ -63,11 +55,9 @@ const StyledImage = styled("img")({
 export const VehicleDetails = () => {
   const { id } = useParams();
   const { vehicle, setVehicle } = useContext(VehicleContext);
-  const { setItemCart, token } = useContext(DataContext);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const infoArray = [
-    { icon: <DriveEtaIcon />, title: "Name", value: vehicle.name },
     {
       icon: <CategoryIcon />,
       title: "Model ID",
@@ -106,7 +96,7 @@ export const VehicleDetails = () => {
     },
     {
       icon: <PeopleAltIcon />,
-      title: "Used/New",
+      title: "Condition",
       value: vehicle.isUsed ? "Used" : "New",
     },
     {
@@ -120,12 +110,6 @@ export const VehicleDetails = () => {
           : "",
     },
   ];
-
-  const handleAppointment = () => {
-    postAppointment().then((data) => {
-      console.log(data);
-    });
-  };
 
   const refreshVehicleData = () => {
     getVehicleById(id).then((data) => {
@@ -173,7 +157,9 @@ export const VehicleDetails = () => {
                       AutoCar
                     </Typography>
                     <Typography variant="h3" gutterBottom>
-                      <span className="title-text">{vehicle.name}</span>
+                      <span className="title-text">
+                        {vehicle.brand.name + " " + vehicle.name}
+                      </span>
                     </Typography>
                     <Breadcrumbs separator="-">
                       <Typography>
@@ -228,9 +214,9 @@ export const VehicleDetails = () => {
                   {vehicle.images.map((item) => (
                     <StyledImageListItem key={item.imagePath}>
                       <StyledImage
-                        srcSet={`${item.imagePath}?w=248&fit=crop&auto=format&dpr=2 2x`}
+                        srcSet={`${item.imagePath}?w=248&fit=crop&auto=format&dpr=1 1x, ${item.imagePath}?w=248&fit=crop&auto=format&dpr=2 2x`}
                         src={`${item.imagePath}?w=248&fit=crop&auto=format`}
-                        alt={item.title}
+                        alt={item.imagePath}
                         loading="lazy"
                       />
                     </StyledImageListItem>

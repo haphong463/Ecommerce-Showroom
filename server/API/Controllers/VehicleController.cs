@@ -81,7 +81,7 @@ namespace API.Controllers
         }
 
         [HttpPost]
-        /*[Authorize(Roles = "Employee, Admin")]*/
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<ActionResult<ApiResponse<VehicleDTO>>> PostVehicle([FromForm] Vehicle vehicle, List<IFormFile> files)
         {
             if (!ModelState.IsValid)
@@ -131,6 +131,7 @@ namespace API.Controllers
 
 
         [HttpPut("{id}")]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<ActionResult<ApiResponse<VehicleDTO>>> UpdateVehicle(int id, [FromForm] Vehicle vehicleUpdate, List<IFormFile>? files)
         {
             try
@@ -181,7 +182,7 @@ namespace API.Controllers
         }
 
 
-
+        [Authorize(Roles = "Admin, Employee")]
         [HttpPut("updateQuantity/{id}")]
         public async Task<ActionResult<ApiResponse<bool>>> UpdateQuantity(int id, [FromForm] int quantity, [FromForm] int purchaseOrderId)
         {
@@ -212,6 +213,7 @@ namespace API.Controllers
 
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> DeleteVehicle(int id)
         {
             var vehicle = await _dbContext.Vehicles.Include(x => x.Brand).Include(x => x.Images).SingleOrDefaultAsync(x => x.VehicleId == id);
@@ -233,6 +235,8 @@ namespace API.Controllers
             var vehicleDto = _mapper.Map<VehicleDTO>(vehicle);
             return Ok(new ApiResponse<VehicleDTO>(vehicleDto, "Delete vehicle successfully"));
         }
+
+        [Authorize(Roles = "Admin, Employee")]
         [HttpPut("updateVehicle/{id}")]
         public async Task<ActionResult<ApiResponse<Vehicle>>> Update(int id, [FromBody] VehicleBriefDTO vehicleBriefDTO)
         {
@@ -263,6 +267,32 @@ namespace API.Controllers
                 return ApiResponse<Vehicle>.Exception(ex);
             }
         }
+
+
+        [HttpGet("images")]
+        public async Task<ActionResult<ApiResponse<IEnumerable<ImageDTO>>>> GetRandomImages()
+        {
+            try
+            {
+                var images = await _dbContext.Images.ToListAsync();
+
+                if (images == null || !images.Any())
+                {
+                    return NotFound(new ApiResponse<IEnumerable<ImageDTO>>(null, "No images found"));
+                }
+
+                // Lấy ngẫu nhiên 'count' hình ảnh từ danh sách
+                var randomImages = images.OrderBy(x => Guid.NewGuid()).Take(12).ToList();
+
+                var imagesDTO = _mapper.Map<List<ImageDTO>>(randomImages);
+                return Ok(new ApiResponse<IEnumerable<ImageDTO>>(imagesDTO, "Random images retrieved successfully"));
+            }
+            catch (Exception ex)
+            {
+                return ApiResponse<IEnumerable<ImageDTO>>.Exception(ex);
+            }
+        }
+
 
     }
 }

@@ -35,7 +35,7 @@ namespace API.Controllers
         }
 
         [HttpGet]
-        //[Authorize(Roles = "Admin,User")]
+        //[Authorize(Roles = "Admin, Employee")]
         public async Task<IActionResult> Index()
         {
             try
@@ -343,6 +343,7 @@ namespace API.Controllers
                     existingAccount.Address = account.Address;
                     existingAccount.Gender = account.Gender;
                     existingAccount.Phone = account.Phone;
+                    existingAccount.DateOfBirth = account.DateOfBirth;
 
                     await _dbContext.SaveChangesAsync();
                     return Ok(new ApiResponse<Account>(existingAccount, "Update account successfully"));

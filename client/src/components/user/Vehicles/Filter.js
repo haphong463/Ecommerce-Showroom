@@ -7,6 +7,7 @@ import {
   MenuItem,
   Paper,
   Select,
+  Slider,
   Stack,
   Typography,
 } from "@mui/material";
@@ -18,8 +19,9 @@ import {
   transmissionType,
   status as statusList,
 } from "../../Vehicle/VehicleLibrary";
-export const Filter = ({ vehicles }) => {
+export const Filter = () => {
   const { setSearchData } = useContext(DataContext);
+  const { vehicleData } = useContext(VehicleContext);
   const [options, setOptions] = useState([]);
   const [brand, setBrand] = useState();
   const [transmission, setTransmission] = useState();
@@ -28,6 +30,14 @@ export const Filter = ({ vehicles }) => {
   const [inputValue, setInputValue] = useState("");
   const [open, setOpen] = React.useState(false);
   const [brandList, setBrandList] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc"); // "asc" for ascending, "desc" for descending
+  // Add these state variables
+
+  // ...
+
+  const handleChangeSortOrder = (event) => {
+    setSortOrder(event.target.value);
+  };
 
   const handleOpen = () => {
     if (inputValue.length > 0) {
@@ -44,9 +54,6 @@ export const Filter = ({ vehicles }) => {
     }
   };
 
-  const handleChangeBrand = (event) => {
-    setBrand(event.target.value);
-  };
   const handleChangeTranmission = (event) => {
     setTransmission(event.target.value);
   };
@@ -58,10 +65,12 @@ export const Filter = ({ vehicles }) => {
   };
 
   useEffect(() => {
-    let filterVehicles = vehicles.slice();
+    let filterVehicles = vehicleData.slice();
     if (inputValue) {
-      filterVehicles = filterVehicles.filter((item) =>
-        item.name.toLowerCase().includes(inputValue.toLowerCase())
+      filterVehicles = filterVehicles.filter(
+        (item) =>
+          item.name.toLowerCase().includes(inputValue.toLowerCase()) ||
+          item.brand.name.toLowerCase().includes(inputValue.toLowerCase())
       );
     }
     if (brand && brand !== "all") {
@@ -84,17 +93,29 @@ export const Filter = ({ vehicles }) => {
         (item) => item.status === parseInt(status)
       );
     }
+
+    filterVehicles.sort((a, b) => {
+      const aPrice = a.price; // Change this to your actual price property
+      const bPrice = b.price; // Change this to your actual price property
+
+      if (sortOrder === "asc") {
+        return aPrice - bPrice;
+      } else {
+        return bPrice - aPrice;
+      }
+    });
+
     setSearchData(filterVehicles);
-  }, [inputValue, brand, status, fuelType, transmission]);
+  }, [inputValue, brand, status, fuelType, transmission, sortOrder]);
 
   useEffect(() => {
-    const uniqueOptions = [...new Set(vehicles.map((item) => item.name))];
+    const uniqueOptions = [...new Set(vehicleData.map((item) => item.name))];
     setOptions(
       uniqueOptions.map((name, index) => ({
         label: name,
       }))
     );
-  }, [vehicles]);
+  }, [vehicleData]);
 
   useEffect(() => {
     getBrandList().then((data) => {
@@ -122,7 +143,7 @@ export const Filter = ({ vehicles }) => {
             <TextField
               {...params}
               variant="outlined"
-              placeholder="Search vehicle by name..."
+              placeholder="Search vehicle by name, brand..."
             />
           )}
           freeSolo
@@ -134,7 +155,7 @@ export const Filter = ({ vehicles }) => {
           onClose={() => setOpen(false)}
           onInputChange={handleInputChange}
         />
-        <FormControl fullWidth>
+        {/* <FormControl fullWidth>
           <InputLabel>Brand</InputLabel>
 
           <Select
@@ -148,6 +169,19 @@ export const Filter = ({ vehicles }) => {
                 {item.name}
               </MenuItem>
             ))}
+          </Select>
+        </FormControl> */}
+
+        <FormControl fullWidth>
+          <InputLabel>Sort By Price</InputLabel>
+          <Select
+            label="Sort By Price"
+            value={sortOrder}
+            fullWidth
+            onChange={handleChangeSortOrder}
+          >
+            <MenuItem value="asc">Ascending</MenuItem>
+            <MenuItem value="desc">Descending</MenuItem>
           </Select>
         </FormControl>
         <FormControl fullWidth>

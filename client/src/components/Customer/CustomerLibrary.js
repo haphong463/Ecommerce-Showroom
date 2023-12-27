@@ -48,6 +48,7 @@ export const postResetPassword = async (token, data) =>
 export const columns = [
   { id: "accountId", label: "ID", minWidth: 30 },
   { id: "name", label: "Name", minWidth: 100 },
+  { id: "email", label: "Email", minWidth: 100 },
   { id: "dateOfBirth", label: "Date of Birth", minWidth: 200, align: "left" },
   { id: "avatarUrl", label: "Avatar", minWidth: 200, align: "left" },
 ];
